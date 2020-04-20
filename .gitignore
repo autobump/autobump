@@ -1,6 +1,11 @@
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
+.idea/*
+.gradle/vcsWorkingDirs/gc.properties
+.gradle/buildOutputCleanup/*
+.gradle/4.8/*
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -96,3 +101,10 @@ hs_err_pid*
 
 # database files
 *.db
+.gradle/buildOutputCleanup/
+
+.gradle/4.8/
+!gradlew.bat
+!gradlew
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
