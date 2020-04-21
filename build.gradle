@@ -25,7 +25,7 @@ sonarqube {
     }
 }
 
-checkstyle{
-    configFile file('./config/checkstyle/checkstyle.xml')
-    toolVersion '8.30'
+checkstyle {
+    toolVersion "8.30"
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }
