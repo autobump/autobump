@@ -2,19 +2,17 @@ package model.maven;
 
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
-import model.Exceptions.NoDependencyFileFoundException;
+import model.exceptions.NoDependencyFileFoundException;
 import model.Workspace;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.Scanner;
 
 public class MavenWorkspace implements Workspace {
     private String projectRoot;
     private final String dependencyFileName = "pom.xml";
-    private final Logger logger = LoggerFactory.getLogger(MavenWorkspace.class);
 
     public MavenWorkspace(String projectRoot) {
         this.projectRoot = projectRoot;

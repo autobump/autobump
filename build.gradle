@@ -15,6 +15,7 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'org.apache.maven', name: 'maven-model', version: '3.6.3'
+    compile group: 'org.apache.maven', name: 'maven-project', version: '2.2.1'
 }
 
 sonarqube {

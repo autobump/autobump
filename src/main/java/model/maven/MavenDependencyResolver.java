@@ -15,6 +15,7 @@ public class MavenDependencyResolver implements DependencyResolver {
     public Set<Dependency> resolve(Workspace workspace) {
         try {
             Reader dependencyDocument = workspace.getDependencydocument();
+
         } catch (FileNotFoundException e) {
             return new HashSet<>();
         }
