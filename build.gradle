@@ -3,7 +3,7 @@ plugins {
     id "org.sonarqube" version "2.8"
 }
 
-group 'be.Xplore'
+group 'be.xplore'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
