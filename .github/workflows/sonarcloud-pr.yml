@@ -1,6 +1,6 @@
 # This workflow will execute sonarqube analysis
 
-name: sonarcloud
+name: sonarcloud-pr
 
 on:
   pull_request:
