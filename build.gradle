@@ -21,6 +21,5 @@ sonarqube {
         property "sonar.projectKey", "autobump_autobump"
         property "sonar.organization", "autobump"
         property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.login", System.getProperty("login")
     }
 }
