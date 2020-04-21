@@ -1,9 +1,7 @@
 package model.maven;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
-import model.exceptions.NoDependencyFileFoundException;
 import model.Workspace;
+import model.exceptions.NoDependencyFileFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
