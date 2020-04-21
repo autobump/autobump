@@ -22,7 +22,7 @@ public class MavenDependencyResolverTest {
 
     @Before
     public void setUp() {
-        workspace = new MavenWorkspace("src\\test\\resources\\project_root");
+        workspace = new MavenWorkspace("src/test/resources/project_root");
         dependencyResolver = new MavenDependencyResolver();
     }
 
@@ -39,13 +39,13 @@ public class MavenDependencyResolverTest {
 
     @Test(expected = NoDependencyFileFoundException.class)
     public void TestFileNotFound() throws IOException, XmlPullParserException {
-        Workspace ws = new MavenWorkspace("src\\test\\resources\\project_root\\testDir");
+        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
         dependencyResolver.resolve(ws);
     }
 
     @Test
     public void TestEmpyDependencies() throws IOException, XmlPullParserException {
-        Workspace ws = new MavenWorkspace("src\\test\\resources\\project_root\\testDir\\empty");
+        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir/empty");
         assertEquals(Set.of(), dependencyResolver.resolve(ws));
     }
 

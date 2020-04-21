@@ -14,7 +14,7 @@ public class MavenWorkspaceTest {
 
     @Before
     public void setUp() throws Exception {
-        workspace = new MavenWorkspace("src\\test\\resources\\project_root");
+        workspace = new MavenWorkspace("src/test/resources/project_root");
     }
 
     @Test
@@ -24,7 +24,7 @@ public class MavenWorkspaceTest {
 
     @Test(expected = NoDependencyFileFoundException.class)
     public void getDependencyDocumentFromWrongPath() throws FileNotFoundException {
-        Workspace ws = new MavenWorkspace("src\\test\\resources\\project_root\\testDir");
+        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
         ws.getDependencydocument();
     }
 }
