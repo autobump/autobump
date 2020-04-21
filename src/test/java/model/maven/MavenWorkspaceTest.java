@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class MavenWorkspaceTest {
     private MavenWorkspace workspace;

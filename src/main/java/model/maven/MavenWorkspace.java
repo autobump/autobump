@@ -7,13 +7,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.net.URI;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class MavenWorkspace implements Workspace {
     private String projectRoot;
-    private final String dependencyFileName = "pom.xml";
+    private final static String dependencyFileName = "pom.xml";
 
     public MavenWorkspace(String projectRoot) {
         this.projectRoot = projectRoot;
@@ -28,7 +26,7 @@ public class MavenWorkspace implements Workspace {
         File[] files = file.listFiles();
         if (files != null){
             for (File f : files){
-                if (!f.isDirectory() && dependencyFileName.equalsIgnoreCase(f.getName())){
+                if (!f.isDirectory() && MavenWorkspace.dependencyFileName.equalsIgnoreCase(f.getName())){
                     return f;
                 }
             }

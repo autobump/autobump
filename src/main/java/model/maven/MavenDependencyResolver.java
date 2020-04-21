@@ -7,10 +7,8 @@ import model.Workspace;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 

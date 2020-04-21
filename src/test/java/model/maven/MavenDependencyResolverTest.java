@@ -8,7 +8,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import java.io.IOException;
 import java.util.Set;
 
