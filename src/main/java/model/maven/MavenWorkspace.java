@@ -10,8 +10,8 @@ import java.io.Reader;
 import java.nio.file.Paths;
 
 public class MavenWorkspace implements Workspace {
-    private String projectRoot;
-    private final static String dependencyFileName = "pom.xml";
+    private final static String DEPENDENCY_FILE_NAME = "pom.xml";
+    private final String projectRoot;
 
     public MavenWorkspace(String projectRoot) {
         this.projectRoot = projectRoot;
@@ -26,7 +26,7 @@ public class MavenWorkspace implements Workspace {
         File[] files = file.listFiles();
         if (files != null){
             for (File f : files){
-                if (!f.isDirectory() && MavenWorkspace.dependencyFileName.equalsIgnoreCase(f.getName())){
+                if (!f.isDirectory() && MavenWorkspace.DEPENDENCY_FILE_NAME.equalsIgnoreCase(f.getName())){
                     return f;
                 }
             }
