@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MavenWorkspace implements Workspace {
     private String projectRoot;
@@ -18,7 +21,7 @@ public class MavenWorkspace implements Workspace {
 
     @Override
     public Reader getDependencydocument() throws FileNotFoundException {
-        return new FileReader(findfile(new File(projectRoot)));
+        return new FileReader(findfile(Paths.get(projectRoot).toFile()));
     }
 
     private File findfile(File file) throws NoDependencyFileFoundException {
