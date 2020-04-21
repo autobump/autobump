@@ -10,7 +10,7 @@ import java.io.Reader;
 import java.nio.file.Paths;
 
 public class MavenWorkspace implements Workspace {
-    private final static String DEPENDENCY_FILE_NAME = "pom.xml";
+    private static final String DEPENDENCY_FILE_NAME = "pom.xml";
     private final String projectRoot;
 
     public MavenWorkspace(String projectRoot) {
