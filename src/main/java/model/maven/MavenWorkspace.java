@@ -21,13 +21,8 @@ public class MavenWorkspace implements Workspace {
     }
 
     @Override
-    public Reader getDependencydocument() {
-        try {
-            return new FileReader(findfile(new File(projectRoot)));
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage());
-            return null;
-        }
+    public Reader getDependencydocument() throws FileNotFoundException {
+        return new FileReader(findfile(new File(projectRoot)));
     }
 
     private File findfile(File file) throws NoDependencyFileFoundException {

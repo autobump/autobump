@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Dependency {
     private String group;
     private String name;
@@ -36,5 +38,20 @@ public class Dependency {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Dependency)) return false;
+        Dependency that = (Dependency) o;
+        return Objects.equals(getGroup(), that.getGroup()) &&
+                Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getVersion(), that.getVersion());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getGroup(), getName(), getVersion());
     }
 }
