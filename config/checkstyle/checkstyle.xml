@@ -165,7 +165,7 @@
 
         <module name="UnnecessaryParentheses"/>
 
-        <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
+        <!--<module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>-->
 
         <module name="UnnecessarySemicolonInEnumeration"/>
 
