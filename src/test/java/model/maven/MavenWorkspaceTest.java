@@ -1,7 +1,7 @@
 package model.maven;
 
 import model.Workspace;
-import model.exceptions.NoDependencyFileFoundException;
+import exceptions.NoDependencyFileFoundException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,12 +19,12 @@ public class MavenWorkspaceTest {
 
     @Test
     public void getDependencydocument() throws FileNotFoundException {
-        assertNotNull(workspace.getDependencydocument());
+        assertNotNull(workspace.getDependencyDocument());
     }
 
     @Test(expected = NoDependencyFileFoundException.class)
     public void getDependencyDocumentFromWrongPath() throws FileNotFoundException {
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
-        ws.getDependencydocument();
+        ws.getDependencyDocument();
     }
 }

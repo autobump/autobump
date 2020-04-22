@@ -5,5 +5,5 @@ import java.io.Reader;
 
 public interface Workspace {
 
-    Reader getDependencydocument() throws FileNotFoundException;
+    Reader getDependencyDocument();
 }

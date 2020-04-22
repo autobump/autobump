@@ -18,8 +18,12 @@ public class MavenWorkspace implements Workspace {
     }
 
     @Override
-    public Reader getDependencydocument() throws FileNotFoundException {
-        return new FileReader(findfile(Paths.get(projectRoot).toFile()));
+    public Reader getDependencyDocument() {
+        try {
+            return new FileReader(findfile(Paths.get(projectRoot).toFile()));
+        } catch (FileNotFoundException e) {
+            throw new NoDependencyFileFoundException("Reader could not load pom file");
+        }
     }
 
     private File findfile(File file) throws NoDependencyFileFoundException {

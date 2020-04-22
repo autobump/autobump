@@ -1,12 +1,14 @@
 package model;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class Dependency {
-    private String group;
-    private String name;
-    private String version;
+    String group;
+    String name;
+    String version;
 
 
     public Dependency(String group, String name, String version) {

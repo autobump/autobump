@@ -1,9 +1,10 @@
 package model.maven;
 
+import exceptions.DependencyParserException;
 import model.Dependency;
 import model.DependencyResolver;
 import model.Workspace;
-import model.exceptions.NoDependencyFileFoundException;
+import exceptions.NoDependencyFileFoundException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class MavenDependencyResolverTest {
 
@@ -28,11 +28,7 @@ public class MavenDependencyResolverTest {
     @Test
     public void TestSuccesresolve() {
         Set<Dependency> deps = null;
-        try {
-            deps = dependencyResolver.resolve(workspace);
-        } catch (IOException | XmlPullParserException e) {
-            fail();
-        }
+        deps = dependencyResolver.resolve(workspace);
         assertEquals(Set.of(new Dependency("org.apache.derby", "derby", "10.15.2.0")), deps);
     }
 
@@ -43,9 +39,14 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestEmpyDependencies() throws IOException, XmlPullParserException {
+    public void TestEmpyDependencies() {
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir/empty");
         assertEquals(Set.of(), dependencyResolver.resolve(ws));
     }
 
+    @Test(expected = DependencyParserException.class)
+    public void TestUnparseableDependencies(){
+        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir/parserror");
+        dependencyResolver.resolve(ws);
+    }
 }
