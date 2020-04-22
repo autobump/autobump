@@ -5,7 +5,6 @@ import exceptions.NoDependencyFileFoundException;
 import model.Dependency;
 import model.DependencyResolver;
 import model.Workspace;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
