@@ -1,7 +1,7 @@
 package model.maven;
 
-import model.Workspace;
 import exceptions.NoDependencyFileFoundException;
+import model.Workspace;
 
 import java.io.File;
 import java.io.FileNotFoundException;
