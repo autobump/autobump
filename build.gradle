@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'checkstyle'
+    id 'jacoco'
     id "org.sonarqube" version "2.8"
 }
 
@@ -31,5 +33,25 @@ sonarqube {
         property "sonar.projectKey", "autobump_autobump"
         property "sonar.organization", "autobump"
         property "sonar.host.url", "https://sonarcloud.io"
+        //property "sonar.jacoco.reportPaths", file("$buildDir/jacoco/test.exec")
     }
 }
+
+checkstyle {
+    toolVersion "8.30"
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+}
+
+jacoco {
+    toolVersion "0.8.5"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled false
+    }
+}
+
+test.finalizedBy jacocoTestReport
