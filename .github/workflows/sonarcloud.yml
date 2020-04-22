@@ -20,6 +20,8 @@ jobs:
         java-version: 1.8
     - name: generateBuild
       run: ./gradlew build
+    - name: gradleJacocoTestReport
+      run: ./gradlew jacocoTestReport
     - name: Build with Gradle
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
