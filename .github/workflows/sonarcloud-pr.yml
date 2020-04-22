@@ -23,6 +23,6 @@ jobs:
       - name: gradleJacocoTestReport
         run: ./gradlew jacocoTestReport
       - name: create log
-        run: tree
+        run: ls -R
       - name: Build with Gradle
         run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.pullrequest.key=${{ github.event.number }} -Dsonar.pullrequest.base=${{ github.base_ref }} -Dsonar.pullrequest.branch=${{ github.head_ref }}
