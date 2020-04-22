@@ -33,7 +33,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                             .build())
                     .collect(Collectors.toSet());
         } catch (XmlPullParserException | IOException e) {
-            throw new DependencyParserException("Parser threw an error.");
+            throw new DependencyParserException("Parser threw an error.", e);
         }
     }
 

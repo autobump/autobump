@@ -22,7 +22,7 @@ public class MavenWorkspace implements Workspace {
         try {
             return new FileReader(findfile(Paths.get(projectRoot).toFile()));
         } catch (FileNotFoundException e) {
-            throw new NoDependencyFileFoundException("Reader could not load pom file");
+            throw new NoDependencyFileFoundException("Reader could not load pom file", e);
         }
     }
 
@@ -35,6 +35,6 @@ public class MavenWorkspace implements Workspace {
                 }
             }
         }
-        throw new NoDependencyFileFoundException("Could not find pom.xml in project root");
+        throw new NoDependencyFileFoundException("Could not find pom.xml in project root", new FileNotFoundException());
     }
 }

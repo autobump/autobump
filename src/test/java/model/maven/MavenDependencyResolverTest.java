@@ -29,7 +29,13 @@ public class MavenDependencyResolverTest {
     public void TestSuccesresolve() {
         Set<Dependency> deps = null;
         deps = dependencyResolver.resolve(workspace);
-        assertEquals(Set.of(new Dependency("org.apache.derby", "derby", "10.15.2.0")), deps);
+        assertEquals(
+                Set.of(Dependency.builder()
+                .group("org.apache.derby")
+                .name("derby")
+                .version("10.15.2.0")
+                .build()),
+                deps);
     }
 
     @Test(expected = NoDependencyFileFoundException.class)
