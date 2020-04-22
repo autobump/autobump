@@ -18,12 +18,12 @@ public class MavenWorkspaceTest {
     }
 
     @Test
-    public void getDependencydocument() throws FileNotFoundException {
+    public void getDependencydocument() {
         assertNotNull(workspace.getDependencyDocument());
     }
 
     @Test(expected = NoDependencyFileFoundException.class)
-    public void getDependencyDocumentFromWrongPath() throws FileNotFoundException {
+    public void getDependencyDocumentFromWrongPath() {
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
         ws.getDependencyDocument();
     }

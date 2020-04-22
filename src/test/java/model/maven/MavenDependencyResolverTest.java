@@ -39,7 +39,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test(expected = NoDependencyFileFoundException.class)
-    public void TestFileNotFound() throws IOException, XmlPullParserException {
+    public void TestFileNotFound() {
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
         dependencyResolver.resolve(ws);
     }
