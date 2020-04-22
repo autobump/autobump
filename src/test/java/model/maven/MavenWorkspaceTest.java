@@ -2,27 +2,28 @@ package model.maven;
 
 import exceptions.NoDependencyFileFoundException;
 import model.Workspace;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MavenWorkspaceTest {
+class MavenWorkspaceTest {
     private MavenWorkspace workspace;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         workspace = new MavenWorkspace("src/test/resources/project_root");
     }
 
     @Test
-    public void getDependencydocument() {
+    void getDependencydocument() {
         assertNotNull(workspace.getDependencyDocument());
     }
 
-    @Test(expected = NoDependencyFileFoundException.class)
-    public void getDependencyDocumentFromWrongPath() {
+    @Test
+    void getDependencyDocumentFromWrongPath() {
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
-        ws.getDependencyDocument();
+        assertThrows(NoDependencyFileFoundException.class, ws::getDependencyDocument);
     }
 }
