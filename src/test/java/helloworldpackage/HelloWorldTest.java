@@ -10,7 +10,7 @@ public class HelloWorldTest {
     private HelloWorld helloWorld;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         helloWorld = new HelloWorld();
     }
 
