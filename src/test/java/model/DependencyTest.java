@@ -1,10 +1,10 @@
 package model;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 public class DependencyTest {
     private Dependency dependency;
@@ -30,28 +30,8 @@ public class DependencyTest {
     }
 
     @Test
-    public void testToString() {
-        assertEquals("Dependency(group=test, name=test, version=test)", dependency.toString());
-    }
-
-    @Test
     public void testEquals() {
-        Dependency dependency = new Dependency("test", "test", "test");
-        Dependency dependency1 = new Dependency(null, "test", "test");
-        Dependency dependency2 = new Dependency("test", null, "test");
-        Dependency dependency3 = new Dependency("test", "test", null);
-        assertEquals(dependency, dependency);
-        assertNotEquals(dependency, dependency1);
-        assertNotEquals(dependency, dependency2);
-        assertNotEquals(dependency, dependency3);
+        EqualsVerifier.forClass(Dependency.class).verify();
 
-    }
-
-    @Test
-    public void testHashCode() {
-    }
-
-    @Test
-    public void testToString1() {
     }
 }

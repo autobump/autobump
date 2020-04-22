@@ -26,7 +26,7 @@ public class MavenWorkspace implements Workspace {
         }
     }
 
-    private File findfile(File file) throws NoDependencyFileFoundException {
+    private File findfile(File file) {
         File[] files = file.listFiles();
         if (files != null){
             for (File f : files){
