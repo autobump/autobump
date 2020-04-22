@@ -4,7 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import model.Dependency;
 import model.DependencyResolver;
 import model.Workspace;
-import model.exceptions.DependencyParserException;
+import exceptions.DependencyParserException;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -26,7 +26,11 @@ public class MavenDependencyResolver implements DependencyResolver {
                     .getDependencies()
                     .stream()
                     .filter(dependency -> dependency.getVersion() != null)
-                    .map(dependency -> new Dependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion()))
+                    .map(dependency -> Dependency.builder()
+                            .group(dependency.getGroupId())
+                            .name(dependency.getArtifactId())
+                            .version(dependency.getVersion())
+                            .build())
                     .collect(Collectors.toSet());
         } catch (XmlPullParserException | IOException e) {
             throw new DependencyParserException("Parser threw an error.");
