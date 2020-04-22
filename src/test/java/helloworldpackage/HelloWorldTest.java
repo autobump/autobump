@@ -16,6 +16,6 @@ public class HelloWorldTest {
 
     @Test
     public void testToString() {
-        assertEquals("Hello world.", helloWorld.toString());
+        assertEquals("Hello world", helloWorld.toString());
     }
 }
