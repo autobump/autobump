@@ -5,11 +5,9 @@ import exceptions.NoDependencyFileFoundException;
 import model.Dependency;
 import model.DependencyResolver;
 import model.Workspace;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;

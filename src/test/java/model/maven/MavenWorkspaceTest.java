@@ -5,8 +5,6 @@ import model.Workspace;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
-
 import static org.junit.Assert.assertNotNull;
 
 public class MavenWorkspaceTest {
