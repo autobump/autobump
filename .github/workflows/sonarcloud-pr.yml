@@ -18,5 +18,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: generateBuild
+      run: ./gradlew build
     - name: Build with Gradle
       run: ./gradlew sonarqube -Dsonar.login=${{ secrets.SONAR_LOGIN }} -Dsonar.pullrequest.key=${{ github.event.number }} -Dsonar.pullrequest.base=${{ github.base_ref }} -Dsonar.pullrequest.branch=${{ github.head_ref }}
