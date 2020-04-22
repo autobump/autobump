@@ -35,3 +35,13 @@ checkstyle {
 jacoco {
     toolVersion "0.8.5"
 }
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.enabled false
+    }
+}
+
+test.finalizedBy jacocoTestReport

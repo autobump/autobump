@@ -20,8 +20,6 @@ jobs:
           java-version: 1.8
       - name: generateBuild
         run: ./gradlew test
-      - name: gradleJacocoTestReport
-        run: ./gradlew jacocoTestReport
       - name: create log
         run: ls -R
       - name: Build with Gradle
