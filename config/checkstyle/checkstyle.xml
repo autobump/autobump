@@ -165,18 +165,18 @@
 
         <module name="UnnecessaryParentheses"/>
 
-        <!--  <module name="UnnecessarySemicolonAfterOuterTypeDeclarationCheck"/>-->
+        <module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
 
-         <module name="UnnecessarySemicolonInEnumeration"/>
+        <module name="UnnecessarySemicolonInEnumeration"/>
 
-         <module name="UnnecessarySemicolonInTryWithResources"/>
+        <module name="UnnecessarySemicolonInTryWithResources"/>
 
-         <module name="UnusedImports"/>
+        <module name="UnusedImports"/>
 
-         <module name="VariableDeclarationUsageDistance">
-             <property name="allowedDistance" value="4"/>
-         </module>
-     </module>
+        <module name="VariableDeclarationUsageDistance">
+            <property name="allowedDistance" value="4"/>
+        </module>
+    </module>
 
 
- </module>
+</module>
