@@ -8,14 +8,24 @@ plugins {
 group 'be.xplore'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    implementation group: 'org.apache.maven', name: 'maven-model', version: '3.6.3'
+    implementation group: 'org.apache.maven', name: 'maven-project', version: '2.2.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
 }
 
 sonarqube {
@@ -40,7 +50,7 @@ jacocoTestReport {
     reports {
         xml.enabled true
         csv.enabled false
-        html.enabled false
+        html.enabled true
     }
 }
 
