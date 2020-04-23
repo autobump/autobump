@@ -1,6 +1,7 @@
 package model.maven;
 
 import exceptions.NoDependencyFileFoundException;
+import lombok.Getter;
 import model.Workspace;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.nio.file.Paths;
 
+@Getter
 public class MavenWorkspace implements Workspace {
     private static final String DEPENDENCY_FILE_NAME = "pom.xml";
     private final String projectRoot;
