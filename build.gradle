@@ -3,6 +3,7 @@ plugins {
     id 'checkstyle'
     id 'jacoco'
     id "org.sonarqube" version "2.8"
+    id 'pmd'
 }
 
 group 'be.xplore'
@@ -34,7 +35,6 @@ sonarqube {
         property "sonar.projectKey", "autobump_autobump"
         property "sonar.organization", "autobump"
         property "sonar.host.url", "https://sonarcloud.io"
-        //property "sonar.jacoco.reportPaths", file("$buildDir/jacoco/test.exec")
     }
 }
 
@@ -60,3 +60,10 @@ test {
 }
 
 test.finalizedBy jacocoTestReport
+
+pmd {
+    consoleOutput = true
+    ignoreFailures = false
+    toolVersion = "6.22.0"
+    ruleSetFiles = files("config/pmd/ruleset.xml")
+}

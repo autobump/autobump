@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MavenWorkspaceTest {
-    private MavenWorkspace workspace;
+
+public class MavenWorkspaceTest {
+    private transient MavenWorkspace workspace;
 
     @BeforeEach
     void setUp() throws Exception {

@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MavenDependencyResolverTest {
 
-    private Workspace workspace;
-    private DependencyResolver dependencyResolver;
+    private transient Workspace workspace;
+    private transient DependencyResolver dependencyResolver;
 
     @BeforeEach
     public void setUp() {
@@ -25,9 +25,8 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-     void TestSuccesresolve() {
-        Set<Dependency> deps = null;
-        deps = dependencyResolver.resolve(workspace);
+    public void TestSuccesresolve() {
+        Set<Dependency> deps = dependencyResolver.resolve(workspace);
         assertEquals(
                 Set.of(Dependency.builder()
                 .group("org.apache.derby")
@@ -39,8 +38,8 @@ public class MavenDependencyResolverTest {
 
     @Test
     public void TestFileNotFound() {
-        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
-        assertThrows(NoDependencyFileFoundException.class, () -> dependencyResolver.resolve(ws));
+        assertThrows(NoDependencyFileFoundException.class, () ->
+                dependencyResolver.resolve(new MavenWorkspace("src/test/resources/project_root/testDir")));
 
     }
 
@@ -52,7 +51,7 @@ public class MavenDependencyResolverTest {
 
     @Test
     public void TestUnparseableDependencies(){
-        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir/parserror");
-        assertThrows(DependencyParserException.class, () -> dependencyResolver.resolve(ws));
+        assertThrows(DependencyParserException.class, () ->
+                dependencyResolver.resolve(new MavenWorkspace("src/test/resources/project_root/testDir/parserror")));
     }
 }
