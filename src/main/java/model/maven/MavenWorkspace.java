@@ -20,21 +20,9 @@ public class MavenWorkspace implements Workspace {
     @Override
     public Reader getDependencyDocument() {
         try {
-            return new FileReader(findfile(Paths.get(projectRoot).toFile()));
+            return new FileReader(Paths.get(projectRoot, MavenWorkspace.DEPENDENCY_FILE_NAME).toFile());
         } catch (FileNotFoundException e) {
             throw new NoDependencyFileFoundException("Reader could not load pom file", e);
         }
-    }
-
-    private File findfile(File file) {
-        File[] files = file.listFiles();
-        if (files != null){
-            for (File f : files){
-                if (!f.isDirectory() && MavenWorkspace.DEPENDENCY_FILE_NAME.equalsIgnoreCase(f.getName())){
-                    return f;
-                }
-            }
-        }
-        throw new NoDependencyFileFoundException("Could not find pom.xml in project root", new FileNotFoundException());
     }
 }
