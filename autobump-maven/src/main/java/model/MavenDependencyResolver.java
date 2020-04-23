@@ -1,4 +1,4 @@
-package model.maven;
+package model;
 
 import exceptions.DependencyParserException;
 import lombok.extern.log4j.Log4j2;

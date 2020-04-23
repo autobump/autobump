@@ -1,6 +1,7 @@
 package model.maven;
 
 import exceptions.NoDependencyFileFoundException;
+import model.MavenWorkspace;
 import model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

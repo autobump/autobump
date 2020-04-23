@@ -2,9 +2,7 @@ package model.maven;
 
 import exceptions.DependencyParserException;
 import exceptions.NoDependencyFileFoundException;
-import model.Dependency;
-import model.DependencyResolver;
-import model.Workspace;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

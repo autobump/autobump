@@ -1,4 +1,4 @@
-package model.maven;
+package model;
 
 import exceptions.NoDependencyFileFoundException;
 import lombok.Getter;
