@@ -5,19 +5,20 @@ import exceptions.NoDependencyFileFoundException;
 import model.Dependency;
 import model.DependencyResolver;
 import model.Workspace;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MavenDependencyResolverTest {
 
     private transient Workspace workspace;
     private transient DependencyResolver dependencyResolver;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         workspace = new MavenWorkspace("src/test/resources/project_root");
         dependencyResolver = new MavenDependencyResolver();
@@ -35,10 +36,11 @@ public class MavenDependencyResolverTest {
                 deps);
     }
 
-    @Test(expected = NoDependencyFileFoundException.class)
+    @Test
     public void TestFileNotFound() {
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir");
-        dependencyResolver.resolve(ws);
+        assertThrows(NoDependencyFileFoundException.class, () -> dependencyResolver.resolve(ws));
+
     }
 
     @Test
@@ -47,9 +49,9 @@ public class MavenDependencyResolverTest {
         assertEquals(Set.of(), dependencyResolver.resolve(ws));
     }
 
-    @Test(expected = DependencyParserException.class)
+    @Test
     public void TestUnparseableDependencies(){
         Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir/parserror");
-        dependencyResolver.resolve(ws);
+        assertThrows(DependencyParserException.class, () -> dependencyResolver.resolve(ws));
     }
 }
