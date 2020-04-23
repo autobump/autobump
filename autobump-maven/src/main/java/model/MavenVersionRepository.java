@@ -15,8 +15,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenVersionRepository implements VersionRepository {
-    private static final String REPO_URL = "https://repo1.maven.org/maven2/";
     private static final String URL_SUFFIX = "maven-metadata.xml";
+    private final transient String baseUrl;
+
+    public MavenVersionRepository(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     @Override
     public Set<Version> getAllAvailableVersions(Dependency dependency) {
@@ -45,7 +49,7 @@ public class MavenVersionRepository implements VersionRepository {
 
     private URL getRepoUri(Dependency dependency) {
         try {
-            return new URL(MavenVersionRepository.REPO_URL +
+            return new URL(this.baseUrl +
                     dependency.getGroup().replace(".", "/") +
                     "/" +
                     dependency.getName() +
