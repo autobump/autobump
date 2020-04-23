@@ -7,8 +7,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
+
 public class MavenWorkspaceTest {
-    private MavenWorkspace workspace;
+    private transient MavenWorkspace workspace;
 
     @Before
     public void setUp() throws Exception {

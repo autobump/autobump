@@ -14,8 +14,8 @@ import static org.junit.Assert.assertEquals;
 
 public class MavenDependencyResolverTest {
 
-    private Workspace workspace;
-    private DependencyResolver dependencyResolver;
+    private transient Workspace workspace;
+    private transient DependencyResolver dependencyResolver;
 
     @Before
     public void setUp() {
@@ -25,8 +25,7 @@ public class MavenDependencyResolverTest {
 
     @Test
     public void TestSuccesresolve() {
-        Set<Dependency> deps = null;
-        deps = dependencyResolver.resolve(workspace);
+        Set<Dependency> deps = dependencyResolver.resolve(workspace);
         assertEquals(
                 Set.of(Dependency.builder()
                 .group("org.apache.derby")

@@ -4,10 +4,9 @@ import exceptions.NoDependencyFileFoundException;
 import lombok.Getter;
 import model.Workspace;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Getter
@@ -22,21 +21,9 @@ public class MavenWorkspace implements Workspace {
     @Override
     public Reader getDependencyDocument() {
         try {
-            return new FileReader(findfile(Paths.get(projectRoot).toFile()));
-        } catch (FileNotFoundException e) {
+            return Files.newBufferedReader(Paths.get(projectRoot, MavenWorkspace.DEPENDENCY_FILE_NAME));
+        } catch (IOException e) {
             throw new NoDependencyFileFoundException("Reader could not load pom file", e);
         }
-    }
-
-    private File findfile(File file) {
-        File[] files = file.listFiles();
-        if (files != null){
-            for (File f : files){
-                if (!f.isDirectory() && MavenWorkspace.DEPENDENCY_FILE_NAME.equalsIgnoreCase(f.getName())){
-                    return f;
-                }
-            }
-        }
-        throw new NoDependencyFileFoundException("Could not find pom.xml in project root", new FileNotFoundException());
     }
 }
