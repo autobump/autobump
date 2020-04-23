@@ -1,2 +1,4 @@
 rootProject.name = 'autobump'
+include 'autobump-core'
+include 'autobump-maven'
 

@@ -1,8 +1,7 @@
-package model.maven;
+package model;
 
 import exceptions.NoDependencyFileFoundException;
 import lombok.Getter;
-import model.Workspace;
 
 import java.io.IOException;
 import java.io.Reader;

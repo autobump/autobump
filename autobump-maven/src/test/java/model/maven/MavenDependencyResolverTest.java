@@ -4,6 +4,8 @@ import exceptions.DependencyParserException;
 import exceptions.NoDependencyFileFoundException;
 import model.Dependency;
 import model.DependencyResolver;
+import model.MavenDependencyResolver;
+import model.MavenWorkspace;
 import model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

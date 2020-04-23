@@ -1,10 +1,7 @@
-package model.maven;
+package model;
 
 import exceptions.DependencyParserException;
 import lombok.extern.log4j.Log4j2;
-import model.Dependency;
-import model.DependencyResolver;
-import model.Workspace;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
