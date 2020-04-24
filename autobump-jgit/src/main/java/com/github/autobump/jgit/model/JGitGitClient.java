@@ -32,14 +32,10 @@ public class JGitGitClient implements GitClient {
         for (var type :
                 typemap.entrySet()) {
             File tmpDir = new File(path + "/" + type.getValue());
-            if (tmpDir.exists() && isMaven(type.getKey())) {
+            if (tmpDir.exists()) {
                 return new MavenWorkspace(path);
             }
         }
         throw new UnsupportedTypeException("could not find dependency file");
-    }
-
-    private boolean isMaven(String type) {
-        return "Maven".equals(type);
     }
 }
