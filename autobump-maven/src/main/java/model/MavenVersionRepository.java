@@ -2,6 +2,7 @@ package model;
 
 import exceptions.DependencyParserException;
 import exceptions.WrongUrlException;
+import lombok.Getter;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -14,9 +15,10 @@ import java.net.URL;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 public class MavenVersionRepository implements VersionRepository {
     private static final String URL_SUFFIX = "maven-metadata.xml";
-    private final transient String baseUrl;
+    private final String baseUrl;
 
     public MavenVersionRepository(String baseUrl) {
         this.baseUrl = baseUrl;
