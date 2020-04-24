@@ -1,6 +1,5 @@
 package com.github.autobump.core.exceptions;
 
-import com.github.autobump.core.exceptions.DependencyParserException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

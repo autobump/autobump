@@ -44,7 +44,7 @@ allprojects {
             html.enabled true
         }
     }
-
+    
     test.finalizedBy jacocoTestReport
 
     checkstyle {

@@ -1,10 +1,10 @@
 package com.github.autobump.maven.model;
 
+import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.maven.exceptions.WrongUrlException;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,8 @@ class MavenVersionRepositoryTest {
 
     @Test
     void getAllAvailableVersions() {
-        var versions = mavenVersionRepository.getAllAvailableVersions(Dependency.builder().name(TEST).group(TEST).version(TEST).build());
+        var versions = mavenVersionRepository.getAllAvailableVersions(
+                Dependency.builder().name(TEST).group(TEST).version(TEST).build());
         assertEquals(18, versions.size());
         assertTrue(versions.contains(new Version("5.7.0-M1")));
     }
@@ -58,18 +59,21 @@ class MavenVersionRepositoryTest {
     @Test
     void getWrongXml() {
         assertThrows(DependencyParserException.class, () ->
-                mavenVersionRepository.getAllAvailableVersions(Dependency.builder().name("test1").group(TEST).version(TEST).build()));
+                mavenVersionRepository.getAllAvailableVersions(
+                        Dependency.builder().name("test1").group(TEST).version(TEST).build()));
     }
 
     @Test
     void getFileNotFound() {
         assertEquals(new HashSet<>(),
-                mavenVersionRepository.getAllAvailableVersions(Dependency.builder().name("bla").group("bla").version("bla").build()));
+                mavenVersionRepository.getAllAvailableVersions(
+                        Dependency.builder().name("bla").group("bla").version("bla").build()));
     }
 
     @Test
     void testMalformedUrl() {
         assertThrows(WrongUrlException.class, () ->
-                new MavenVersionRepository("//").getAllAvailableVersions(Dependency.builder().name(TEST).group(TEST).version(TEST).build()));
+                new MavenVersionRepository("//").getAllAvailableVersions(
+                        Dependency.builder().name(TEST).group(TEST).version(TEST).build()));
     }
 }
