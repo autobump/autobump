@@ -1,7 +1,6 @@
 package model;
 
 import exceptions.DependencyParserException;
-import lombok.extern.log4j.Log4j2;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -10,7 +9,6 @@ import java.io.Reader;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Log4j2
 public class MavenDependencyResolver implements DependencyResolver {
 
 
