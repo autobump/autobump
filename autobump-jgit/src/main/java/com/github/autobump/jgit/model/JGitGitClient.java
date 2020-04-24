@@ -29,10 +29,10 @@ public class JGitGitClient implements GitClient {
 
     private Workspace getWorkspace(String path) {
         Map<String, String> typemap = Map.of("Maven", "pom.xml");
-        for (String type :
-                typemap.keySet()) {
-            File tmpDir = new File(path + "/" + typemap.get(type));
-            if (tmpDir.exists() && isMaven(type)) {
+        for (var type :
+                typemap.entrySet()) {
+            File tmpDir = new File(path + "/" + type.getValue());
+            if (tmpDir.exists() && isMaven(type.getKey())) {
                 return new MavenWorkspace(path);
             }
         }
