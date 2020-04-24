@@ -1,5 +1,7 @@
 package com.github.autobump.jgit.model;
 
+import com.github.autobump.jgit.exception.GitException;
+import com.github.autobump.jgit.exception.UnsupportedTypeException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -17,9 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JGitGitClientTest {
 
@@ -36,6 +40,20 @@ class JGitGitClientTest {
         startServer("Maven");
         JGitGitClient client = new JGitGitClient();
         assertNotNull(client.clone(new URI("http://localhost:8080/TestRepo")));
+        stopServer();
+    }
+
+    @Test
+    void testWrongUrl() throws URISyntaxException {
+        assertThrows(GitException.class,() ->
+                new JGitGitClient().clone(new URI("wrong")));
+    }
+
+    @Test
+    void noFileFound() throws Exception {
+        startServer("gradle");
+        assertThrows(UnsupportedTypeException.class, () ->
+                new JGitGitClient().clone(new URI("http://localhost:8080/TestRepo")));
         stopServer();
     }
 
@@ -83,10 +101,11 @@ class JGitGitClientTest {
         repository.getConfig().setString("http", null, "receivepack", "true");
 
         try (Git git = new Git(repository)) {
-            File myfile = null;
             if ("Maven".equals(dependencyType)) {
-                myfile = new File(repository.getDirectory().getParent(), "pom.xml");
+                File myfile = new File(repository.getDirectory().getParent(), "pom.xml");
                 createContent(myfile, dependencyType);
+            }else {
+                new File(repository.getDirectory().getParent(), "dummy");
             }
 
             addAndCommit(git);
