@@ -1,7 +1,10 @@
-package model;
+package com.github.autobump.maven.model;
 
-import exceptions.DependencyParserException;
-import exceptions.NoDependencyFileFoundException;
+import com.github.autobump.core.exceptions.DependencyParserException;
+import com.github.autobump.core.exceptions.NoDependencyFileFoundException;
+import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

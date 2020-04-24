@@ -1,4 +1,4 @@
-package exceptions;
+package com.github.autobump.core.exceptions;
 
 public class DependencyParserException extends RuntimeException{
 

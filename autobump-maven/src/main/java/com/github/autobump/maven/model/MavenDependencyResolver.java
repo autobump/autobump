@@ -1,6 +1,9 @@
-package model;
+package com.github.autobump.maven.model;
 
-import exceptions.DependencyParserException;
+import com.github.autobump.core.exceptions.DependencyParserException;
+import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
