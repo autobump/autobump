@@ -9,15 +9,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
 public class MavenVersionRepository implements VersionRepository {
-    private static final String URL_SUFFIX = "maven-metadata.xml";
     private final String baseUrl;
 
     public MavenVersionRepository(String baseUrl) {
@@ -43,7 +42,7 @@ public class MavenVersionRepository implements VersionRepository {
                         .map(Version::new)
                         .collect(Collectors.toSet());
         } catch (IOException e) {
-            throw new UncheckedIOException("wrong url", e);
+            return new HashSet<>();
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("something went wrong while parseing the xml", e);
         }
@@ -51,12 +50,10 @@ public class MavenVersionRepository implements VersionRepository {
 
     private URL getRepoUri(Dependency dependency) {
         try {
-            return new URL(this.baseUrl +
-                    dependency.getGroup().replace(".", "/") +
-                    "/" +
-                    dependency.getName() +
-                    "/" +
-                    MavenVersionRepository.URL_SUFFIX);
+            return new URL(String.format("%s/%s/%s/maven-metadata.xml",
+                    baseUrl,
+                    dependency.getGroup().replaceAll("\\.", "/"),
+                    dependency.getName()));
         } catch (MalformedURLException e) {
             throw new WrongUrlException("wrong URI Syntax", e);
         }

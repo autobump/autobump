@@ -7,7 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.UncheckedIOException;
+import java.util.HashSet;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -24,7 +24,7 @@ class MavenVersionRepositoryTest {
 
     @BeforeEach
     void setUp(){
-        mavenVersionRepository = new MavenVersionRepository("http://localhost:8090/maven2/");
+        mavenVersionRepository = new MavenVersionRepository("http://localhost:8090/maven2");
         wireMockServer = new WireMockServer(options().port(8090).usingFilesUnderClasspath("src/test/resources/"));
         wireMockServer.start();
         setupStub();
@@ -61,7 +61,7 @@ class MavenVersionRepositoryTest {
 
     @Test
     void getFileNotFound() {
-        assertThrows(UncheckedIOException.class, () ->
+        assertEquals(new HashSet<>(),
                 mavenVersionRepository.getAllAvailableVersions(new Dependency("bla", "bla", "bla")));
     }
 
