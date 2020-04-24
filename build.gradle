@@ -6,7 +6,7 @@ plugins {
     id 'pmd'
 }
 
-group 'com.github'
+group 'com.github.autobump'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 11
@@ -44,7 +44,7 @@ allprojects {
             html.enabled true
         }
     }
-    
+
     test.finalizedBy jacocoTestReport
 
     checkstyle {
