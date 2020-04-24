@@ -1,6 +1,7 @@
-package model;
+package com.github.autobump.maven.model;
 
-import exceptions.NoDependencyFileFoundException;
+import com.github.autobump.core.exceptions.NoDependencyFileFoundException;
+import com.github.autobump.core.model.Workspace;
 import lombok.Getter;
 
 import java.io.IOException;

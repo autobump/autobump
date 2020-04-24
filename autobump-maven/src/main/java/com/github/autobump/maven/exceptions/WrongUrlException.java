@@ -1,4 +1,4 @@
-package exceptions;
+package com.github.autobump.maven.exceptions;
 
 public class WrongUrlException extends RuntimeException {
 

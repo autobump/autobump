@@ -1,7 +1,10 @@
-package model;
+package com.github.autobump.maven.model;
 
-import exceptions.DependencyParserException;
-import exceptions.WrongUrlException;
+import com.github.autobump.core.exceptions.DependencyParserException;
+import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.Version;
+import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.maven.exceptions.WrongUrlException;
 import lombok.Getter;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -41,10 +44,10 @@ public class MavenVersionRepository implements VersionRepository {
                     .stream()
                         .map(Version::new)
                         .collect(Collectors.toSet());
-        } catch (IOException e) {
-            return new HashSet<>();
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("something went wrong while parseing the xml", e);
+        }catch (IOException e) {
+            return new HashSet<>();
         }
     }
 
