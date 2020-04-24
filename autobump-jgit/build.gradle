@@ -5,9 +5,10 @@ dependencies {
     implementation project(':autobump-core')
     implementation project(':autobump-maven')
     implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r'
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit.http.server', version: '5.7.0.202003110725-r'
 
 
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
-
+    testImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.26.3'
 }

@@ -7,6 +7,7 @@ import com.github.autobump.jgit.exception.UnsupportedTypeException;
 import com.github.autobump.maven.model.MavenWorkspace;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Repository;
 
 import java.io.File;
 import java.net.URI;
@@ -16,28 +17,23 @@ import java.util.UUID;
 public class JGitGitClient implements GitClient {
     @Override
     public Workspace clone(URI uri) {
-        try {
-            Git git = Git.cloneRepository().setURI(uri.toString()).setDirectory(new File(System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID().toString())).call();
-            return getWorkspace(git.getRepository().getDirectory().getPath().replace(".git", ""));
+        try(Repository repo = Git.cloneRepository().setURI(uri.toString())
+                .setDirectory(new File(System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID().toString()))
+                .call().getRepository()) {
+
+            return getWorkspace(repo.getDirectory().getPath().replace(".git", ""));
         } catch (GitAPIException e) {
             throw new GitException("something went wrong while cloneing the repo", e);
         }
     }
 
     private Workspace getWorkspace(String path) {
-        if ("Maven".equals(getType(path))) {
-            return new MavenWorkspace(path);
-        }
-        throw new UnsupportedTypeException("could not determine type");
-    }
-
-    private String getType(String path) {
         Map<String, String> typemap = Map.of("Maven", "pom.xml");
         for (String type :
                 typemap.keySet()) {
             File tmpDir = new File(path + "/" + typemap.get(type));
-            if (tmpDir.exists()) {
-                return type;
+            if (tmpDir.exists() && "Maven".equals(type)) {
+                return new MavenWorkspace(path);
             }
         }
         throw new UnsupportedTypeException("could not find dependency file");
