@@ -1,16 +1,14 @@
 package model;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
+import exceptions.DependencyParserException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MavenVersionRepositoryTest {
     private transient MavenVersionRepository mavenVersionRepository;
@@ -28,6 +26,10 @@ class MavenVersionRepositoryTest {
                 .willReturn(aResponse().withHeader("Content-Type", "text/xml")
                         .withStatus(200)
                         .withBodyFile("metadata/maven-metadata.xml")));
+        wireMockServer.stubFor(get(urlEqualTo("/maven2/test/test1/maven-metadata.xml"))
+                .willReturn(aResponse().withHeader("Content-Type", "text/xml")
+                        .withStatus(200)
+                        .withBodyFile("metadata/maven-metadata-corrupt.xml")));
     }
 
     @AfterEach
@@ -40,5 +42,11 @@ class MavenVersionRepositoryTest {
         var versions = mavenVersionRepository.getAllAvailableVersions(new Dependency("test", "test", "test"));
         assertEquals(18, versions.size());
         assertTrue(versions.contains(new Version("5.7.0-M1")));
+    }
+
+    @Test
+    void getWrongXml() {
+        assertThrows(DependencyParserException.class, () ->
+                mavenVersionRepository.getAllAvailableVersions(new Dependency("test", "test1", "test")));
     }
 }
