@@ -18,7 +18,10 @@ public class JGitGitClient implements GitClient {
     @Override
     public Workspace clone(URI uri) {
         try(Repository repo = Git.cloneRepository().setURI(uri.toString())
-                .setDirectory(new File(System.getProperty("java.io.tmpdir") + "/" + UUID.randomUUID().toString()))
+                .setDirectory(
+                        new File(System.getProperty("java.io.tmpdir") +
+                                        File.separator +
+                                        UUID.randomUUID().toString()))
                 .call().getRepository()) {
 
             return getWorkspace(repo.getDirectory().getPath().replace(".git", ""));
@@ -31,7 +34,7 @@ public class JGitGitClient implements GitClient {
         Map<String, String> typemap = Map.of("Maven", "pom.xml");
         for (var type :
                 typemap.entrySet()) {
-            File tmpDir = new File(path + "/" + type.getValue());
+            File tmpDir = new File(path + File.separator + type.getValue());
             if (tmpDir.exists()) {
                 return new MavenWorkspace(path);
             }
