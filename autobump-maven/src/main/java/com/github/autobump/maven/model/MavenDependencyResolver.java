@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-    private static final String DEPENDENCY_FILENAME = "pom.xml";
+    public static final String DEPENDENCY_FILENAME = "pom.xml";
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
@@ -34,6 +34,5 @@ public class MavenDependencyResolver implements DependencyResolver {
             throw new DependencyParserException("Parser threw an error.", e);
         }
     }
-
 
 }
