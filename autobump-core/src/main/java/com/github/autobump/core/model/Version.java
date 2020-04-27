@@ -1,8 +1,10 @@
 package com.github.autobump.core.model;
 
-import lombok.Value;
+/**
+ * @author Griet Vermeesch
+ * @version 1.0 27/04/2020 14:36
+ */
+public interface Version extends Comparable<Version> {
 
-@Value
-public class Version {
-    String versionNumber;
+    String getVersionNumber();
 }
