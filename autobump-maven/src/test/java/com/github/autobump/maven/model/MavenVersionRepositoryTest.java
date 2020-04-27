@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MavenVersionRepositoryTest {
-    private static final transient String TEST = "test";
+    private static final transient String TEST = "bumpTest";
     private transient MavenVersionRepository mavenVersionRepository;
     private transient WireMockServer wireMockServer;
 

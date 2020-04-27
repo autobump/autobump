@@ -25,7 +25,7 @@ public class MavenDependencyBumper implements DependencyBumper {
     @Override
     public void bump(Workspace workspace, Bump bump) {
         try(Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
-            InputLocation versionLocation = findVersionLine(reader, bump.getDependency());
+            InputLocation versionLocation = findVersionLine(reader, bump.getDependency(), workspace.getProjectRoot());
             updateDependency(versionLocation, bump);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -46,11 +46,11 @@ public class MavenDependencyBumper implements DependencyBumper {
         }
     }
 
-    private InputLocation findVersionLine(Reader reader, Dependency dependency) {
+    private InputLocation findVersionLine(Reader reader, Dependency dependency, String rootdir) {
         MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
         try {
             InputSource inputSource = new InputSource();
-            inputSource.setLocation("src/test/resources/project_root/pom.xml");
+            inputSource.setLocation(rootdir + "/pom.xml");
             return mavenXpp3ReaderEx.read(reader, true, inputSource)
                     .getDependencies()
                     .stream()
