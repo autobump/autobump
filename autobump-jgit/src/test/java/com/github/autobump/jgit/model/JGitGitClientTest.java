@@ -1,7 +1,6 @@
 package com.github.autobump.jgit.model;
 
 import com.github.autobump.jgit.exception.GitException;
-import com.github.autobump.jgit.exception.UnsupportedTypeException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -19,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,17 +42,9 @@ class JGitGitClientTest {
     }
 
     @Test
-    void testWrongUrl() throws URISyntaxException {
+    void testWrongUrl() {
         assertThrows(GitException.class,() ->
                 new JGitGitClient().clone(new URI("wrong")));
-    }
-
-    @Test
-    void noFileFound() throws Exception {
-        startServer("gradle");
-        assertThrows(UnsupportedTypeException.class, () ->
-                new JGitGitClient().clone(new URI("http://localhost:8080/TestRepo")));
-        stopServer();
     }
 
     private void stopServer() throws Exception {

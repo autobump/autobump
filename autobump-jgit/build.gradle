@@ -3,7 +3,6 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     implementation project(':autobump-core')
-    implementation project(':autobump-maven')
     implementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r'
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit.http.server', version: '5.7.0.202003110725-r'
 

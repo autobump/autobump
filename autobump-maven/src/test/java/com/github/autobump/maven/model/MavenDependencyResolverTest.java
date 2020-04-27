@@ -20,7 +20,7 @@ public class MavenDependencyResolverTest {
 
     @BeforeEach
     public void setUp() {
-        workspace = new MavenWorkspace("src/test/resources/project_root");
+        workspace = new Workspace("src/test/resources/project_root");
         dependencyResolver = new MavenDependencyResolver();
     }
 
@@ -39,19 +39,19 @@ public class MavenDependencyResolverTest {
     @Test
     public void TestFileNotFound() {
         assertThrows(NoDependencyFileFoundException.class, () ->
-                dependencyResolver.resolve(new MavenWorkspace("src/test/resources/project_root/testDir")));
+                dependencyResolver.resolve(new Workspace("src/test/resources/project_root/testDir")));
 
     }
 
     @Test
     public void TestEmpyDependencies() {
-        Workspace ws = new MavenWorkspace("src/test/resources/project_root/testDir/empty");
+        Workspace ws = new Workspace("src/test/resources/project_root/testDir/empty");
         assertEquals(Set.of(), dependencyResolver.resolve(ws));
     }
 
     @Test
     public void TestUnparseableDependencies(){
         assertThrows(DependencyParserException.class, () ->
-                dependencyResolver.resolve(new MavenWorkspace("src/test/resources/project_root/testDir/parserror")));
+                dependencyResolver.resolve(new Workspace("src/test/resources/project_root/testDir/parserror")));
     }
 }

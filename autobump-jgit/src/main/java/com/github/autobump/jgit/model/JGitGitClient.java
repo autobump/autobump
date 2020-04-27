@@ -3,15 +3,12 @@ package com.github.autobump.jgit.model;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
-import com.github.autobump.jgit.exception.UnsupportedTypeException;
-import com.github.autobump.maven.model.MavenWorkspace;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Map;
 import java.util.UUID;
 
 public class JGitGitClient implements GitClient {
@@ -24,21 +21,9 @@ public class JGitGitClient implements GitClient {
                                         UUID.randomUUID().toString()))
                 .call().getRepository()) {
 
-            return getWorkspace(repo.getDirectory().getPath().replace(".git", ""));
+            return new Workspace(repo.getDirectory().getPath().replace(".git", ""));
         } catch (GitAPIException e) {
             throw new GitException("something went wrong while cloneing the repo", e);
         }
-    }
-
-    private Workspace getWorkspace(String path) {
-        Map<String, String> typemap = Map.of("Maven", "pom.xml");
-        for (var type :
-                typemap.entrySet()) {
-            File tmpDir = new File(path + File.separator + type.getValue());
-            if (tmpDir.exists()) {
-                return new MavenWorkspace(path);
-            }
-        }
-        throw new UnsupportedTypeException("could not find dependency file");
     }
 }
