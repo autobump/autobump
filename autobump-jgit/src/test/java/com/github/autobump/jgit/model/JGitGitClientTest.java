@@ -86,7 +86,7 @@ class JGitGitClientTest {
 
     private static void populateRepository(Repository repository,
                                            String dependencyType)
-            throws IOException, GitAPIException {
+            throws GitAPIException {
         // enable pushing to the sample repository via http
         repository.getConfig().setString("http", null, "receivepack", "true");
 
@@ -107,7 +107,7 @@ class JGitGitClientTest {
         git.commit().setMessage("Test-Checkin").call();
     }
 
-    private static void createContent(File fileToWriteTo, String dependencyType) throws IOException {
+    private static void createContent(File fileToWriteTo, String dependencyType) {
         if ("Maven".equals(dependencyType)) {
             try (BufferedWriter fw = Files.newBufferedWriter(fileToWriteTo.toPath());
                     BufferedReader bufferedReader =
