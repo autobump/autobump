@@ -5,7 +5,6 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.Workspace;
-import com.github.autobump.maven.exceptions.DependencyNotFoundException;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
@@ -58,8 +57,7 @@ public class MavenDependencyBumper implements DependencyBumper {
                             dependency1.getGroupId().equals(dependency.getGroup())
                                     && dependency1.getArtifactId().equals(dependency.getName()))
                     .findFirst()
-                    .orElseThrow(() ->
-                            new DependencyNotFoundException("clould not find dependency " + dependency.getName()))
+                    .orElseThrow()
                     .getLocation("version");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
