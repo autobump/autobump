@@ -46,7 +46,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         }
         String version = model.getProperties().getProperty(getPropertyName(dependencyVersionData));
         if (version == null) {
-            throw new RuntimeException("Error reading version property");
+            throw new DependencyParserException("Error reading version property");
         }
         return version;
     }
