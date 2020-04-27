@@ -14,6 +14,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class MavenDependencyBumper implements DependencyBumper {
 
@@ -21,7 +26,21 @@ public class MavenDependencyBumper implements DependencyBumper {
     public void bump(Workspace workspace, Bump bump) {
         Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME);
         InputLocation versionLocation = findVersionLine(reader, bump.getDependency());
-        System.out.println("versionLocation = " + versionLocation);
+        updateDependency(versionLocation, bump);
+    }
+
+    private void updateDependency(InputLocation versionLocation, Bump bump) {
+        try {
+            Path file = Paths.get(versionLocation.getSource().getLocation());
+            List<String> out = Files.readAllLines(file);
+            out.set(versionLocation.getLineNumber() - 1,
+                    out.get(versionLocation.getLineNumber() - 1)
+                            .replace(bump.getDependency().getVersion(),
+                                    bump.getVersion().getVersionNumber()));
+            Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private InputLocation findVersionLine(Reader reader, Dependency dependency) {
