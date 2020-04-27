@@ -51,9 +51,10 @@ public class MavenDependencyResolverTest {
 
     @Test
     public void TestresolveNullProperty() {
-        Workspace ws = new Workspace("src/test/resources/project_root_support_properties_nullproperty");
         assertThrows(DependencyParserException.class, () ->
-                dependencyResolver.resolve(ws));
+                dependencyResolver.resolve(
+                        new Workspace("src/test/resources/project_root_support_properties_nullproperty")
+                ));
     }
 
     @Test
