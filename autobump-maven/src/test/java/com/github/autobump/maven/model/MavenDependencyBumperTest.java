@@ -39,7 +39,11 @@ class MavenDependencyBumperTest {
         assertTrue(dependencies.contains(dep));
         Bump bump = new Bump(dep, new Version("bumpTest"));
         mavenDependencyBumper.bump(workspace, bump);
-        Dependency updatedDep = Dependency.builder().group("org.apache.derby").name("derby").version("bumpTest").build();
+        Dependency updatedDep = Dependency.builder()
+                .group("org.apache.derby")
+                .name("derby")
+                .version("bumpTest")
+                .build();
         dependencies = resolver.resolve(workspace);
         assertTrue(dependencies.contains(updatedDep));
     }
