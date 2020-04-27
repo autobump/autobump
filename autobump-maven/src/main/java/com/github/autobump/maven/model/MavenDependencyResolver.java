@@ -13,12 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-
+    private static final String DEPENDENCY_FILENAME = "pom.xml";
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
 
-        try(Reader dependencyDocument = workspace.getDependencyDocument()){
+        try(Reader dependencyDocument = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)){
             return new MavenXpp3Reader()
                     .read(dependencyDocument)
                     .getDependencies()
