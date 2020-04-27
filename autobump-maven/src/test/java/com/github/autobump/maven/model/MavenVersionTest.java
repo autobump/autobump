@@ -45,7 +45,7 @@ class MavenVersionTest {
 
     @Test
     void compareSimilarVersions(){
-        assertSame(mv2.compareTo(mv3), 0);
+        assertSame(0, mv2.compareTo(mv3));
     }
 
     @Test
