@@ -58,6 +58,19 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
+    public void TestresolveMalformedVarProperty() {
+        Workspace ws = new Workspace("src/test/resources/project_root_support_properties_badproperty");
+        Set<Dependency> deps = dependencyResolver.resolve(ws);
+        assertEquals(
+                Set.of(Dependency.builder()
+                        .group("org.apache.derby")
+                        .name("derby")
+                        .version("${org.apache.derby.version")
+                        .build()),
+                deps);
+    }
+
+    @Test
     public void TestFileNotFound() {
         assertThrows(NoDependencyFileFoundException.class, () ->
                 dependencyResolver.resolve(new Workspace("src/test/resources/project_root/testDir")));
