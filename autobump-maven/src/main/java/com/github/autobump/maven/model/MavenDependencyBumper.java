@@ -24,9 +24,12 @@ public class MavenDependencyBumper implements DependencyBumper {
 
     @Override
     public void bump(Workspace workspace, Bump bump) {
-        Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME);
-        InputLocation versionLocation = findVersionLine(reader, bump.getDependency());
-        updateDependency(versionLocation, bump);
+        try(Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
+            InputLocation versionLocation = findVersionLine(reader, bump.getDependency());
+            updateDependency(versionLocation, bump);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private void updateDependency(InputLocation versionLocation, Bump bump) {
@@ -39,7 +42,7 @@ public class MavenDependencyBumper implements DependencyBumper {
                                     bump.getVersion().getVersionNumber()));
             Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -54,7 +57,10 @@ public class MavenDependencyBumper implements DependencyBumper {
                     .filter(dependency1 ->
                             dependency1.getGroupId().equals(dependency.getGroup())
                                     && dependency1.getArtifactId().equals(dependency.getName()))
-                    .findFirst().orElseThrow(() -> new DependencyNotFoundException("clould not find dependency " + dependency.getName())).getLocation("version");
+                    .findFirst()
+                    .orElseThrow(() ->
+                            new DependencyNotFoundException("clould not find dependency " + dependency.getName()))
+                    .getLocation("version");
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (XmlPullParserException e) {
