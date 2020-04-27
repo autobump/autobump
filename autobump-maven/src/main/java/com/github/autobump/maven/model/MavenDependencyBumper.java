@@ -23,7 +23,7 @@ public class MavenDependencyBumper implements DependencyBumper {
 
     @Override
     public void bump(Workspace workspace, Bump bump) {
-        try(Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
+        try (Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
             InputLocation versionLocation = findVersionLine(reader, bump.getDependency(), workspace.getProjectRoot());
             updateDependency(versionLocation, bump);
         } catch (IOException e) {
@@ -31,21 +31,17 @@ public class MavenDependencyBumper implements DependencyBumper {
         }
     }
 
-    private void updateDependency(InputLocation versionLocation, Bump bump) {
-        try {
-            Path file = Paths.get(versionLocation.getSource().getLocation());
-            List<String> out = Files.readAllLines(file);
-            out.set(versionLocation.getLineNumber() - 1,
-                    out.get(versionLocation.getLineNumber() - 1)
-                            .replace(bump.getDependency().getVersion(),
-                                    bump.getVersion().getVersionNumber()));
-            Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    private void updateDependency(InputLocation versionLocation, Bump bump) throws IOException {
+        Path file = Paths.get(versionLocation.getSource().getLocation());
+        List<String> out = Files.readAllLines(file);
+        out.set(versionLocation.getLineNumber() - 1,
+                out.get(versionLocation.getLineNumber() - 1)
+                        .replace(bump.getDependency().getVersion(),
+                                bump.getVersion().getVersionNumber()));
+        Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
-    private InputLocation findVersionLine(Reader reader, Dependency dependency, String rootdir) {
+    private InputLocation findVersionLine(Reader reader, Dependency dependency, String rootdir) throws IOException {
         MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
         try {
             InputSource inputSource = new InputSource();
@@ -59,8 +55,6 @@ public class MavenDependencyBumper implements DependencyBumper {
                     .findFirst()
                     .orElseThrow()
                     .getLocation("version");
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("error while parseing dependency file", e);
         }
