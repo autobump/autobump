@@ -4,6 +4,7 @@ import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -17,23 +18,44 @@ public class MavenDependencyResolver implements DependencyResolver {
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
+        Model model = getModel(workspace);
+        return model
+                .getDependencies()
+                .stream()
+                .filter(dependency -> dependency.getVersion() != null)
+                .map(dependency -> Dependency.builder()
+                        .group(dependency.getGroupId())
+                        .name(dependency.getArtifactId())
+                        .version(getDependencyVersionFromModel(model, dependency.getVersion()))
+                        .build())
+                .collect(Collectors.toSet());
+    }
 
-        try(Reader dependencyDocument = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)){
+    private Model getModel(Workspace workspace) {
+        try (Reader dependencyDocument = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
             return new MavenXpp3Reader()
-                    .read(dependencyDocument)
-                    .getDependencies()
-                    .stream()
-                    .filter(dependency -> dependency.getVersion() != null)
-                    .map(dependency -> Dependency.builder()
-                            .group(dependency.getGroupId())
-                            .name(dependency.getArtifactId())
-                            .version(dependency.getVersion())
-                            .build())
-                    .collect(Collectors.toSet());
+                    .read(dependencyDocument);
         } catch (XmlPullParserException | IOException e) {
             throw new DependencyParserException("Parser threw an error.", e);
         }
     }
 
+    private String getDependencyVersionFromModel(Model model, String dependencyVersionData) {
+        if (!isProperty(dependencyVersionData)) {
+            return dependencyVersionData;
+        }
+        String version = model.getProperties().getProperty(getPropertyName(dependencyVersionData));
+        if (version == null) {
+            throw new RuntimeException("Error reading version property");
+        }
+        return version;
+    }
 
+    private boolean isProperty(String dependencyVersionData) {
+        return dependencyVersionData.startsWith("${") && dependencyVersionData.endsWith("}");
+    }
+
+    private String getPropertyName(String dependencyVersionData) {
+        return dependencyVersionData.substring(2, dependencyVersionData.length() - 1);
+    }
 }
