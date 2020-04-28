@@ -6,10 +6,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Griet Vermeesch
- * @version 1.0 27/04/2020 15:51
- */
 class MavenVersionTest {
     private transient MavenVersion mv1;
     private transient MavenVersion mv2;
