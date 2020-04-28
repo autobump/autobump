@@ -31,7 +31,8 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .name(dependency.getArtifactId())
                         .version(getDependencyVersionFromModel(model, dependency.getVersion()))
                         .build())
-                .collect(Collectors.toSet());
+                .filter(dependency -> dependency.getVersion() != null)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private Model getModel(Workspace workspace) {
@@ -45,8 +46,7 @@ public class MavenDependencyResolver implements DependencyResolver {
 
     private String getDependencyVersionFromModel(Model model, String dependencyVersionData) {
         Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(dependencyVersionData);
-        if (!matcher.matches()
-                || model.getProperties().getProperty(matcher.group(1)) == null) {
+        if (!matcher.matches()) {
             return dependencyVersionData;
         }
         return model.getProperties().getProperty(matcher.group(1));

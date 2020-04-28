@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MavenDependencyResolverTest {
@@ -52,16 +53,14 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestresolveUndevinedProperty() {
+    public void TestresolveUndefinedProperty() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties_undefinedproperty");
         Set<Dependency> deps = dependencyResolver.resolve(ws);
-        assertEquals(
-                Set.of(Dependency.builder()
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .version("${org.apache.derby.version}")
-                        .build()),
-                deps);
+        assertFalse(deps.contains(Dependency.builder()
+                .group(TEST_DEPENDENCY_GROUP)
+                .name(TEST_DEPENDENCY_NAME)
+                .version(null)
+                .build()));
     }
 
     @Test
