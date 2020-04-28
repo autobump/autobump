@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MavenDependencyResolverTest {
 
+    private static final transient String TEST_DEPENDENCY_GROUP = "org.apache.derby";
+    private static final transient String TEST_DEPENDENCY_NAME = "derby";
     private transient Workspace workspace;
     private transient DependencyResolver dependencyResolver;
 
@@ -29,8 +31,8 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = dependencyResolver.resolve(workspace);
         assertEquals(
                 Set.of(Dependency.builder()
-                        .group("org.apache.derby")
-                        .name("derby")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
                         .version("10.15.2.0")
                         .build()),
                 deps);
@@ -42,8 +44,8 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = dependencyResolver.resolve(ws);
         assertEquals(
                 Set.of(Dependency.builder()
-                        .group("org.apache.derby")
-                        .name("derby")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
                         .version("10.15.2.0")
                         .build()),
                 deps);
@@ -55,8 +57,8 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = dependencyResolver.resolve(ws);
         assertEquals(
                 Set.of(Dependency.builder()
-                        .group("org.apache.derby")
-                        .name("derby")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
                         .version("${org.apache.derby.version}")
                         .build()),
                 deps);
@@ -68,8 +70,8 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = dependencyResolver.resolve(ws);
         assertEquals(
                 Set.of(Dependency.builder()
-                        .group("org.apache.derby")
-                        .name("derby")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
                         .version("${org.apache.derby.version")
                         .build()),
                 deps);
