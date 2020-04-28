@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MavenDependencyBumperTest {
+    private static final transient String DERBY_GROUP = "org.apache.derby";
     private transient MavenDependencyBumper mavenDependencyBumper;
     private transient Workspace workspace;
     private transient MavenDependencyResolver resolver;
     private transient Dependency dependency;
     private transient Version version;
-    private static final transient String DERBY_GROUP = "org.apache.derby";
 
     @BeforeEach
     void setUp() throws IOException {
