@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.github.autobump.maven.model.MavenModelAnalyser.DEPENDENCY_FILENAME;
-
 @Getter
 public class MavenDependencyBumper implements DependencyBumper {
     private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile(".*\\$\\{(.+)\\}.*");
@@ -32,7 +30,7 @@ public class MavenDependencyBumper implements DependencyBumper {
 
     @Override
     public void bump(Workspace workspace, Bump bump) {
-        try (Reader reader = workspace.getDependencyDocument(DEPENDENCY_FILENAME)) {
+        try (Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
             InputLocation versionLocation = findVersionLine(reader, bump.getDependency(), workspace.getProjectRoot());
             updateDependency(versionLocation, bump);
         } catch (IOException e) {

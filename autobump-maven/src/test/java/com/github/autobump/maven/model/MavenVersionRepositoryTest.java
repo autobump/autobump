@@ -2,7 +2,6 @@ package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.Version;
 import com.github.autobump.maven.exceptions.WrongUrlException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterEach;
@@ -53,7 +52,7 @@ class MavenVersionRepositoryTest {
         var versions = mavenVersionRepository.getAllAvailableVersions(
                 Dependency.builder().name(TEST).group(TEST).version(TEST).build());
         assertEquals(18, versions.size());
-        assertTrue(versions.contains(new Version("5.7.0-M1")));
+        assertTrue(versions.contains(new MavenVersion("5.7.0-M1")));
     }
 
     @Test

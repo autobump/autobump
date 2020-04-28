@@ -1,8 +1,6 @@
 package com.github.autobump.core.model;
 
-import lombok.Value;
+public interface Version extends Comparable<Version> {
 
-@Value
-public class Version {
-    String versionNumber;
+    String getVersionNumber();
 }
