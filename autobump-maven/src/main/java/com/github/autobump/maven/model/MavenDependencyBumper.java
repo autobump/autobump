@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MavenDependencyBumper implements DependencyBumper {
-    private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile("\\$\\{(.+)\\}");
+    private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile(".*\\$\\{(.+)\\}.*");
     transient MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
 
 

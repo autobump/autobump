@@ -42,7 +42,7 @@ class MavenDependencyBumperTest {
     @Test
     void testBump() {
         var dependencies = resolver.resolve(workspace);
-        //assertTrue(dependencies.contains(dependency));
+        assertTrue(dependencies.contains(dependency));
         Bump bump = new Bump(dependency, version);
         mavenDependencyBumper.bump(workspace, bump);
         Dependency updatedDep = Dependency.builder()
@@ -62,12 +62,12 @@ class MavenDependencyBumperTest {
                 .version("10.15.2.0")
                 .build();
         var dependencies = resolver.resolve(workspace);
-        //assertTrue(dependencies.contains(dependency));
+        assertTrue(dependencies.contains(dependency));
         Bump bump = new Bump(dependency, version);
         mavenDependencyBumper.bump(workspace, bump);
         Dependency updatedDep = Dependency.builder()
                 .group(DERBY_GROUP)
-                .name("derby")
+                .name("derbys")
                 .version("bumpTest")
                 .build();
         dependencies = resolver.resolve(workspace);
