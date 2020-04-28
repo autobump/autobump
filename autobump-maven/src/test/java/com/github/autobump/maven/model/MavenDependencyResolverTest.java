@@ -29,10 +29,49 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = dependencyResolver.resolve(workspace);
         assertEquals(
                 Set.of(Dependency.builder()
-                .group("org.apache.derby")
-                .name("derby")
-                .version("10.15.2.0")
-                .build()),
+                        .group("org.apache.derby")
+                        .name("derby")
+                        .version("10.15.2.0")
+                        .build()),
+                deps);
+    }
+
+    @Test
+    public void TestSuccesresolveProperties() {
+        Workspace ws = new Workspace("src/test/resources/project_root_support_properties");
+        Set<Dependency> deps = dependencyResolver.resolve(ws);
+        assertEquals(
+                Set.of(Dependency.builder()
+                        .group("org.apache.derby")
+                        .name("derby")
+                        .version("10.15.2.0")
+                        .build()),
+                deps);
+    }
+
+    @Test
+    public void TestresolveUndevinedProperty() {
+        Workspace ws = new Workspace("src/test/resources/project_root_support_properties_undefinedproperty");
+        Set<Dependency> deps = dependencyResolver.resolve(ws);
+        assertEquals(
+                Set.of(Dependency.builder()
+                        .group("org.apache.derby")
+                        .name("derby")
+                        .version("${org.apache.derby.version}")
+                        .build()),
+                deps);
+    }
+
+    @Test
+    public void TestresolveMalformedVarProperty() {
+        Workspace ws = new Workspace("src/test/resources/project_root_support_properties_badproperty");
+        Set<Dependency> deps = dependencyResolver.resolve(ws);
+        assertEquals(
+                Set.of(Dependency.builder()
+                        .group("org.apache.derby")
+                        .name("derby")
+                        .version("${org.apache.derby.version")
+                        .build()),
                 deps);
     }
 
@@ -40,7 +79,6 @@ public class MavenDependencyResolverTest {
     public void TestFileNotFound() {
         assertThrows(NoDependencyFileFoundException.class, () ->
                 dependencyResolver.resolve(new Workspace("src/test/resources/project_root/testDir")));
-
     }
 
     @Test
@@ -50,7 +88,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestUnparseableDependencies(){
+    public void TestUnparseableDependencies() {
         assertThrows(DependencyParserException.class, () ->
                 dependencyResolver.resolve(new Workspace("src/test/resources/project_root/testDir/parserror")));
     }

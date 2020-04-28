@@ -7,4 +7,8 @@ public class DependencyParserException extends RuntimeException{
     public DependencyParserException(String s, Exception cause){
         super(s, cause);
     }
+
+    public DependencyParserException(String s) {
+        super(s);
+    }
 }
