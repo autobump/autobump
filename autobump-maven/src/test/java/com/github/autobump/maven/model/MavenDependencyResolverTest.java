@@ -52,7 +52,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestresolveUndevinedProperty() {
+    public void TestresolveUndefinedProperty() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties_undefinedproperty");
         Set<Dependency> deps = dependencyResolver.resolve(ws);
         assertEquals(
