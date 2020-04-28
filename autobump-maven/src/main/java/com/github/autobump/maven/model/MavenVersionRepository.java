@@ -42,8 +42,8 @@ public class MavenVersionRepository implements VersionRepository {
                     .getVersioning()
                     .getVersions()
                     .stream()
-                        .map(Version::new)
-                        .collect(Collectors.toSet());
+                    .map(MavenVersion::new)
+                    .collect(Collectors.toUnmodifiableSet());
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("something went wrong while parseing the xml", e);
         }catch (IOException e) {
