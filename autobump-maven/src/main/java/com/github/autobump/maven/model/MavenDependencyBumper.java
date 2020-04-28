@@ -18,10 +18,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MavenDependencyBumper implements DependencyBumper {
-
+    private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile("\\$\\{(.+)\\}");
     transient MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
+
 
     @Override
     public void bump(Workspace workspace, Bump bump) {
@@ -36,8 +39,9 @@ public class MavenDependencyBumper implements DependencyBumper {
     public void updateDependency(InputLocation versionLocation, Bump bump) throws IOException {
         Path file = Paths.get(versionLocation.getSource().getLocation());
         List<String> out = Files.readAllLines(file);
-        if (out.get(versionLocation.getLineNumber() - 1).matches(".*\\$\\{.*\\}.*")){
-            changeProperty(versionLocation, out, bump);
+        Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(out.get(versionLocation.getLineNumber() - 1));
+        if (matcher.matches()){
+            changeProperty(out, bump, matcher.group(1));
         }else {
             changeVersionLine(versionLocation, bump, out);
         }
@@ -51,14 +55,10 @@ public class MavenDependencyBumper implements DependencyBumper {
                                 bump.getVersion().getVersionNumber()));
     }
 
-    private void changeProperty(InputLocation versionLocation, List<String> out, Bump bump) {
+    private void changeProperty(List<String> out, Bump bump, String groupname) {
         for (int i = 0; i < out.size(); i++) {
             String line = out.get(i);
-            if (line.contains("<" +
-                    out.get(versionLocation.getLineNumber() - 1)
-                            .substring(
-                                    out.get(versionLocation.getLineNumber() - 1).indexOf("{") + 1,
-                                    out.get(versionLocation.getLineNumber() - 1).indexOf("}") - 1))) {
+            if (line.contains("<" + groupname + ">")) {
                 out.set(i, line.replace(bump.getDependency().getVersion(), bump.getVersion().getVersionNumber()));
             }
         }

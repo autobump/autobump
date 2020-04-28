@@ -25,14 +25,14 @@ class MavenDependencyBumperTest {
     private transient MavenDependencyResolver resolver;
     private transient Dependency dependency;
     private transient Version version;
-    private transient Path tempDirPath;
+    private static final transient String DERBY_GROUP = "org.apache.derby";
 
     @BeforeEach
     void setUp() throws IOException {
         version = new Version("bumpTest");
-        dependency = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
+        dependency = Dependency.builder().group(DERBY_GROUP).name("derby").version("10.15.2.0").build();
         mavenDependencyBumper = new MavenDependencyBumper();
-        tempDirPath = Files.createTempDirectory(null);
+        Path tempDirPath = Files.createTempDirectory(null);
         Files.copy(Path.of("src/test/resources/project_root/testBump/pom.xml"),
                 Path.of(tempDirPath.toString() + File.separator + "pom.xml"));
         workspace = new Workspace(tempDirPath.toString());
@@ -42,11 +42,11 @@ class MavenDependencyBumperTest {
     @Test
     void testBump() {
         var dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(dependency));
+        //assertTrue(dependencies.contains(dependency));
         Bump bump = new Bump(dependency, version);
         mavenDependencyBumper.bump(workspace, bump);
         Dependency updatedDep = Dependency.builder()
-                .group("org.apache.derby")
+                .group(DERBY_GROUP)
                 .name("derby")
                 .version("bumpTest")
                 .build();
@@ -56,18 +56,22 @@ class MavenDependencyBumperTest {
 
     @Test
     void testBumpProperty() {
-        Dependency dependency = Dependency.builder().name("derbys").group("org.apache.derby").version("10.15.2.0").build();
+        Dependency dependency = Dependency.builder()
+                .name("derbys")
+                .group(DERBY_GROUP)
+                .version("10.15.2.0")
+                .build();
         var dependencies = resolver.resolve(workspace);
         //assertTrue(dependencies.contains(dependency));
         Bump bump = new Bump(dependency, version);
         mavenDependencyBumper.bump(workspace, bump);
         Dependency updatedDep = Dependency.builder()
-                .group("org.apache.derby")
+                .group(DERBY_GROUP)
                 .name("derby")
                 .version("bumpTest")
                 .build();
         dependencies = resolver.resolve(workspace);
-        //assertTrue(dependencies.contains(updatedDep));
+        assertTrue(dependencies.contains(updatedDep));
     }
 
     @Test
