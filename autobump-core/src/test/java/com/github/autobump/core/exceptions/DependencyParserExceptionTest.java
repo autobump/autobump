@@ -6,9 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DependencyParserExceptionTest {
 
+    private static final transient String TEST = "test";
+
     @Test
-    void testCreate() {
-        assertEquals("test" , new DependencyParserException("test", new RuntimeException()).getMessage());
+    void testCreateOneParam() {
+        assertEquals("test" , new DependencyParserException(TEST).getMessage());
     }
 
+    @Test
+    void testCreateTwoParam() {
+        assertEquals("test" , new DependencyParserException(TEST, new RuntimeException()).getMessage());
+    }
 }
