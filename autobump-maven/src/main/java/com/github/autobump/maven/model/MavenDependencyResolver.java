@@ -45,14 +45,10 @@ public class MavenDependencyResolver implements DependencyResolver {
 
     private String getDependencyVersionFromModel(Model model, String dependencyVersionData) {
         Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(dependencyVersionData);
-        String version;
         if (!matcher.matches()
-                || model.getProperties() == null
                 || model.getProperties().getProperty(matcher.group(1)) == null) {
-            version = dependencyVersionData;
-        } else {
-            version = model.getProperties().getProperty(matcher.group(1));
+            return dependencyVersionData;
         }
-        return version;
+        return model.getProperties().getProperty(matcher.group(1));
     }
 }
