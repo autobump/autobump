@@ -5,12 +5,12 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
-import com.github.autobump.maven.model.testClasses.MavenDependencyBumperTester;
-import com.github.autobump.maven.model.testClasses.MavenXpp3ReaderExTester;
-import org.junit.jupiter.api.AfterEach;
+import com.github.autobump.maven.model.testclasses.MavenDependencyBumperTester;
+import com.github.autobump.maven.model.testclasses.MavenXpp3ReaderExTester;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -23,26 +23,27 @@ class MavenDependencyBumperTest {
     private transient MavenDependencyBumper mavenDependencyBumper;
     private transient Workspace workspace;
     private transient MavenDependencyResolver resolver;
+    private transient Dependency dependency;
+    private transient Version version;
+    private transient Path tempDirPath;
 
     @BeforeEach
     void setUp() throws IOException {
+        version = new Version("bumpTest");
+        dependency = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
         mavenDependencyBumper = new MavenDependencyBumper();
-        Files.copy(Path.of("src/test/resources/project_root/testBump/pom.xml"), Path.of("src/test/resources/pom.xml"));
-        workspace = new Workspace("src/test/resources");
+        tempDirPath = Files.createTempDirectory(null);
+        Files.copy(Path.of("src/test/resources/project_root/testBump/pom.xml"),
+                Path.of(tempDirPath.toString() + File.separator + "pom.xml"));
+        workspace = new Workspace(tempDirPath.toString());
         resolver = new MavenDependencyResolver();
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        Files.delete(Path.of("src/test/resources/pom.xml"));
     }
 
     @Test
     void testBump() {
         var dependencies = resolver.resolve(workspace);
-        Dependency dep = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
-        assertTrue(dependencies.contains(dep));
-        Bump bump = new Bump(dep, new Version("bumpTest"));
+        assertTrue(dependencies.contains(dependency));
+        Bump bump = new Bump(dependency, version);
         mavenDependencyBumper.bump(workspace, bump);
         Dependency updatedDep = Dependency.builder()
                 .group("org.apache.derby")
@@ -54,19 +55,35 @@ class MavenDependencyBumperTest {
     }
 
     @Test
+    void testBumpProperty() {
+        Dependency dependency = Dependency.builder().name("derbys").group("org.apache.derby").version("10.15.2.0").build();
+        var dependencies = resolver.resolve(workspace);
+        //assertTrue(dependencies.contains(dependency));
+        Bump bump = new Bump(dependency, version);
+        mavenDependencyBumper.bump(workspace, bump);
+        Dependency updatedDep = Dependency.builder()
+                .group("org.apache.derby")
+                .name("derby")
+                .version("bumpTest")
+                .build();
+        dependencies = resolver.resolve(workspace);
+        //assertTrue(dependencies.contains(updatedDep));
+    }
+
+    @Test
     void testThrowsIO() {
-        Dependency dep = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
         mavenDependencyBumper = new MavenDependencyBumperTester();
-        Bump bump = new Bump(dep, new Version("bumpTest"));
-        assertThrows(UncheckedIOException.class, () -> mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"), bump));
+        assertThrows(UncheckedIOException.class, () ->
+                mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"),
+                        new Bump(dependency, version)));
     }
 
     @Test
     void testThrowParser(){
-        Dependency dep = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
         mavenDependencyBumper = new MavenDependencyBumper();
         mavenDependencyBumper.mavenXpp3ReaderEx = new MavenXpp3ReaderExTester();
-        Bump bump = new Bump(dep, new Version("bumpTest"));
-        assertThrows(DependencyParserException.class, () -> mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"), bump));
+        assertThrows(DependencyParserException.class, () ->
+                mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"),
+                        new Bump(dependency, version)));
     }
 }

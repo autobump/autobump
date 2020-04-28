@@ -1,4 +1,4 @@
-package com.github.autobump.maven.model.testClasses;
+package com.github.autobump.maven.model.testclasses;
 
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.maven.model.MavenDependencyBumper;

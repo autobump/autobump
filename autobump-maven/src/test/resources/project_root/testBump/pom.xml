@@ -14,6 +14,10 @@
     <name>restaurantdag_organizer</name>
     <description>Demo project for Spring Boot</description>
 
+    <properties>
+        <testProp>10.15.2.0</testProp>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.nascar</groupId>
@@ -37,6 +41,12 @@
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
             <version>10.15.2.0</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbys</artifactId>
+            <version>${testProp}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

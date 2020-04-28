@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MavenDependencyBumper implements DependencyBumper {
 
-    MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
+    transient MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
 
     @Override
     public void bump(Workspace workspace, Bump bump) {
@@ -36,11 +36,32 @@ public class MavenDependencyBumper implements DependencyBumper {
     public void updateDependency(InputLocation versionLocation, Bump bump) throws IOException {
         Path file = Paths.get(versionLocation.getSource().getLocation());
         List<String> out = Files.readAllLines(file);
+        if (out.get(versionLocation.getLineNumber() - 1).matches(".*\\$\\{.*\\}.*")){
+            changeProperty(versionLocation, out, bump);
+        }else {
+            changeVersionLine(versionLocation, bump, out);
+        }
+        Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    private void changeVersionLine(InputLocation versionLocation, Bump bump, List<String> out) {
         out.set(versionLocation.getLineNumber() - 1,
                 out.get(versionLocation.getLineNumber() - 1)
                         .replace(bump.getDependency().getVersion(),
                                 bump.getVersion().getVersionNumber()));
-        Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    private void changeProperty(InputLocation versionLocation, List<String> out, Bump bump) {
+        for (int i = 0; i < out.size(); i++) {
+            String line = out.get(i);
+            if (line.contains("<" +
+                    out.get(versionLocation.getLineNumber() - 1)
+                            .substring(
+                                    out.get(versionLocation.getLineNumber() - 1).indexOf("{") + 1,
+                                    out.get(versionLocation.getLineNumber() - 1).indexOf("}") - 1))) {
+                out.set(i, line.replace(bump.getDependency().getVersion(), bump.getVersion().getVersionNumber()));
+            }
+        }
     }
 
     private InputLocation findVersionLine(Reader reader, Dependency dependency, String rootdir) throws IOException {

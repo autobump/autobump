@@ -1,4 +1,4 @@
-package com.github.autobump.maven.model.testClasses;
+package com.github.autobump.maven.model.testclasses;
 
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Model;
