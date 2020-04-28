@@ -37,13 +37,13 @@ public class MavenVersionRepository implements VersionRepository {
                             )
                     )
         ) {
-            return (Set<Version>) new MetadataXpp3Reader()
+            return new MetadataXpp3Reader()
                     .read(in)
                     .getVersioning()
                     .getVersions()
                     .stream()
-                        .map(v -> new MavenVersion(v.toString()))
-                        .collect(Collectors.toSet());
+                    .map(MavenVersion::new)
+                    .collect(Collectors.toUnmodifiableSet());
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("something went wrong while parseing the xml", e);
         }catch (IOException e) {
