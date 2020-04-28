@@ -29,7 +29,7 @@ class MavenDependencyBumperTest {
 
     @BeforeEach
     void setUp() throws IOException {
-        version = new Version("bumpTest");
+        version = new MavenVersion("bumpTest");
         dependency = Dependency.builder().group(DERBY_GROUP).name("derby").version("10.15.2.0").build();
         mavenDependencyBumper = new MavenDependencyBumper();
         Path tempDirPath = Files.createTempDirectory(null);
