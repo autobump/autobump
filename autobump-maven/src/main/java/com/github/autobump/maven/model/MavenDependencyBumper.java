@@ -5,6 +5,7 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.Workspace;
+import lombok.Getter;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
@@ -21,9 +22,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Getter
 public class MavenDependencyBumper implements DependencyBumper {
     private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile(".*\\$\\{(.+)\\}.*");
-    transient MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
+    MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
 
 
     @Override
