@@ -50,11 +50,16 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestresolveNullProperty() {
-        assertThrows(DependencyParserException.class, () ->
-                dependencyResolver.resolve(
-                        new Workspace("src/test/resources/project_root_support_properties_nullproperty")
-                ));
+    public void TestresolveUndevinedProperty() {
+        Workspace ws = new Workspace("src/test/resources/project_root_support_properties_undefinedproperty");
+        Set<Dependency> deps = dependencyResolver.resolve(ws);
+        assertEquals(
+                Set.of(Dependency.builder()
+                        .group("org.apache.derby")
+                        .name("derby")
+                        .version("${org.apache.derby.version}")
+                        .build()),
+                deps);
     }
 
     @Test

@@ -11,10 +11,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
     private static final String DEPENDENCY_FILENAME = "pom.xml";
+    private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile("\\$\\{(.+)}");
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
@@ -41,21 +44,14 @@ public class MavenDependencyResolver implements DependencyResolver {
     }
 
     private String getDependencyVersionFromModel(Model model, String dependencyVersionData) {
-        if (!isProperty(dependencyVersionData)) {
+        Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(dependencyVersionData);
+        if (!matcher.matches()) {
             return dependencyVersionData;
         }
-        String version = model.getProperties().getProperty(getPropertyName(dependencyVersionData));
+        String version = model.getProperties().getProperty(matcher.group(1));
         if (version == null) {
-            throw new DependencyParserException("Error reading version property");
+            return dependencyVersionData;
         }
         return version;
-    }
-
-    private boolean isProperty(String dependencyVersionData) {
-        return dependencyVersionData.startsWith("${") && dependencyVersionData.endsWith("}");
-    }
-
-    private String getPropertyName(String dependencyVersionData) {
-        return dependencyVersionData.substring(2, dependencyVersionData.length() - 1);
     }
 }
