@@ -32,7 +32,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .version(getDependencyVersionFromModel(model, dependency.getVersion()))
                         .build())
                 .filter(dependency -> dependency.getVersion() != null)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private Model getModel(Workspace workspace) {
