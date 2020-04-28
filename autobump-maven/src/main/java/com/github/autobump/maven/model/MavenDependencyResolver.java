@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-    private static final String DEPENDENCY_FILENAME = "pom.xml";
+    public static final String DEPENDENCY_FILENAME = "pom.xml";
     private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile("\\$\\{(.+)}");
 
     @Override
