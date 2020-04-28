@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenDependencyResolverTest {
 
@@ -56,11 +56,7 @@ public class MavenDependencyResolverTest {
     public void TestresolveUndefinedProperty() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties_undefinedproperty");
         Set<Dependency> deps = dependencyResolver.resolve(ws);
-        assertFalse(deps.contains(Dependency.builder()
-                .group(TEST_DEPENDENCY_GROUP)
-                .name(TEST_DEPENDENCY_NAME)
-                .version(null)
-                .build()));
+        assertTrue(deps.isEmpty(), "expected list of dependencies to be empty");
     }
 
     @Test
