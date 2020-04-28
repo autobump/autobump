@@ -1,17 +1,22 @@
 package com.github.autobump.maven.model;
 
+import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
+import com.github.autobump.maven.model.testClasses.MavenDependencyBumperTester;
+import com.github.autobump.maven.model.testClasses.MavenXpp3ReaderExTester;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MavenDependencyBumperTest {
@@ -46,5 +51,22 @@ class MavenDependencyBumperTest {
                 .build();
         dependencies = resolver.resolve(workspace);
         assertTrue(dependencies.contains(updatedDep));
+    }
+
+    @Test
+    void testThrowsIO() {
+        Dependency dep = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
+        mavenDependencyBumper = new MavenDependencyBumperTester();
+        Bump bump = new Bump(dep, new Version("bumpTest"));
+        assertThrows(UncheckedIOException.class, () -> mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"), bump));
+    }
+
+    @Test
+    void testThrowParser(){
+        Dependency dep = Dependency.builder().group("org.apache.derby").name("derby").version("10.15.2.0").build();
+        mavenDependencyBumper = new MavenDependencyBumper();
+        mavenDependencyBumper.mavenXpp3ReaderEx = new MavenXpp3ReaderExTester();
+        Bump bump = new Bump(dep, new Version("bumpTest"));
+        assertThrows(DependencyParserException.class, () -> mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"), bump));
     }
 }

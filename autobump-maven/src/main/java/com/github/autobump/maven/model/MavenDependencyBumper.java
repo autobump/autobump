@@ -21,6 +21,8 @@ import java.util.List;
 
 public class MavenDependencyBumper implements DependencyBumper {
 
+    MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
+
     @Override
     public void bump(Workspace workspace, Bump bump) {
         try (Reader reader = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
@@ -31,7 +33,7 @@ public class MavenDependencyBumper implements DependencyBumper {
         }
     }
 
-    private void updateDependency(InputLocation versionLocation, Bump bump) throws IOException {
+    public void updateDependency(InputLocation versionLocation, Bump bump) throws IOException {
         Path file = Paths.get(versionLocation.getSource().getLocation());
         List<String> out = Files.readAllLines(file);
         out.set(versionLocation.getLineNumber() - 1,
@@ -42,7 +44,6 @@ public class MavenDependencyBumper implements DependencyBumper {
     }
 
     private InputLocation findVersionLine(Reader reader, Dependency dependency, String rootdir) throws IOException {
-        MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
         try {
             InputSource inputSource = new InputSource();
             inputSource.setLocation(rootdir + "/pom.xml");
