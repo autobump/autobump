@@ -59,7 +59,7 @@ public class MavenDependencyResolverTest {
         assertFalse(deps.contains(Dependency.builder()
                 .group(TEST_DEPENDENCY_GROUP)
                 .name(TEST_DEPENDENCY_NAME)
-                .version("${org.apache.derby.version}")
+                .version(null)
                 .build()));
     }
 

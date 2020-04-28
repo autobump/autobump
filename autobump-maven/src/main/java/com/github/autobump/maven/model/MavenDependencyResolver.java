@@ -31,6 +31,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .name(dependency.getArtifactId())
                         .version(getDependencyVersionFromModel(model, dependency.getVersion()))
                         .build())
+                .filter(dependency -> dependency.getVersion() != null)
                 .collect(Collectors.toSet());
     }
 
