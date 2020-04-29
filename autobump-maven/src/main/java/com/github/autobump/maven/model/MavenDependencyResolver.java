@@ -5,7 +5,16 @@ import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.Model;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +31,29 @@ public class MavenDependencyResolver implements DependencyResolver {
         Model model = mavenModelAnalyser.getModel(workspace);
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
+        var modules = model.getModules();
+        if (modules.size() != 0) {
+            try {
+                dependencies.addAll(resolveModules(workspace));
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
+        return dependencies;
+    }
+
+    private Set<Dependency> resolveModules(Workspace workspace) throws IOException {
+        var dependencies = new HashSet<Dependency>();
+        Files.walkFileTree(Path.of(workspace.getProjectRoot()), Set.of(), 2, new SimpleFileVisitor<Path>(){
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                if (!file.toString().equals(workspace.getProjectRoot() + File.separator + "pom.xml") && file.endsWith("pom.xml")){
+                    Workspace ws = new Workspace(file.toAbsolutePath().toString().replace("pom.xml", ""));
+                    dependencies.addAll(resolve(ws));
+                }
+                return FileVisitResult.CONTINUE;
+            }
+        });
         return dependencies;
     }
 

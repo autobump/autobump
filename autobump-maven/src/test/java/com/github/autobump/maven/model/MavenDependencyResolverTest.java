@@ -189,4 +189,10 @@ public class MavenDependencyResolverTest {
                 Set.of(),
                 plugins);
     }
+
+    @Test
+    void tester() {
+        MavenDependencyResolver resolver = new MavenDependencyResolver();
+        resolver.resolve(new Workspace("D:\\school\\2019-2020\\stage\\autobump\\autobump\\autobump-maven\\src\\test\\resources\\multi_module_root"));
+    }
 }
