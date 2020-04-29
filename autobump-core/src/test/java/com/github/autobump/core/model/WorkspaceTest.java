@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class WorkspaceTest {
-    private transient Workspace workspace;
+    private  Workspace workspace;
 
     @BeforeEach
     void setUp() {
