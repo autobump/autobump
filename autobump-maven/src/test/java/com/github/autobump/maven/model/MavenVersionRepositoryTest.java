@@ -2,7 +2,6 @@ package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
-import com.github.autobump.maven.exceptions.WrongUrlException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +23,7 @@ class MavenVersionRepositoryTest {
     private transient WireMockServer wireMockServer;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         mavenVersionRepository = new MavenVersionRepository("http://localhost:8090/maven2");
         wireMockServer = new WireMockServer(options().port(8090).usingFilesUnderClasspath("src/test/resources/"));
         wireMockServer.start();
@@ -71,7 +70,7 @@ class MavenVersionRepositoryTest {
 
     @Test
     void testMalformedUrl() {
-        assertThrows(WrongUrlException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 new MavenVersionRepository("//").getAllAvailableVersions(
                         Dependency.builder().name(TEST).group(TEST).version(TEST).build()));
     }
