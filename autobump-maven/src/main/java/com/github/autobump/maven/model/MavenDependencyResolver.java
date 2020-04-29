@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-    private final transient MavenModelAnalyser mavenModelAnalyser;
+    private final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
         this.mavenModelAnalyser = new MavenModelAnalyser();
