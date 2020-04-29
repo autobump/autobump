@@ -52,7 +52,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                 @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (!file.toString().equals(workspace.getProjectRoot() + File.separator + "pom.xml") &&
-                              file.getFileName().equals("pom.xml")){
+                             file.getFileName().toString().equals("pom.xml")){
                         Workspace ws = new Workspace(file.toAbsolutePath().toString().replace("pom.xml", ""));
                         dependencies.addAll(resolve(ws));
                     }
