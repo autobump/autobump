@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
+    private static final String FILENAME = "pom.xml";
     private final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
@@ -33,7 +34,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
         var modules = model.getModules();
-        if (modules.size() != 0) {
+        if (!modules.isEmpty()) {
             try {
                 dependencies.addAll(resolveModules(workspace));
             } catch (IOException e) {
@@ -51,12 +52,12 @@ public class MavenDependencyResolver implements DependencyResolver {
                 new SimpleFileVisitor<Path>(){
                 @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (!file.toString().equals(workspace.getProjectRoot() + File.separator + "pom.xml") &&
-                             file.getFileName().toString().equals("pom.xml")){
+                    if (!file.toString().equals(workspace.getProjectRoot() + File.separator + FILENAME) &&
+                             file.getFileName().toString().equals(FILENAME)){
                         Workspace ws = new Workspace(file
                                 .toAbsolutePath()
                                 .toString()
-                                .replace(File.separator + "pom.xml", ""));
+                                .replace(File.separator + FILENAME, ""));
                         dependencies.addAll(resolve(ws));
                     }
                     return FileVisitResult.CONTINUE;
