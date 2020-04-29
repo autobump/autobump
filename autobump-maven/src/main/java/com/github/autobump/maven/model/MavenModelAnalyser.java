@@ -2,8 +2,9 @@ package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Workspace;
+import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
@@ -17,8 +18,10 @@ public class MavenModelAnalyser {
 
     public Model getModel(Workspace workspace) {
         try (Reader dependencyDocument = workspace.getDependencyDocument(DEPENDENCY_FILENAME)) {
-            return new MavenXpp3Reader()
-                    .read(dependencyDocument);
+            InputSource inputSource = new InputSource();
+            inputSource.setLocation(workspace.getProjectRoot() + "/pom.xml");
+            return new MavenXpp3ReaderEx()
+                    .read(dependencyDocument, true, inputSource);
         } catch (XmlPullParserException | IOException e) {
             throw new DependencyParserException("Parser threw an error.", e);
         }
