@@ -1,54 +1,66 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-    public static final String DEPENDENCY_FILENAME = "pom.xml";
-    private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile("\\$\\{(.+)}");
+    private final MavenModelAnalyser mavenModelAnalyser;
+
+    public MavenDependencyResolver() {
+        this.mavenModelAnalyser = new MavenModelAnalyser();
+    }
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
-        Model model = getModel(workspace);
+        Model model = mavenModelAnalyser.getModel(workspace);
+        Set<Dependency> dependencies = getDependencies(model);
+        dependencies.addAll(getPlugins(model));
+        return dependencies;
+    }
+
+    private Set<Dependency> getPlugins(Model model) {
+        List<org.apache.maven.model.Plugin> pluginList = new ArrayList<>();
+        if (model.getBuild() != null) {
+            pluginList.addAll(model.getBuild().getPlugins());
+            if (model.getBuild().getPluginManagement() != null) {
+                pluginList.addAll(model.getBuild().getPluginManagement().getPlugins());
+            }
+        }
+        return pluginList.stream()
+                .filter(plugin -> plugin.getVersion() != null)
+                .map(plugin -> MavenDependency.builder()
+                        .group(plugin.getGroupId())
+                        .name(plugin.getArtifactId())
+                        .type(DependencyType.PLUGIN)
+                        .inputLocation(plugin.getLocation("version"))
+                        .version(mavenModelAnalyser.getVersionFromProperties(model, plugin.getVersion()))
+                        .build())
+                .filter(plugin -> plugin.getVersion() != null)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Dependency> getDependencies(Model model) {
         return model
                 .getDependencies()
                 .stream()
                 .filter(dependency -> dependency.getVersion() != null)
-                .map(dependency -> Dependency.builder()
+                .map(dependency -> MavenDependency.builder()
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())
-                        .version(getDependencyVersionFromModel(model, dependency.getVersion()))
+                        .type(DependencyType.DEPENDENCY)
+                        .inputLocation(dependency.getLocation("version"))
+                        .version(mavenModelAnalyser.getVersionFromProperties(model, dependency.getVersion()))
                         .build())
                 .filter(dependency -> dependency.getVersion() != null)
-                .collect(Collectors.toUnmodifiableSet());
-    }
-
-    private Model getModel(Workspace workspace) {
-        try (Reader dependencyDocument = workspace.getDependencyDocument(MavenDependencyResolver.DEPENDENCY_FILENAME)) {
-            return new MavenXpp3Reader()
-                    .read(dependencyDocument);
-        } catch (XmlPullParserException | IOException e) {
-            throw new DependencyParserException("Parser threw an error.", e);
-        }
-    }
-
-    private String getDependencyVersionFromModel(Model model, String dependencyVersionData) {
-        Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(dependencyVersionData);
-        if (!matcher.matches()) {
-            return dependencyVersionData;
-        }
-        return model.getProperties().getProperty(matcher.group(1));
+                .collect(Collectors.toSet());
     }
 }
