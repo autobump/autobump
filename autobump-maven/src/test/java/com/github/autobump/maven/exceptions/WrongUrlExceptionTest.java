@@ -8,7 +8,7 @@ class WrongUrlExceptionTest {
 
     @Test
     void canCreate(){
-        assertEquals("test" , new WrongUrlException("test", new RuntimeException()).getMessage());
+        assertEquals("bumpTest", new WrongUrlException("bumpTest", new RuntimeException()).getMessage());
     }
 
 }
