@@ -6,7 +6,6 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.maven.model.testclasses.MavenDependencyResolverTester;
-import junit.framework.Assert;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,19 +25,19 @@ public class MavenDependencyResolverTest {
     private static final  String TEST_DEPENDENCY_VERSION = "10.15.2.0";
     private Workspace workspace;
     private Workspace pluginWorkspace;
-    private Workspace multi_module_workspace;
+    private Workspace multiModuleWorkspace;
     private DependencyResolver resolver;
 
     @BeforeEach
     public void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
-        multi_module_workspace = new Workspace("src/test/resources/multi_module_root");
+        multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
         resolver = new MavenDependencyResolver();
     }
 
     @Test
-    public void TestSuccesresolve() {
+    public void TestSuccessresolve() {
         Set<Dependency> deps = resolver.resolve(workspace);
         InputSource is = new InputSource();
         is.setLocation("src/test/resources/project_root/pom.xml");
@@ -54,7 +53,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestSuccesresolveProperties() {
+    public void TestSuccessresolveProperties() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties");
         Set<Dependency> deps = resolver.resolve(ws);
         InputSource is = new InputSource();
@@ -197,14 +196,14 @@ public class MavenDependencyResolverTest {
 
     @Test
     void testResolveMultiModuleProject() throws Exception {
-        Set<Dependency> dependencies = resolver.resolve(multi_module_workspace);
-        Assert.assertEquals(3, dependencies.size());
+        Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
+        assertEquals(3, dependencies.size());
     }
 
     @Test
     void testThrowsIO() {
         MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
         assertThrows(UncheckedIOException.class, () ->
-                tester.resolve(multi_module_workspace));
+                tester.resolve(multiModuleWorkspace));
     }
 }

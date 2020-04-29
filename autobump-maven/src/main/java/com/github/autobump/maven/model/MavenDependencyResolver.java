@@ -5,6 +5,7 @@ import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.Model;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

@@ -56,6 +56,7 @@ allprojects {
         consoleOutput = true
         ignoreFailures = false
         toolVersion = "6.22.0"
+        ruleSets = []
         ruleSetFiles = rootProject.files("config/pmd/ruleset.xml")
     }
 }
