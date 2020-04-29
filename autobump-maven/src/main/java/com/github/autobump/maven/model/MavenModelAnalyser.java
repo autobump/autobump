@@ -19,7 +19,7 @@ public class MavenModelAnalyser {
     public Model getModel(Workspace workspace) {
         try (Reader dependencyDocument = workspace.getDependencyDocument(DEPENDENCY_FILENAME)) {
             InputSource inputSource = new InputSource();
-            inputSource.setLocation(workspace.getProjectRoot() + "/pom.xml");
+            inputSource.setLocation(workspace.getProjectRoot() + "pom.xml");
             return new MavenXpp3ReaderEx()
                     .read(dependencyDocument, true, inputSource);
         } catch (XmlPullParserException | IOException e) {

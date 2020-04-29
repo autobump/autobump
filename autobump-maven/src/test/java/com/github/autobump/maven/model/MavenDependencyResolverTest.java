@@ -5,11 +5,14 @@ import com.github.autobump.core.exceptions.NoDependencyFileFoundException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
+import com.github.autobump.maven.model.testclasses.MavenDependencyResolverTester;
+import junit.framework.Assert;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.UncheckedIOException;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
@@ -18,17 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenDependencyResolverTest {
 
-    private static final transient String TEST_DEPENDENCY_GROUP = "org.apache.derby";
-    private static final transient String TEST_DEPENDENCY_NAME = "derby";
-    private static final transient String TEST_DEPENDENCY_VERSION = "10.15.2.0";
-    private transient Workspace workspace;
-    private transient Workspace pluginWorkspace;
-    private transient DependencyResolver resolver;
+    private static final  String TEST_DEPENDENCY_GROUP = "org.apache.derby";
+    private static final  String TEST_DEPENDENCY_NAME = "derby";
+    private static final  String TEST_DEPENDENCY_VERSION = "10.15.2.0";
+    private Workspace workspace;
+    private Workspace pluginWorkspace;
+    private Workspace multi_module_workspace;
+    private DependencyResolver resolver;
 
     @BeforeEach
     public void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
+        multi_module_workspace = new Workspace("src/test/resources/multi_module_root");
         resolver = new MavenDependencyResolver();
     }
 
@@ -156,7 +161,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void testEmpltyPlugins() {
+    void testEmptyPlugins() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/emptyPlugins");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertEquals(Set.of(), plugins);
@@ -182,7 +187,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void pluginWithNonExestentProperties() {
+    void pluginWithNonExistentProperties() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/nonExistentproperties");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertEquals(
@@ -191,8 +196,15 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void tester() {
-        MavenDependencyResolver resolver = new MavenDependencyResolver();
-        resolver.resolve(new Workspace("D:\\school\\2019-2020\\stage\\autobump\\autobump\\autobump-maven\\src\\test\\resources\\multi_module_root"));
+    void testResolveMultiModuleProject() throws Exception {
+        Set<Dependency> dependencies = resolver.resolve(multi_module_workspace);
+        Assert.assertEquals(3, dependencies.size());
+    }
+
+    @Test
+    void testThrowsIO() {
+        MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
+        assertThrows(UncheckedIOException.class, () ->
+                tester.resolve(multi_module_workspace));
     }
 }

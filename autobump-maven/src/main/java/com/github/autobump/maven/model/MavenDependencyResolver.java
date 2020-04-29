@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-    private final transient MavenModelAnalyser mavenModelAnalyser;
+    final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
         this.mavenModelAnalyser = new MavenModelAnalyser();
@@ -42,18 +42,22 @@ public class MavenDependencyResolver implements DependencyResolver {
         return dependencies;
     }
 
-    private Set<Dependency> resolveModules(Workspace workspace) throws IOException {
+    public Set<Dependency> resolveModules(Workspace workspace) throws IOException {
         var dependencies = new HashSet<Dependency>();
-        Files.walkFileTree(Path.of(workspace.getProjectRoot()), Set.of(), 2, new SimpleFileVisitor<Path>(){
-            @Override
+        Files.walkFileTree(Path.of(workspace.getProjectRoot()),
+                Set.of(),
+                2,
+                new SimpleFileVisitor<Path>(){
+                @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                if (!file.toString().equals(workspace.getProjectRoot() + File.separator + "pom.xml") && file.endsWith("pom.xml")){
-                    Workspace ws = new Workspace(file.toAbsolutePath().toString().replace("pom.xml", ""));
-                    dependencies.addAll(resolve(ws));
+                    if (!file.toString().equals(workspace.getProjectRoot() + File.separator + "pom.xml") &&
+                            file.endsWith("pom.xml")){
+                        Workspace ws = new Workspace(file.toAbsolutePath().toString().replace("pom.xml", ""));
+                        dependencies.addAll(resolve(ws));
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+            });
         return dependencies;
     }
 
