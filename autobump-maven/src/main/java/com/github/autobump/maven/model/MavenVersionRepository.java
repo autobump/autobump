@@ -5,6 +5,7 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -16,11 +17,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@Slf4j
 public class MavenVersionRepository implements VersionRepository {
 
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
@@ -49,8 +51,10 @@ public class MavenVersionRepository implements VersionRepository {
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("Something went wrong while parsing the xml", e);
         } catch (IOException e) {
-            return new HashSet<>();
+            log.warn("Unable to read maven-metadata.xml for dependency {}", dependency, e);
         }
+
+        return Collections.emptySet();
     }
 
     private InputStream readMavenMetaDataForDependency(Dependency dependency) {
