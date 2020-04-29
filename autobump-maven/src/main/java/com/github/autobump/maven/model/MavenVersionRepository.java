@@ -4,7 +4,6 @@ import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -21,7 +20,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter
 @Slf4j
 public class MavenVersionRepository implements VersionRepository {
 
