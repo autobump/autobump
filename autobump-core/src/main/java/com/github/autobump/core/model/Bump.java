@@ -5,5 +5,5 @@ import lombok.Value;
 @Value
 public class Bump {
     Dependency dependency;
-    Version version;
+    Version updatedVersion;
 }
