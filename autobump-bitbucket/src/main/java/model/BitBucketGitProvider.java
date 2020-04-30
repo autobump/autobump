@@ -39,7 +39,7 @@ public class BitBucketGitProvider implements GitProvider {
                             API_LINK,
                             pullRequest.getRepoOwner(),
                             pullRequest.getProjectName()));
-            addHeaders(user.getUsername(), user.getPassword(), httppost);
+            addHeaders(httppost);
             addBody(pullRequest.getTitle(), pullRequest.getBranchName(), httppost);
             executeRequest(httppost);
         } catch (IOException e) {
@@ -54,8 +54,10 @@ public class BitBucketGitProvider implements GitProvider {
         httppost.setEntity(new StringEntity(data));
     }
 
-    private void addHeaders(String username, String password, HttpPost httppost) {
-        httppost.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encodeUsernamePassword(username, password));
+    private void addHeaders(HttpPost httppost) {
+        if (user != null) {
+            httppost.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encodeUsernamePassword(user.getUsername(), user.getPassword()));
+        }
         httppost.setHeader("Content-Type", "application/json");
     }
 
