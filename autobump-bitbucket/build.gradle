@@ -1,0 +1,17 @@
+plugins {
+    id 'war'
+}
+
+group 'com.github.autobump'
+version '1.0-SNAPSHOT'
+
+repositories {
+    maven { url "https://repo.spring.io/libs-release/" }
+}
+
+dependencies {
+    implementation project(':autobump-core')
+
+
+
+}
