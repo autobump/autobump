@@ -63,7 +63,8 @@ public class MavenDependencyBumper implements DependencyBumper {
         for (int i = 0; i < out.size(); i++) {
             String line = out.get(i);
             if (line.contains("<" + groupname + ">")) {
-                out.set(i, line.replace(bump.getDependency().getVersion(), bump.getUpdatedVersion().getVersionNumber()));
+                out.set(i, line.replace(bump.getDependency().getVersion(),
+                        bump.getUpdatedVersion().getVersionNumber()));
             }
         }
     }

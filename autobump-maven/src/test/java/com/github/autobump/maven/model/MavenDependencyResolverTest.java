@@ -156,7 +156,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void testEmpltyPlugins() {
+    void testEmptyPlugins() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/emptyPlugins");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertEquals(Set.of(), plugins);
@@ -182,7 +182,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void pluginWithNonExestentProperties() {
+    void pluginWithNonExistentProperties() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/nonExistentproperties");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertEquals(
