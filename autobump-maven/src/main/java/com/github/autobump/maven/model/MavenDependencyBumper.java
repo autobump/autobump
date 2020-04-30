@@ -34,7 +34,8 @@ public class MavenDependencyBumper implements DependencyBumper {
     public void bump(Workspace workspace, Bump bump) {
         try (Reader reader = workspace.getDependencyDocument(DEPENDENCY_FILENAME)) {
             InputLocation versionLocation = null;
-            if (bump.getDependency() instanceof MavenDependency && ((MavenDependency) bump.getDependency()).getInputLocation() != null){
+            if (bump.getDependency() instanceof MavenDependency &&
+                    ((MavenDependency) bump.getDependency()).getInputLocation() != null){
                 versionLocation = ((MavenDependency) bump.getDependency()).getInputLocation();
             }else {
                 versionLocation = findVersionLine(reader, bump.getDependency(), workspace.getProjectRoot());
