@@ -30,11 +30,11 @@ public class JGitGitClient implements GitClient {
     @Override
     public void CommitToNewBranch(Workspace workspace, Bump bump) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-                createBranch(bump, git);
-                commitAndPushToNewBranch(bump, git);
+            createBranch(bump, git);
+            commitAndPushToNewBranch(bump, git);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        } catch (GitAPIException g){
+        } catch (GitAPIException g) {
             throw new GitException("Something went wrong while creating the new branch or committing to it", g);
         }
     }
