@@ -52,7 +52,7 @@ class JGitGitClientTest {
 
     @Test
     void testWrongUrl() {
-        assertThrows(GitException.class,() ->
+        assertThrows(GitException.class, () ->
                 new JGitGitClient().clone(new URI("wrong")));
     }
 
@@ -103,7 +103,7 @@ class JGitGitClientTest {
             if (MAVENTYPE.equals(dependencyType)) {
                 File myfile = new File(repository.getDirectory().getParent(), "pom.xml");
                 createContent(myfile, dependencyType);
-            }else {
+            } else {
                 new File(repository.getDirectory().getParent(), "dummy");
             }
 
@@ -220,5 +220,4 @@ class JGitGitClientTest {
             throw new CanceledException("The call was cancelled");
         }
     }
-
 }
