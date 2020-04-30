@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
     private static final String FILENAME = "pom.xml";
+    private static final String LOCATIONKEY = "version";
     private final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
@@ -87,7 +88,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
                         .type(DependencyType.PLUGIN)
-                        .inputLocation(plugin.getLocation("version"))
+                        .inputLocation(plugin.getLocation(LOCATIONKEY))
                         .version(mavenModelAnalyser.getVersionFromProperties(model, plugin.getVersion()))
                         .build())
                 .filter(plugin -> plugin.getVersion() != null)
@@ -106,11 +107,11 @@ public class MavenDependencyResolver implements DependencyResolver {
                             .name(dep.getArtifactId())
                             .version(dep.getVersion())
                             .type(DependencyType.DEPENDENCY)
-                            .inputLocation(dep.getLocation("version"))
+                            .inputLocation(dep.getLocation(LOCATIONKEY))
                             .build())
                     .collect(Collectors.toSet());
         }
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     private Set<Dependency> getDependencies(Model model) {
@@ -122,7 +123,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())
                         .type(DependencyType.DEPENDENCY)
-                        .inputLocation(dependency.getLocation("version"))
+                        .inputLocation(dependency.getLocation(LOCATIONKEY))
                         .version(mavenModelAnalyser.getVersionFromProperties(model, dependency.getVersion()))
                         .build())
                 .filter(dependency -> dependency.getVersion() != null)
