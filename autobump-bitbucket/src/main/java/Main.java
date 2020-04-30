@@ -1,3 +1,5 @@
+import model.BitBucketGitProvider;
+
 import java.io.IOException;
 
 public class Main {
