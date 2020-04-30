@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class MavenWorkspaceTest {
-    private transient Workspace workspace;
+    private  Workspace workspace;
 
     @BeforeEach
     void setUp() throws Exception {

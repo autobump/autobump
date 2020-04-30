@@ -7,12 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MavenVersionTest {
-    private transient MavenVersion mv1;
-    private transient MavenVersion mv2;
-    private transient MavenVersion mv3;
-    private transient MavenVersion mv4;
-    private transient MavenVersion mv5;
-    private transient MavenVersion mv6;
+    private  MavenVersion mv1;
+    private  MavenVersion mv2;
+    private  MavenVersion mv3;
+    private  MavenVersion mv4;
+    private  MavenVersion mv5;
+    private  MavenVersion mv6;
 
     @BeforeEach
     void setUp(){

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JGitGitClientTest {
 
-    transient Server server;
+    Server server;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -43,7 +43,7 @@ class JGitGitClientTest {
 
     @Test
     void testWrongUrl() {
-        assertThrows(GitException.class,() ->
+        assertThrows(GitException.class, () ->
                 new JGitGitClient().clone(new URI("wrong")));
     }
 
@@ -94,7 +94,7 @@ class JGitGitClientTest {
             if ("Maven".equals(dependencyType)) {
                 File myfile = new File(repository.getDirectory().getParent(), "pom.xml");
                 createContent(myfile, dependencyType);
-            }else {
+            } else {
                 new File(repository.getDirectory().getParent(), "dummy");
             }
 

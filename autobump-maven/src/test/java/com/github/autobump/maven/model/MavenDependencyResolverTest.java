@@ -10,6 +10,8 @@ import org.apache.maven.model.InputSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
@@ -18,22 +20,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenDependencyResolverTest {
 
-    private static final transient String TEST_DEPENDENCY_GROUP = "org.apache.derby";
-    private static final transient String TEST_DEPENDENCY_NAME = "derby";
-    private static final transient String TEST_DEPENDENCY_VERSION = "10.15.2.0";
-    private transient Workspace workspace;
-    private transient Workspace pluginWorkspace;
-    private transient DependencyResolver resolver;
+    private static final  String TEST_DEPENDENCY_GROUP = "org.apache.derby";
+    private static final  String TEST_DEPENDENCY_NAME = "derby";
+    private static final  String TEST_DEPENDENCY_VERSION = "10.15.2.0";
+    private Workspace workspace;
+    private Workspace pluginWorkspace;
+    private Workspace multiModuleWorkspace;
+    private DependencyResolver resolver;
 
     @BeforeEach
     public void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
+        multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
         resolver = new MavenDependencyResolver();
     }
 
     @Test
-    public void TestSuccesresolve() {
+    public void TestSuccessresolve() {
         Set<Dependency> deps = resolver.resolve(workspace);
         InputSource is = new InputSource();
         is.setLocation("src/test/resources/project_root/pom.xml");
@@ -49,7 +53,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestSuccesresolveProperties() {
+    public void TestSuccessresolveProperties() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties");
         Set<Dependency> deps = resolver.resolve(ws);
         InputSource is = new InputSource();
@@ -156,7 +160,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void testEmpltyPlugins() {
+    void testEmptyPlugins() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/emptyPlugins");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertEquals(Set.of(), plugins);
@@ -182,11 +186,32 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void pluginWithNonExestentProperties() {
+    void pluginWithNonExistentProperties() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/nonExistentproperties");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertEquals(
                 Set.of(),
                 plugins);
+    }
+
+    @Test
+    void testResolveMultiModuleProject() throws Exception {
+        Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
+        assertEquals(3, dependencies.size());
+    }
+
+    @Test
+    void testThrowsIO() {
+
+        class MavenDependencyResolverTester extends MavenDependencyResolver {
+            @Override
+            public void walkFiles(Workspace workspace, Set<Dependency> dependencies) throws IOException {
+                throw new IOException();
+            }
+        }
+
+        MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
+        assertThrows(UncheckedIOException.class, () ->
+                tester.resolve(multiModuleWorkspace));
     }
 }

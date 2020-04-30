@@ -1,12 +1,14 @@
 package com.github.autobump.core.model;
 
-import lombok.Data;
+import lombok.Value;
+import lombok.experimental.NonFinal;
 import lombok.experimental.SuperBuilder;
 
-@Data
+@NonFinal
+@Value
 @SuperBuilder
 public class Dependency {
-    final String group;
-    final String name;
-    final String version;
+    String group;
+    String name;
+    String version;
 }
