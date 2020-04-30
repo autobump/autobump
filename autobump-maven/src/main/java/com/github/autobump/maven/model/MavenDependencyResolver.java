@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,37 +34,41 @@ public class MavenDependencyResolver implements DependencyResolver {
         Model model = mavenModelAnalyser.getModel(workspace);
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
-        var modules = model.getModules();
+        dependencies.addAll(resolveModules(workspace, model.getModules()));
+        return dependencies;
+    }
+
+    private Set<Dependency> resolveModules(Workspace workspace, List<String> modules) {
         if (!modules.isEmpty()) {
             try {
-                dependencies.addAll(resolveModules(workspace));
+                var dependencies = new HashSet<Dependency>();
+                walkFiles(workspace, dependencies);
+                return dependencies;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
         }
-        return dependencies;
+        return Collections.emptySet();
     }
 
-    public Set<Dependency> resolveModules(Workspace workspace) throws IOException {
-        var dependencies = new HashSet<Dependency>();
+    public void walkFiles(Workspace workspace, Set<Dependency> dependencies) throws IOException {
         Files.walkFileTree(Path.of(workspace.getProjectRoot()),
                 Set.of(),
                 2,
-                new SimpleFileVisitor<Path>(){
-                @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (!file.toString().equals(workspace.getProjectRoot() + File.separator + FILENAME) &&
-                             file.getFileName().toString().equals(FILENAME)){
-                        Workspace ws = new Workspace(file
-                                .toAbsolutePath()
-                                .toString()
-                                .replace(File.separator + FILENAME, ""));
-                        dependencies.addAll(resolve(ws));
+                new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                        if (!file.toString().equals(workspace.getProjectRoot() + File.separator + FILENAME) &&
+                                file.getFileName().toString().equals(FILENAME)) {
+                            Workspace ws = new Workspace(file
+                                    .toAbsolutePath()
+                                    .toString()
+                                    .replace(File.separator + FILENAME, ""));
+                            dependencies.addAll(resolve(ws));
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        return dependencies;
+                });
     }
 
     private Set<Dependency> getPlugins(Model model) {

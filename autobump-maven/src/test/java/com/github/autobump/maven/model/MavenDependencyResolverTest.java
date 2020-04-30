@@ -5,12 +5,12 @@ import com.github.autobump.core.exceptions.NoDependencyFileFoundException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
-import com.github.autobump.maven.model.testclasses.MavenDependencyResolverTester;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Set;
 
@@ -202,6 +202,14 @@ public class MavenDependencyResolverTest {
 
     @Test
     void testThrowsIO() {
+
+        class MavenDependencyResolverTester extends MavenDependencyResolver {
+            @Override
+            public void walkFiles(Workspace workspace, Set<Dependency> dependencies) throws IOException {
+                throw new IOException();
+            }
+        }
+
         MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
         assertThrows(UncheckedIOException.class, () ->
                 tester.resolve(multiModuleWorkspace));
