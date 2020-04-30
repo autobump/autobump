@@ -164,7 +164,7 @@ class JGitGitClientTest {
         try(Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())){
             Bump bump = getBumpForCreationBranch();
 
-            client.CommitToNewBranch(workspace, bump);
+            client.commitToNewBranch(workspace, bump);
 
             assertEquals(2, git.branchList().call().size());
             assertEquals(String.format("refs/heads/autobump/%s/%s/%s",
@@ -179,7 +179,7 @@ class JGitGitClientTest {
     void commitNewBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
         Workspace invalidWorkspace = new Workspace("test/test/test");
         Bump bump = getBumpForCreationBranch();
-        assertThrows(UncheckedIOException.class, () -> client.CommitToNewBranch(invalidWorkspace, bump));
+        assertThrows(UncheckedIOException.class, () -> client.commitToNewBranch(invalidWorkspace, bump));
     }
 
     @Test
@@ -188,7 +188,7 @@ class JGitGitClientTest {
         JGitGitClientTester testClient = new JGitGitClientTester();
         Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
         Bump bump = getBumpForCreationBranch();
-        assertThrows(GitException.class, () -> testClient.CommitToNewBranch(workspace, bump));
+        assertThrows(GitException.class, () -> testClient.commitToNewBranch(workspace, bump));
         stopServer();
     }
 

@@ -28,7 +28,7 @@ public class JGitGitClient implements GitClient {
     }
 
     @Override
-    public void CommitToNewBranch(Workspace workspace, Bump bump) {
+    public void commitToNewBranch(Workspace workspace, Bump bump) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             createBranch(bump, git);
             commitAndPushToNewBranch(bump, git);
