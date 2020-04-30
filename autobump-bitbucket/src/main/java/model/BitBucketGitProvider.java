@@ -34,7 +34,11 @@ public class BitBucketGitProvider implements GitProvider {
     @Override
     public void MakePullRequest(PullRequest pullRequest) {
         try {
-            HttpPost httppost = new HttpPost(String.format("%s/repositories/%s/%s/pullrequests", API_LINK, pullRequest.getRepoOwner(), pullRequest.getProjectName()));
+            HttpPost httppost = new HttpPost(
+                    String.format("%s/repositories/%s/%s/pullrequests",
+                            API_LINK,
+                            pullRequest.getRepoOwner(),
+                            pullRequest.getProjectName()));
             addHeaders(user.getUsername(), user.getPassword(), httppost);
             addBody(pullRequest.getTitle(), pullRequest.getBranchName(), httppost);
             executeRequest(httppost);
@@ -44,7 +48,9 @@ public class BitBucketGitProvider implements GitProvider {
     }
 
     private void addBody(String title, String branchName, HttpPost httppost) throws UnsupportedEncodingException {
-        String data = String.format("{\"title\": \"%s\",\"source\": {\"branch\": {\"name\": \"%s\"}}}", title, branchName);
+        String data = String.format("{\"title\": \"%s\",\"source\": {\"branch\": {\"name\": \"%s\"}}}",
+                title,
+                branchName);
         httppost.setEntity(new StringEntity(data));
     }
 
@@ -65,6 +71,9 @@ public class BitBucketGitProvider implements GitProvider {
     }
 
     private String encodeUsernamePassword(String username, String password) {
-        return Base64.getEncoder().encodeToString((String.format("%s:%s", username, password)).getBytes(StandardCharsets.UTF_8));
+        return Base64
+                .getEncoder()
+                .encodeToString(String.format("%s:%s", username, password)
+                        .getBytes(StandardCharsets.UTF_8));
     }
 }
