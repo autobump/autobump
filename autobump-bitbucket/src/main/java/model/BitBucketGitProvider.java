@@ -7,24 +7,23 @@ import exception.RemoteNotFoundException;
 import exception.UnauthorizedException;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 
 @Setter
 @Getter
 public class BitBucketGitProvider implements GitProvider {
     private static final String API_LINK = "https://api.bitbucket.org/2.0";
-    private final HttpClient httpClient = HttpClients.createDefault();
+    private final HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(30)).build();
     private BitBucketAccount user;
 
     public BitBucketGitProvider(BitBucketAccount user) {
@@ -34,40 +33,41 @@ public class BitBucketGitProvider implements GitProvider {
     @Override
     public void MakePullRequest(PullRequest pullRequest) {
         try {
-            HttpPost httppost = new HttpPost(
-                    String.format("%s/repositories/%s/%s/pullrequests",
+            HttpRequest request = HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(getBody(pullRequest.getTitle(),
+                            pullRequest.getBranchName())))
+                    .uri(URI.create(String.format("%s/repositories/%s/%s/pullrequests",
                             API_LINK,
                             pullRequest.getRepoOwner(),
-                            pullRequest.getProjectName()));
-            addHeaders(httppost);
-            addBody(pullRequest.getTitle(), pullRequest.getBranchName(), httppost);
-            executeRequest(httppost);
+                            pullRequest.getProjectName())))
+                    .header("Authorization",
+                            "Basic " + encodeUsernamePassword(user.getUsername(), user.getPassword()))
+                    .header("Content-Type",
+                            "application/json")
+                    .build();
+
+            executeRequest(request);
+
         } catch (IOException e) {
             throw new UncheckedIOException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
-    private void addBody(String title, String branchName, HttpPost httppost) throws UnsupportedEncodingException {
-        String data = String.format("{\"title\": \"%s\",\"source\": {\"branch\": {\"name\": \"%s\"}}}",
+    private String getBody(String title, String branchName) {
+        return String.format("{\"title\": \"%s\",\"source\": {\"branch\": {\"name\": \"%s\"}}}",
                 title,
                 branchName);
-        httppost.setEntity(new StringEntity(data));
     }
 
-    private void addHeaders(HttpPost httppost) {
-        if (user != null) {
-            httppost.setHeader(HttpHeaders.AUTHORIZATION, "Basic " + encodeUsernamePassword(user.getUsername(), user.getPassword()));
-        }
-        httppost.setHeader("Content-Type", "application/json");
-    }
-
-    private void executeRequest(HttpPost httppost) throws IOException {
-        HttpResponse response = httpClient.execute(httppost);
-        if (response.getStatusLine().getStatusCode() == 404) {
+    private void executeRequest(HttpRequest request) throws IOException, InterruptedException {
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
             throw new RemoteNotFoundException("Could not find remote repository");
-        } else if (response.getStatusLine().getStatusCode() == 401) {
+        } else if (response.statusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
             throw new UnauthorizedException("the user is not authorized to make a pull request on this repository");
-        } else if (response.getStatusLine().getStatusCode() == 400) {
+        } else if (response.statusCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
             throw new BranchNotFoundException("could not find branch");
         }
     }
