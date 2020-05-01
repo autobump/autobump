@@ -184,6 +184,20 @@ class JGitGitClientTest {
 
     @Test
     void commitToNewBranch_shouldThrowGitException() throws Exception {
+
+        class JGitGitClientTester extends JGitGitClient {
+
+            @Override
+            public void createBranch(Bump bump, Git git) throws CanceledException {
+                throw new CanceledException("The call was cancelled");
+            }
+
+            @Override
+            public void commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
+                throw new CanceledException("The call was cancelled");
+            }
+        }
+
         startServer(MAVENTYPE);
         JGitGitClientTester testClient = new JGitGitClientTester();
         Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
@@ -206,18 +220,5 @@ class JGitGitClientTest {
             }
         };
         return new Bump(dep, version);
-    }
-
-    static class JGitGitClientTester extends JGitGitClient {
-
-        @Override
-        public void createBranch(Bump bump, Git git) throws CanceledException {
-            throw new CanceledException("The call was cancelled");
-        }
-
-        @Override
-        public void commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
-            throw new CanceledException("The call was cancelled");
-        }
     }
 }
