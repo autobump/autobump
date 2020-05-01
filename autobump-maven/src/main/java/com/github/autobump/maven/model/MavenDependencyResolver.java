@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
     private static final String FILENAME = "pom.xml";
+    private static final String LOCATION_KEY = "version";
     private final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
@@ -86,7 +87,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
                         .type(DependencyType.PLUGIN)
-                        .inputLocation(plugin.getLocation("version"))
+                        .inputLocation(plugin.getLocation(LOCATION_KEY))
                         .version(mavenModelAnalyser.getVersionFromProperties(model, plugin.getVersion()))
                         .build())
                 .filter(plugin -> plugin.getVersion() != null)
@@ -99,7 +100,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         if (parent != null) {
             dependencies.add(MavenDependency
                     .builder()
-                    .inputLocation(parent.getLocation("version"))
+                    .inputLocation(parent.getLocation(LOCATION_KEY))
                     .group(parent.getGroupId())
                     .name(parent.getArtifactId())
                     .version(parent.getVersion())
@@ -118,7 +119,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())
                         .type(DependencyType.DEPENDENCY)
-                        .inputLocation(dependency.getLocation("version"))
+                        .inputLocation(dependency.getLocation(LOCATION_KEY))
                         .version(mavenModelAnalyser.getVersionFromProperties(model, dependency.getVersion()))
                         .build())
                 .filter(dependency -> dependency.getVersion() != null)
