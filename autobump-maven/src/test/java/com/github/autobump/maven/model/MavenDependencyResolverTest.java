@@ -214,4 +214,9 @@ public class MavenDependencyResolverTest {
         assertThrows(UncheckedIOException.class, () ->
                 tester.resolve(multiModuleWorkspace));
     }
+
+    @Test
+    void testProfiles(){
+
+    }
 }
