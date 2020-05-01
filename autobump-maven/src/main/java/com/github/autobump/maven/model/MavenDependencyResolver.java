@@ -34,6 +34,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         Model model = mavenModelAnalyser.getModel(workspace);
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
+        dependencies.addAll(getParentDependency(model));
         dependencies.addAll(resolveModules(workspace, model.getModules()));
         return dependencies;
     }
@@ -90,6 +91,22 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .build())
                 .filter(plugin -> plugin.getVersion() != null)
                 .collect(Collectors.toSet());
+    }
+
+    private Set<Dependency> getParentDependency(Model model){
+        var parent = model.getParent();
+        Set<Dependency> dependencies = new HashSet<>();
+        if (parent != null) {
+            dependencies.add(MavenDependency
+                    .builder()
+                    .inputLocation(parent.getLocation("version"))
+                    .group(parent.getGroupId())
+                    .name(parent.getArtifactId())
+                    .version(parent.getVersion())
+                    .type(DependencyType.PARENT_DEPENDENCY)
+                    .build());
+        }
+        return dependencies;
     }
 
     private Set<Dependency> getDependencies(Model model) {
