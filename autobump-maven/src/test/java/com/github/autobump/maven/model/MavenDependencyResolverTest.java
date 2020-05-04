@@ -20,13 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenDependencyResolverTest {
 
-    private static final String TEST_DEPENDENCY_GROUP = "org.apache.derby";
-    private static final String TEST_DEPENDENCY_NAME = "derby";
-    private static final String TEST_DEPENDENCY_VERSION = "10.15.2.0";
+    public static final String TEST_DEPENDENCY_GROUP = "org.apache.derby";
+    public static final String TEST_DEPENDENCY_NAME = "derby";
+    public static final String TEST_DEPENDENCY_VERSION = "10.15.2.0";
     private Workspace workspace;
     private Workspace pluginWorkspace;
     private Workspace multiModuleWorkspace;
-    private Workspace profilesWorkspace;
     private DependencyResolver resolver;
 
     @BeforeEach
@@ -34,7 +33,6 @@ public class MavenDependencyResolverTest {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
         multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
-        profilesWorkspace = new Workspace("src/test/resources/profiles_root");
         resolver = new MavenDependencyResolver();
     }
 
@@ -217,83 +215,7 @@ public class MavenDependencyResolverTest {
                 tester.resolve(multiModuleWorkspace));
     }
 
-    @Test
-    void testProfiles() {
 
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
-                MavenDependency.builder()
-                        .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version(TEST_DEPENDENCY_VERSION)
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .build()
-        ));
-
-    }
-
-    @Test
-    void testPluginProfiles() {
-
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
-                MavenDependency.builder()
-                        .type(DependencyType.PROFILE_PLUGIN)
-                        .version("10.13.2.0")
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .build()
-        ));
-
-    }
-
-    @Test
-    void testDependencyManagementProfiles() {
-
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
-                MavenDependency.builder()
-                        .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version("10.14.2.0")
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .build()
-        ));
-
-    }
-
-    @Test
-    void testPropertiesInProfiles() {
-
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
-                MavenDependency.builder()
-                        .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version("10.16.2.0")
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .build()
-        ));
-
-    }
-
-    @Test
-    void testMainPropertiesInProfiles() {
-
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
-                MavenDependency.builder()
-                        .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version("10.17.2.0")
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .build()
-        ));
-
-    }
-
-    @Test
-    void testemptyProfile() {
-
-        profilesWorkspace = new Workspace(profilesWorkspace.getProjectRoot() + "/empty");
-        assertEquals(0, resolver.resolve(profilesWorkspace).size());
-
-    }
 
 
 
