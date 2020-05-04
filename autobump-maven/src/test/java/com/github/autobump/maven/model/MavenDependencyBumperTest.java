@@ -69,8 +69,6 @@ class MavenDependencyBumperTest {
         assertTrue(dependencies.contains(updatedDep));
     }
 
-
-
     @Test
     void testBumpProperty() {
         Dependency dependency = MavenDependency.builder()

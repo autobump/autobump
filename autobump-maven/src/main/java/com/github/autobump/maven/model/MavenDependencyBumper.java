@@ -62,14 +62,15 @@ public class MavenDependencyBumper implements DependencyBumper {
         out.set(versionLocation.getLineNumber() - 1,
                 out.get(versionLocation.getLineNumber() - 1)
                         .replace(bump.getDependency().getVersion(),
-                                bump.getVersion().getVersionNumber()));
+                                bump.getUpdatedVersion().getVersionNumber()));
     }
 
     private void changeProperty(List<String> out, Bump bump, String groupname) {
         for (int i = 0; i < out.size(); i++) {
             String line = out.get(i);
             if (line.contains("<" + groupname + ">")) {
-                out.set(i, line.replace(bump.getDependency().getVersion(), bump.getVersion().getVersionNumber()));
+                out.set(i, line.replace(bump.getDependency().getVersion(),
+                        bump.getUpdatedVersion().getVersionNumber()));
             }
         }
     }

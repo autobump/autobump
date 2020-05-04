@@ -13,7 +13,7 @@ public class MavenWorkspaceTest {
     private  Workspace workspace;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
     }
 
