@@ -24,7 +24,8 @@ import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
     private static final String FILENAME = "pom.xml";
-    private static final String LOCATIONKEY = "version";
+    private static final String LOCATION_KEY = "version";
+
     private final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
@@ -36,6 +37,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         Model model = mavenModelAnalyser.getModel(workspace);
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
+        dependencies.addAll(getParentDependency(model));
         dependencies.addAll(resolveModules(workspace, model.getModules()));
         dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
         return dependencies;
@@ -88,12 +90,13 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
                         .type(DependencyType.PLUGIN)
-                        .inputLocation(plugin.getLocation(LOCATIONKEY))
+                        .inputLocation(plugin.getLocation(LOCATION_KEY))
                         .version(mavenModelAnalyser.getVersionFromProperties(model, plugin.getVersion()))
                         .build())
                 .filter(plugin -> plugin.getVersion() != null)
                 .collect(Collectors.toSet());
     }
+
 
     private Set<Dependency> getDependenciesFromDependencyManagementSection(Model model){
         DependencyManagement mng = model.getDependencyManagement();
@@ -112,6 +115,21 @@ public class MavenDependencyResolver implements DependencyResolver {
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
+  
+    private Set<Dependency> getParentDependency(Model model){
+        var parent = model.getParent();
+        Set<Dependency> dependencies = new HashSet<>();
+        if (parent != null) {
+            dependencies.add(MavenDependency
+                    .builder()
+                    .inputLocation(parent.getLocation(LOCATION_KEY))
+                    .group(parent.getGroupId())
+                    .name(parent.getArtifactId())
+                    .version(parent.getVersion())
+                    .type(DependencyType.PARENT_DEPENDENCY)
+                    .build());
+        }
+        return dependencies;
     }
 
     private Set<Dependency> getDependencies(Model model) {
@@ -123,7 +141,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())
                         .type(DependencyType.DEPENDENCY)
-                        .inputLocation(dependency.getLocation(LOCATIONKEY))
+                        .inputLocation(dependency.getLocation(LOCATION_KEY))
                         .version(mavenModelAnalyser.getVersionFromProperties(model, dependency.getVersion()))
                         .build())
                 .filter(dependency -> dependency.getVersion() != null)
