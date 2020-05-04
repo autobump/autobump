@@ -39,7 +39,12 @@ public class MavenDependencyResolver implements DependencyResolver {
     @Override
     public Set<Dependency> resolve(Workspace workspace, Set<Dependency> toBeIgnored) {
         Model model = mavenModelAnalyser.getModel(workspace);
-        toBeIgnored.add(Dependency.builder().name(model.getArtifactId()).group(model.getGroupId()).version(model.getVersion()).build());
+        toBeIgnored.add(Dependency
+                .builder()
+                .name(model.getArtifactId())
+                .group(model.getGroupId())
+                .version(model.getVersion())
+                .build());
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
@@ -69,7 +74,8 @@ public class MavenDependencyResolver implements DependencyResolver {
         return Collections.emptySet();
     }
 
-    public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored) throws IOException {
+    public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored)
+            throws IOException {
         Files.walkFileTree(Path.of(workspace.getProjectRoot()),
                 Set.of(),
                 2,

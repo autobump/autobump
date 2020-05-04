@@ -10,8 +10,6 @@ import org.apache.maven.model.InputSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Set;
 
 import static junit.framework.Assert.assertEquals;
@@ -25,7 +23,6 @@ public class MavenDependencyResolverTest {
     private static final  String TEST_DEPENDENCY_VERSION = "10.15.2.0";
     private Workspace workspace;
     private Workspace pluginWorkspace;
-    private Workspace multiModuleWorkspace;
     private Workspace parentDependencyWorkspace;
     private DependencyResolver resolver;
 
@@ -33,7 +30,6 @@ public class MavenDependencyResolverTest {
     public void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
-        multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
         parentDependencyWorkspace = new Workspace("src/test/resources/parent_dependency_root");
         resolver = new MavenDependencyResolver();
     }
@@ -196,33 +192,7 @@ public class MavenDependencyResolverTest {
                 plugins);
     }
 
-    @Test
-    void testResolveMultiModuleProject() {
-        Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
-        assertEquals(3, dependencies.size());
-    }
 
-    @Test
-    void testResolveMultiModuleProject_withDependencyManagementSection() {
-        Workspace ws = new Workspace("src/test/resources/multi_module_root_depmngt");
-        Set<Dependency> dependencies = resolver.resolve(ws);
-        assertEquals(4, dependencies.size());
-    }
-
-    @Test
-    void testThrowsIO() {
-
-        class MavenDependencyResolverTester extends MavenDependencyResolver {
-            @Override
-            public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored) throws IOException {
-                throw new IOException();
-            }
-        }
-
-        MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
-        assertThrows(UncheckedIOException.class, () ->
-                tester.resolve(multiModuleWorkspace));
-    }
 
     @Test
     void testGetParedntDependency(){
