@@ -197,9 +197,16 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void testResolveMultiModuleProject() throws Exception {
+    void testResolveMultiModuleProject() {
         Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
         assertEquals(4, dependencies.size());
+    }
+
+    @Test
+    void testResolveMultiModuleProject_withDependencyManagementSection() {
+        Workspace ws = new Workspace("src/test/resources/multi_module_root_depmngt");
+        Set<Dependency> dependencies = resolver.resolve(ws);
+        assertEquals(5, dependencies.size());
     }
 
     @Test
