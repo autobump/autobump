@@ -3,6 +3,7 @@ package com.github.autobump.maven.model;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class MavenDependencyResolver implements DependencyResolver {
     private static final String FILENAME = "pom.xml";
     private static final String LOCATION_KEY = "version";
+
     private final MavenModelAnalyser mavenModelAnalyser;
 
     public MavenDependencyResolver() {
@@ -37,6 +39,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
         dependencies.addAll(resolveModules(workspace, model.getModules()));
+        dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
         return dependencies;
     }
 
@@ -92,6 +95,26 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .build())
                 .filter(plugin -> plugin.getVersion() != null)
                 .collect(Collectors.toSet());
+    }
+
+
+    private Set<Dependency> getDependenciesFromDependencyManagementSection(Model model) {
+        DependencyManagement mng = model.getDependencyManagement();
+        if (mng != null) {
+            return mng
+                    .getDependencies()
+                    .stream()
+                    .filter(dep -> dep.getVersion() != null)
+                    .map(dep -> MavenDependency.builder()
+                            .group(dep.getGroupId())
+                            .name(dep.getArtifactId())
+                            .version(dep.getVersion())
+                            .type(DependencyType.DEPENDENCY)
+                            .inputLocation(dep.getLocation(LOCATION_KEY))
+                            .build())
+                    .collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
     }
 
     private Set<Dependency> getParentDependency(Model model){
