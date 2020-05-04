@@ -206,7 +206,7 @@ public class MavenDependencyResolverTest {
     void testResolveMultiModuleProject_withDependencyManagementSection() {
         Workspace ws = new Workspace("src/test/resources/multi_module_root_depmngt");
         Set<Dependency> dependencies = resolver.resolve(ws);
-        assertEquals(4, dependencies.size());
+        assertEquals(5, dependencies.size());
     }
 
     @Test

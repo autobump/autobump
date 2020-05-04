@@ -98,9 +98,9 @@ public class MavenDependencyResolver implements DependencyResolver {
     }
 
 
-    private Set<Dependency> getDependenciesFromDependencyManagementSection(Model model){
+    private Set<Dependency> getDependenciesFromDependencyManagementSection(Model model) {
         DependencyManagement mng = model.getDependencyManagement();
-        if (mng != null){
+        if (mng != null) {
             return mng
                     .getDependencies()
                     .stream()
@@ -110,12 +110,13 @@ public class MavenDependencyResolver implements DependencyResolver {
                             .name(dep.getArtifactId())
                             .version(dep.getVersion())
                             .type(DependencyType.DEPENDENCY)
-                            .inputLocation(dep.getLocation(LOCATIONKEY))
+                            .inputLocation(dep.getLocation(LOCATION_KEY))
                             .build())
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
-  
+    }
+
     private Set<Dependency> getParentDependency(Model model){
         var parent = model.getParent();
         Set<Dependency> dependencies = new HashSet<>();
