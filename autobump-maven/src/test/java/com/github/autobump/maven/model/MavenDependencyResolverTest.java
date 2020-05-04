@@ -27,6 +27,7 @@ public class MavenDependencyResolverTest {
     private Workspace pluginWorkspace;
     private Workspace multiModuleWorkspace;
     private Workspace dependencyManagementWorkspace;
+    private Workspace profilesWorkspace;
     private DependencyResolver resolver;
 
     @BeforeEach
@@ -35,6 +36,7 @@ public class MavenDependencyResolverTest {
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
         multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
         dependencyManagementWorkspace = new Workspace("src/test/resources/project_root/dependencyManagement");
+        profilesWorkspace = new Workspace("src/test/resources/profiles_root");
         resolver = new MavenDependencyResolver();
     }
 
@@ -236,5 +238,71 @@ public class MavenDependencyResolverTest {
     @Test
     void testProfiles() {
 
+        assertTrue(resolver.resolve(profilesWorkspace).contains(
+                MavenDependency.builder()
+                        .type(DependencyType.PROFILE_DEPENDENCY)
+                        .version(TEST_DEPENDENCY_VERSION)
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
+                        .build()
+        ));
+
     }
+
+    @Test
+    void testPluginProfiles() {
+
+        assertTrue(resolver.resolve(profilesWorkspace).contains(
+                MavenDependency.builder()
+                        .type(DependencyType.PROFILE_PLUGIN)
+                        .version("10.13.2.0")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
+                        .build()
+        ));
+
+    }
+
+    @Test
+    void testDependencyManagementProfiles() {
+
+        assertTrue(resolver.resolve(profilesWorkspace).contains(
+                MavenDependency.builder()
+                        .type(DependencyType.PROFILE_DEPENDENCY)
+                        .version("10.14.2.0")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
+                        .build()
+        ));
+
+    }
+
+    @Test
+    void testPropertiesInProfiles() {
+
+        assertTrue(resolver.resolve(profilesWorkspace).contains(
+                MavenDependency.builder()
+                        .type(DependencyType.PROFILE_DEPENDENCY)
+                        .version("10.16.2.0")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
+                        .build()
+        ));
+
+    }
+
+    @Test
+    void testMainPropertiesInProfiles() {
+
+        assertTrue(resolver.resolve(profilesWorkspace).contains(
+                MavenDependency.builder()
+                        .type(DependencyType.PROFILE_DEPENDENCY)
+                        .version("10.17.2.0")
+                        .group(TEST_DEPENDENCY_GROUP)
+                        .name(TEST_DEPENDENCY_NAME)
+                        .build()
+        ));
+
+    }
+
 }
