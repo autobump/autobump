@@ -67,7 +67,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        var response = bitBucketGitProvider.MakePullRequest(pullRequest);
+        var response = bitBucketGitProvider.makePullRequest(pullRequest);
         var expected = PullRequestResponse.builder()
                 .type("pullrequest")
                 .description("")
@@ -87,7 +87,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(RemoteNotFoundException.class, () -> bitBucketGitProvider.MakePullRequest(pullRequest));
+        assertThrows(RemoteNotFoundException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
     @Test
@@ -98,7 +98,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(BranchNotFoundException.class, () -> bitBucketGitProvider.MakePullRequest(pullRequest));
+        assertThrows(BranchNotFoundException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
     @Test
@@ -109,7 +109,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(UnauthorizedException.class, () -> bitBucketGitProvider.MakePullRequest(pullRequest));
+        assertThrows(UnauthorizedException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
     @Test
@@ -120,6 +120,6 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(RuntimeException.class, () -> bitBucketGitProvider.MakePullRequest(pullRequest));
+        assertThrows(RuntimeException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 }

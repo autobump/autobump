@@ -22,7 +22,7 @@ public class BitBucketGitProvider implements GitProvider {
     }
 
     @Override
-    public PullRequestResponse MakePullRequest(PullRequest pullRequest) {
+    public PullRequestResponse makePullRequest(PullRequest pullRequest) {
         PullRequestBodyDto body = new PullRequestBodyDto(pullRequest.getTitle(),
                 new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())));
 

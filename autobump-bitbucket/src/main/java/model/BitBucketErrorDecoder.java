@@ -17,10 +17,9 @@ public class BitBucketErrorDecoder implements ErrorDecoder {
             case 401:
                 exception = new UnauthorizedException("Could not authenticate");
                 break;
-            case 404: {
+            case 404:
                 exception = new RemoteNotFoundException("Remote not found");
                 break;
-            }
             default:
                 exception = new RuntimeException(response.reason());
                 break;
