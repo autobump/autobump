@@ -26,7 +26,6 @@ public class MavenDependencyResolverTest {
     private Workspace workspace;
     private Workspace pluginWorkspace;
     private Workspace multiModuleWorkspace;
-    private Workspace dependencyManagementWorkspace;
     private Workspace profilesWorkspace;
     private DependencyResolver resolver;
 
@@ -35,7 +34,6 @@ public class MavenDependencyResolverTest {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
         multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
-        dependencyManagementWorkspace = new Workspace("src/test/resources/project_root/dependencyManagement");
         profilesWorkspace = new Workspace("src/test/resources/profiles_root");
         resolver = new MavenDependencyResolver();
     }
@@ -45,22 +43,6 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = resolver.resolve(workspace);
         InputSource is = new InputSource();
         is.setLocation("src/test/resources/project_root/pom.xml");
-        assertEquals(
-                Set.of(MavenDependency.builder()
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .version(TEST_DEPENDENCY_VERSION)
-                        .type(DependencyType.DEPENDENCY)
-                        .inputLocation(new InputLocation(21, 22, is))
-                        .build()),
-                deps);
-    }
-
-    @Test
-    void testDependencyManagement() {
-        Set<Dependency> deps = resolver.resolve(dependencyManagementWorkspace);
-        InputSource is = new InputSource();
-        is.setLocation("src/test/resources/project_root/dependencyManagement/pom.xml");
         assertEquals(
                 Set.of(MavenDependency.builder()
                         .group(TEST_DEPENDENCY_GROUP)
@@ -304,5 +286,15 @@ public class MavenDependencyResolverTest {
         ));
 
     }
+
+    @Test
+    void testemptyProfile() {
+
+        profilesWorkspace = new Workspace(profilesWorkspace.getProjectRoot() + "/empty");
+        assertEquals(0, resolver.resolve(profilesWorkspace).size());
+
+    }
+
+
 
 }

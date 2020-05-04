@@ -81,22 +81,20 @@ public class MavenDependencyResolver implements DependencyResolver {
     }
 
     private Set<Dependency> getDependenciesFromProfile(Model model, Profile profile) {
-        if (profile.getDependencies() != null) {
-            return profile.getDependencies()
-                    .stream()
-                    .filter(dependency -> dependency.getVersion() != null)
-                    .map(dependency -> MavenDependency.builder()
-                            .group(dependency.getGroupId())
-                            .name(dependency.getArtifactId())
-                            .type(DependencyType.PROFILE_DEPENDENCY)
-                            .inputLocation(dependency.getLocation(LOCATION_KEY))
-                            .version(mavenModelAnalyser
-                                    .getVersionFromProperties(model, dependency.getVersion(), profile))
-                            .build())
-                    .filter(dependency -> dependency.getVersion() != null)
-                    .collect(Collectors.toSet());
-        }
-        return Collections.emptySet();
+
+        return profile.getDependencies()
+                .stream()
+                .filter(dependency -> dependency.getVersion() != null)
+                .map(dependency -> MavenDependency.builder()
+                        .group(dependency.getGroupId())
+                        .name(dependency.getArtifactId())
+                        .type(DependencyType.PROFILE_DEPENDENCY)
+                        .inputLocation(dependency.getLocation(LOCATION_KEY))
+                        .version(mavenModelAnalyser
+                                .getVersionFromProperties(model, dependency.getVersion(), profile))
+                        .build())
+                .filter(dependency -> dependency.getVersion() != null)
+                .collect(Collectors.toSet());
     }
 
     private Set<Dependency> getPluginsFromProfile(Profile profile, Model model) {
@@ -176,9 +174,6 @@ public class MavenDependencyResolver implements DependencyResolver {
 
     private Set<Dependency> getDependencies(Model model) {
         List<org.apache.maven.model.Dependency> dependencies = model.getDependencies();
-        if (model.getDependencyManagement() != null) {
-            dependencies.addAll(model.getDependencyManagement().getDependencies());
-        }
         return dependencies
                 .stream()
                 .filter(dependency -> dependency.getVersion() != null)

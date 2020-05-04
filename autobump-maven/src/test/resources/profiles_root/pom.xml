@@ -35,6 +35,15 @@
                     <artifactId>derby</artifactId>
                     <version>${testMain}</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derby</artifactId>
+                    <version>${shamalamadingdong}</version>
+                </dependency>
             </dependencies>
             <dependencyManagement>
                 <dependencies>
@@ -42,6 +51,15 @@
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
                         <version>10.14.2.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
+                        <version>${shamalamadingdong}</version>
                     </dependency>
                 </dependencies>
             </dependencyManagement>
