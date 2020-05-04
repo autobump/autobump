@@ -122,6 +122,4 @@ class BitBucketGitProviderTest {
                 .build();
         assertThrows(RuntimeException.class, () -> bitBucketGitProvider.MakePullRequest(pullRequest));
     }
-
-
 }
