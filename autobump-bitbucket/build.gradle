@@ -11,9 +11,6 @@ repositories {
 
 dependencies {
     implementation project(':autobump-core')
-    // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16
-    compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
-
-
-
+    implementation group: 'io.github.openfeign', name: 'feign-core', version : '11.0'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version : '11.0'
 }

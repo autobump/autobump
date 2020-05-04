@@ -14,5 +14,5 @@ public class PullRequest {
     @NonNull
     String repoOwner;
     @NonNull
-    String projectName;
+    String repoName;
 }
