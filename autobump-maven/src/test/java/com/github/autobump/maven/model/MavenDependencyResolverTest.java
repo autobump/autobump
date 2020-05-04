@@ -199,14 +199,14 @@ public class MavenDependencyResolverTest {
     @Test
     void testResolveMultiModuleProject() {
         Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
-        assertEquals(4, dependencies.size());
+        assertEquals(3, dependencies.size());
     }
 
     @Test
     void testResolveMultiModuleProject_withDependencyManagementSection() {
         Workspace ws = new Workspace("src/test/resources/multi_module_root_depmngt");
         Set<Dependency> dependencies = resolver.resolve(ws);
-        assertEquals(5, dependencies.size());
+        assertEquals(4, dependencies.size());
     }
 
     @Test
@@ -214,7 +214,7 @@ public class MavenDependencyResolverTest {
 
         class MavenDependencyResolverTester extends MavenDependencyResolver {
             @Override
-            public void walkFiles(Workspace workspace, Set<Dependency> dependencies) throws IOException {
+            public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored) throws IOException {
                 throw new IOException();
             }
         }
@@ -235,5 +235,11 @@ public class MavenDependencyResolverTest {
                                 .version("2.2.5.RELEASE")
                                 .type(DependencyType.PARENT_DEPENDENCY)
                                 .build()));
+    }
+
+    @Test
+    void testIgnoreInternalDependencies() {
+        Workspace workspace = new Workspace("src/test/resources/projectDep");
+        assertEquals(0, resolver.resolve(workspace).size());
     }
 }

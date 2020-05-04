@@ -6,7 +6,6 @@ import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -34,20 +33,34 @@ public class MavenDependencyResolver implements DependencyResolver {
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
+        return resolve(workspace, new HashSet<>());
+    }
+
+    @Override
+    public Set<Dependency> resolve(Workspace workspace, Set<Dependency> toBeIgnored) {
         Model model = mavenModelAnalyser.getModel(workspace);
+        toBeIgnored.add(Dependency.builder().name(model.getArtifactId()).group(model.getGroupId()).version(model.getVersion()).build());
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
-        dependencies.addAll(resolveModules(workspace, model.getModules()));
+        dependencies.addAll(resolveModules(workspace, model.getModules(), toBeIgnored));
         dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
-        return dependencies;
+        return dependencies.stream().filter(dependency ->
+                !toBeIgnored.contains(Dependency.builder()
+                        .group(dependency.getGroup())
+                        .version(dependency.getVersion())
+                        .name(dependency.getName())
+                        .build()))
+                .filter(dependency ->
+                        !dependency.getGroup().equals("${project.groupId}"))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
-    private Set<Dependency> resolveModules(Workspace workspace, List<String> modules) {
+    private Set<Dependency> resolveModules(Workspace workspace, List<String> modules, Set<Dependency> toBeIgnored) {
         if (!modules.isEmpty()) {
             try {
                 var dependencies = new HashSet<Dependency>();
-                walkFiles(workspace, dependencies);
+                walkFiles(workspace, dependencies, toBeIgnored);
                 return dependencies;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -56,7 +69,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         return Collections.emptySet();
     }
 
-    public void walkFiles(Workspace workspace, Set<Dependency> dependencies) throws IOException {
+    public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored) throws IOException {
         Files.walkFileTree(Path.of(workspace.getProjectRoot()),
                 Set.of(),
                 2,
@@ -69,7 +82,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                                     .toAbsolutePath()
                                     .toString()
                                     .replace(File.separator + FILENAME, ""));
-                            dependencies.addAll(resolve(ws));
+                            dependencies.addAll(resolve(ws, toBeIgnored));
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -117,7 +130,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         return Collections.emptySet();
     }
 
-    private Set<Dependency> getParentDependency(Model model){
+    private Set<Dependency> getParentDependency(Model model) {
         var parent = model.getParent();
         Set<Dependency> dependencies = new HashSet<>();
         if (parent != null) {
