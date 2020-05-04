@@ -26,6 +26,7 @@ public class MavenDependencyResolverTest {
     private Workspace workspace;
     private Workspace pluginWorkspace;
     private Workspace multiModuleWorkspace;
+    private Workspace parentDependencyWorkspace;
     private DependencyResolver resolver;
 
     @BeforeEach
@@ -33,6 +34,7 @@ public class MavenDependencyResolverTest {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
         multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
+        parentDependencyWorkspace = new Workspace("src/test/resources/parent_dependency_root");
         resolver = new MavenDependencyResolver();
     }
 
@@ -197,7 +199,7 @@ public class MavenDependencyResolverTest {
     @Test
     void testResolveMultiModuleProject() throws Exception {
         Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
-        assertEquals(3, dependencies.size());
+        assertEquals(4, dependencies.size());
     }
 
     @Test
@@ -213,5 +215,18 @@ public class MavenDependencyResolverTest {
         MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
         assertThrows(UncheckedIOException.class, () ->
                 tester.resolve(multiModuleWorkspace));
+    }
+
+    @Test
+    void testGetParedntDependency(){
+        assertTrue(resolver.resolve(parentDependencyWorkspace)
+                .contains(
+                        MavenDependency
+                                .builder()
+                                .name("spring-boot-starter-parent")
+                                .group("org.springframework.boot")
+                                .version("2.2.5.RELEASE")
+                                .type(DependencyType.PARENT_DEPENDENCY)
+                                .build()));
     }
 }
