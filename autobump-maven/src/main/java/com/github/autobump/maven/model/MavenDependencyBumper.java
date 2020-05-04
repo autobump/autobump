@@ -33,7 +33,13 @@ public class MavenDependencyBumper implements DependencyBumper {
     @Override
     public void bump(Workspace workspace, Bump bump) {
         try (Reader reader = workspace.getDependencyDocument(DEPENDENCY_FILENAME)) {
-            InputLocation versionLocation = findVersionLine(reader, bump.getDependency(), workspace.getProjectRoot());
+            InputLocation versionLocation = null;
+            if (bump.getDependency() instanceof MavenDependency &&
+                    ((MavenDependency) bump.getDependency()).getInputLocation() != null){
+                versionLocation = ((MavenDependency) bump.getDependency()).getInputLocation();
+            }else {
+                versionLocation = findVersionLine(reader, bump.getDependency(), workspace.getProjectRoot());
+            }
             updateDependency(versionLocation, bump);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -63,7 +69,8 @@ public class MavenDependencyBumper implements DependencyBumper {
         for (int i = 0; i < out.size(); i++) {
             String line = out.get(i);
             if (line.contains("<" + groupname + ">")) {
-                out.set(i, line.replace(bump.getDependency().getVersion(), bump.getUpdatedVersion().getVersionNumber()));
+                out.set(i, line.replace(bump.getDependency().getVersion(),
+                        bump.getUpdatedVersion().getVersionNumber()));
             }
         }
     }
