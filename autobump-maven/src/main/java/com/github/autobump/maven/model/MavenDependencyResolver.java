@@ -38,7 +38,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
-        dependencies.addAll(resolveModules(workspace, model.getModules()));
+        dependencies.addAll(getModules(workspace, model.getModules()));
         dependencies.addAll(getProfiles(model));
         return dependencies;
     }
