@@ -8,14 +8,10 @@ import feign.jackson.JacksonEncoder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.net.http.HttpClient;
-import java.time.Duration;
-
 @Setter
 @Getter
 public class BitBucketGitProvider implements GitProvider {
     private static final String API_LINK = "https://api.bitbucket.org/2.0";
-    private final HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(30)).build();
     private BitBucketAccount user;
 
     public BitBucketGitProvider(BitBucketAccount user) {
