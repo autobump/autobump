@@ -14,4 +14,12 @@ import org.apache.maven.model.InputLocation;
 public class MavenDependency extends Dependency {
     InputLocation inputLocation;
     DependencyType type;
+
+    public Dependency getAsDependency() {
+        return Dependency.builder()
+                .group(this.getGroup())
+                .version(this.getVersion())
+                .name(this.getName())
+                .build();
+    }
 }
