@@ -1,10 +1,10 @@
-package model;
+package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
+import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import model.dtos.PullRequestBodyDto;
-import model.dtos.PullRequestResponseDto;
 
 interface BitBucketApi {
     @RequestLine("POST /repositories/{repoOwner}/{repoName}/pullrequests")
