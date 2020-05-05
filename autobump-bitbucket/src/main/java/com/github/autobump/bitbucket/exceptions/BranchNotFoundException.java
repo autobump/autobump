@@ -1,4 +1,4 @@
-package exceptions;
+package com.github.autobump.bitbucket.exceptions;
 
 public class BranchNotFoundException extends RuntimeException {
 

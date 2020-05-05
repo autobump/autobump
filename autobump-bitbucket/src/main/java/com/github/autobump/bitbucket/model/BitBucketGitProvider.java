@@ -1,5 +1,7 @@
-package model;
+package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
+import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
@@ -8,8 +10,6 @@ import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import lombok.Getter;
-import model.dtos.PullRequestBodyDto;
-import model.dtos.PullRequestResponseDto;
 
 @Getter
 public class BitBucketGitProvider implements GitProvider {

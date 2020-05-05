@@ -1,0 +1,6 @@
+//group 'com.github.autobump'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation group: 'info.picocli', name: 'picocli', version: '4.2.0'
+}
