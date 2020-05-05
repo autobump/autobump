@@ -36,10 +36,9 @@ public class MavenDependencyResolver implements DependencyResolver {
         return resolve(workspace, new HashSet<>());
     }
 
-    @Override
-    public Set<Dependency> resolve(Workspace workspace, Set<Dependency> toBeIgnored) {
+    private Set<Dependency> resolve(Workspace workspace, Set<Dependency> ignoredInternal) {
         Model model = mavenModelAnalyser.getModel(workspace);
-        toBeIgnored.add(Dependency
+        ignoredInternal.add(Dependency
                 .builder()
                 .name(model.getArtifactId())
                 .group(model.getGroupId())
@@ -48,10 +47,10 @@ public class MavenDependencyResolver implements DependencyResolver {
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
-        dependencies.addAll(resolveModules(workspace, model.getModules(), toBeIgnored));
+        dependencies.addAll(resolveModules(workspace, model.getModules(), ignoredInternal));
         dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
         return dependencies.stream().filter(dependency ->
-                !toBeIgnored.contains(Dependency.builder()
+                !ignoredInternal.contains(Dependency.builder()
                         .group(dependency.getGroup())
                         .version(dependency.getVersion())
                         .name(dependency.getName())
