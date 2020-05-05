@@ -3,9 +3,11 @@ package com.github.autobump.maven.model;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.Workspace;
+import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
-
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Profile;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,12 +40,84 @@ public class MavenDependencyResolver implements DependencyResolver {
         Set<Dependency> dependencies = getDependencies(model);
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
-        dependencies.addAll(resolveModules(workspace, model.getModules()));
+        dependencies.addAll(getModules(workspace, model.getModules()));
+        dependencies.addAll(getProfiles(model));
         dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
         return dependencies;
     }
 
-    private Set<Dependency> resolveModules(Workspace workspace, List<String> modules) {
+    private Set<Dependency> getProfiles(Model model) {
+        Set<Dependency> dependencies = new HashSet<>();
+        for (Profile profile : model.getProfiles()) {
+            dependencies.addAll(
+                    getPluginsFromProfile(profile, model)
+            );
+
+            dependencies.addAll(
+                    getDependenciesFromProfile(model, profile)
+            );
+
+            dependencies.addAll(
+                    getDependencyManageMentFromProfile(model, profile)
+            );
+        }
+        return dependencies;
+    }
+
+    private Set<Dependency> getDependencyManageMentFromProfile(Model model, Profile profile) {
+        if (profile.getDependencyManagement() != null) {
+            return profile.getDependencyManagement()
+                    .getDependencies()
+                    .stream()
+                    .filter(dependency -> dependency.getVersion() != null)
+                    .map(dependency -> MavenDependency.builder()
+                            .group(dependency.getGroupId())
+                            .name(dependency.getArtifactId())
+                            .type(DependencyType.PROFILE_DEPENDENCY)
+                            .inputLocation(dependency.getLocation(LOCATION_KEY))
+                            .version(mavenModelAnalyser
+                                    .getVersionFromProperties(model, dependency.getVersion(), profile))
+                            .build())
+                    .filter(dependency -> dependency.getVersion() != null)
+                    .collect(Collectors.toSet());
+        }
+        return Collections.emptySet();
+    }
+
+    private Set<Dependency> getDependenciesFromProfile(Model model, Profile profile) {
+
+        return profile.getDependencies()
+                .stream()
+                .filter(dependency -> dependency.getVersion() != null)
+                .map(dependency -> MavenDependency.builder()
+                        .group(dependency.getGroupId())
+                        .name(dependency.getArtifactId())
+                        .type(DependencyType.PROFILE_DEPENDENCY)
+                        .inputLocation(dependency.getLocation(LOCATION_KEY))
+                        .version(mavenModelAnalyser
+                                .getVersionFromProperties(model, dependency.getVersion(), profile))
+                        .build())
+                .filter(dependency -> dependency.getVersion() != null)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Dependency> getPluginsFromProfile(Profile profile, Model model) {
+        return resolvePlugins(profile.getBuild())
+                .stream()
+                .filter(plugin -> plugin.getVersion() != null)
+                .map(plugin -> MavenDependency.builder()
+                        .group(plugin.getGroupId())
+                        .name(plugin.getArtifactId())
+                        .type(DependencyType.PROFILE_PLUGIN)
+                        .inputLocation(plugin.getLocation(LOCATION_KEY))
+                        .version(mavenModelAnalyser
+                                .getVersionFromProperties(model, plugin.getVersion(), profile))
+                        .build())
+                .filter(plugin -> plugin.getVersion() != null)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Dependency> getModules(Workspace workspace, List<String> modules) {
         if (!modules.isEmpty()) {
             try {
                 var dependencies = new HashSet<Dependency>();
@@ -77,13 +151,7 @@ public class MavenDependencyResolver implements DependencyResolver {
     }
 
     private Set<Dependency> getPlugins(Model model) {
-        List<org.apache.maven.model.Plugin> pluginList = new ArrayList<>();
-        if (model.getBuild() != null) {
-            pluginList.addAll(model.getBuild().getPlugins());
-            if (model.getBuild().getPluginManagement() != null) {
-                pluginList.addAll(model.getBuild().getPluginManagement().getPlugins());
-            }
-        }
+        List<Plugin> pluginList = resolvePlugins(model.getBuild());
         return pluginList.stream()
                 .filter(plugin -> plugin.getVersion() != null)
                 .map(plugin -> MavenDependency.builder()
@@ -133,9 +201,20 @@ public class MavenDependencyResolver implements DependencyResolver {
         return dependencies;
     }
 
+    private List<Plugin> resolvePlugins(BuildBase build) {
+        List<Plugin> pluginList = new ArrayList<>();
+        if (build != null) {
+            pluginList.addAll(build.getPlugins());
+            if (build.getPluginManagement() != null) {
+                pluginList.addAll(build.getPluginManagement().getPlugins());
+            }
+        }
+        return pluginList;
+    }
+
     private Set<Dependency> getDependencies(Model model) {
-        return model
-                .getDependencies()
+        List<org.apache.maven.model.Dependency> dependencies = model.getDependencies();
+        return dependencies
                 .stream()
                 .filter(dependency -> dependency.getVersion() != null)
                 .map(dependency -> MavenDependency.builder()

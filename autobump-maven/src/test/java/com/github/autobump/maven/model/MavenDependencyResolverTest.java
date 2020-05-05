@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MavenDependencyResolverTest {
 
-    private static final  String TEST_DEPENDENCY_GROUP = "org.apache.derby";
-    private static final  String TEST_DEPENDENCY_NAME = "derby";
-    private static final  String TEST_DEPENDENCY_VERSION = "10.15.2.0";
+    public static final String TEST_DEPENDENCY_GROUP = "org.apache.derby";
+    public static final String TEST_DEPENDENCY_NAME = "derby";
+    public static final String TEST_DEPENDENCY_VERSION = "10.15.2.0";
     private Workspace workspace;
     private Workspace pluginWorkspace;
     private Workspace pluginDefaultGroupIdWorkspace;
@@ -31,7 +31,7 @@ public class MavenDependencyResolverTest {
     private DependencyResolver resolver;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
         pluginDefaultGroupIdWorkspace = new Workspace("src/test/resources/project_root_plugins/pluginsDefaultGroupId");
@@ -41,7 +41,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestSuccessresolve() {
+    void TestSuccessresolve() {
         Set<Dependency> deps = resolver.resolve(workspace);
         InputSource is = new InputSource();
         is.setLocation("src/test/resources/project_root/pom.xml");
@@ -57,7 +57,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestSuccessresolveProperties() {
+    void TestSuccessresolveProperties() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties");
         Set<Dependency> deps = resolver.resolve(ws);
         InputSource is = new InputSource();
@@ -68,20 +68,20 @@ public class MavenDependencyResolverTest {
                         .name(TEST_DEPENDENCY_NAME)
                         .version(TEST_DEPENDENCY_VERSION)
                         .type(DependencyType.DEPENDENCY)
-                        .inputLocation(new InputLocation(25, 22 , is))
+                        .inputLocation(new InputLocation(25, 22, is))
                         .build()),
                 deps);
     }
 
     @Test
-    public void TestresolveUndefinedProperty() {
+    void TestresolveUndefinedProperty() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties_undefinedproperty");
         Set<Dependency> deps = resolver.resolve(ws);
         assertTrue(deps.isEmpty(), "expected list of dependencies to be empty");
     }
 
     @Test
-    public void TestresolveMalformedVarProperty() {
+    void TestresolveMalformedVarProperty() {
         Workspace ws = new Workspace("src/test/resources/project_root_support_properties_badproperty");
         Set<Dependency> deps = resolver.resolve(ws);
         InputSource is = new InputSource();
@@ -98,19 +98,19 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    public void TestFileNotFound() {
+    void TestFileNotFound() {
         assertThrows(NoDependencyFileFoundException.class, () ->
                 resolver.resolve(new Workspace("src/test/resources/project_root/testDir")));
     }
 
     @Test
-    public void TestEmpyDependencies() {
+    void TestEmpyDependencies() {
         Workspace ws = new Workspace("src/test/resources/project_root/testDir/empty");
         assertEquals(Set.of(), resolver.resolve(ws));
     }
 
     @Test
-    public void TestUnparseableDependencies() {
+    void TestUnparseableDependencies() {
         assertThrows(DependencyParserException.class, () ->
                 resolver.resolve(new Workspace("src/test/resources/project_root/testDir/parserror")));
     }
@@ -146,7 +146,7 @@ public class MavenDependencyResolverTest {
     void testNoPluginsFound() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/empty");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
-        assertEquals(Set.of() , plugins);
+        assertEquals(Set.of(), plugins);
     }
 
     @Test
@@ -194,11 +194,11 @@ public class MavenDependencyResolverTest {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/pluginsWithProperties");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
         assertTrue(plugins.contains(MavenDependency.builder()
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .version(TEST_DEPENDENCY_VERSION)
-                        .type(DependencyType.PLUGIN)
-                        .build()));
+                .group(TEST_DEPENDENCY_GROUP)
+                .name(TEST_DEPENDENCY_NAME)
+                .version(TEST_DEPENDENCY_VERSION)
+                .type(DependencyType.PLUGIN)
+                .build()));
     }
 
     @Test
