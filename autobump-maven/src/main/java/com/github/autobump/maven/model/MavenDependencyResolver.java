@@ -103,7 +103,6 @@ public class MavenDependencyResolver implements DependencyResolver {
             }
         }
         return pluginList.stream()
-                .filter(plugin -> plugin.getVersion() != null)
                 .map(plugin -> MavenDependency.builder()
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
@@ -122,14 +121,14 @@ public class MavenDependencyResolver implements DependencyResolver {
             return mng
                     .getDependencies()
                     .stream()
-                    .filter(dep -> dep.getVersion() != null)
                     .map(dep -> MavenDependency.builder()
                             .group(dep.getGroupId())
                             .name(dep.getArtifactId())
-                            .version(dep.getVersion())
+                            .version(mavenModelAnalyser.getVersionFromProperties(model, dep.getVersion()))
                             .type(DependencyType.DEPENDENCY)
                             .inputLocation(dep.getLocation(LOCATION_KEY))
                             .build())
+                    .filter(dependency -> dependency.getVersion() != null)
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -155,7 +154,6 @@ public class MavenDependencyResolver implements DependencyResolver {
         return model
                 .getDependencies()
                 .stream()
-                .filter(dependency -> dependency.getVersion() != null)
                 .map(dependency -> MavenDependency.builder()
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())

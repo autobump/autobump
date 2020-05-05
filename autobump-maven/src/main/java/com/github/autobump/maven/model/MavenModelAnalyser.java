@@ -28,10 +28,16 @@ public class MavenModelAnalyser {
     }
 
     public String getVersionFromProperties(Model model, String pluginVersionData) {
+        if (pluginVersionData == null) {
+            return null;
+        }
+        String returnVersion;
         Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(pluginVersionData);
         if (!matcher.matches()) {
-            return pluginVersionData;
+            returnVersion = pluginVersionData;
+        }else {
+            returnVersion = model.getProperties().getProperty(matcher.group(1));
         }
-        return model.getProperties().getProperty(matcher.group(1));
+        return returnVersion;
     }
 }
