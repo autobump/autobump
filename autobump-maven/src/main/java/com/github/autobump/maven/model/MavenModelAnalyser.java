@@ -4,6 +4,8 @@ import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.ModelBase;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -39,5 +41,17 @@ public class MavenModelAnalyser {
             returnVersion = model.getProperties().getProperty(matcher.group(1));
         }
         return returnVersion;
+    }
+
+    public String getVersionFromProperties(Model model, String pluginVersionData, Profile profile) {
+        Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(pluginVersionData);
+        if (!matcher.matches()) {
+            return pluginVersionData;
+        }
+        String value = profile.getProperties().getProperty(matcher.group(1));
+        if (value == null){
+            value = model.getProperties().getProperty(matcher.group(1));
+        }
+        return value;
     }
 }
