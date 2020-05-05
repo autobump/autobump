@@ -2,4 +2,5 @@ rootProject.name = 'autobump'
 include 'autobump-core'
 include 'autobump-maven'
 include 'autobump-jgit'
+include 'autobump-bitbucket'
 
