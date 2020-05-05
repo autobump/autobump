@@ -25,6 +25,7 @@ public class MavenDependencyResolverTest {
     private static final  String TEST_DEPENDENCY_VERSION = "10.15.2.0";
     private Workspace workspace;
     private Workspace pluginWorkspace;
+    private Workspace pluginDefaultGroupIdWorkspace;
     private Workspace multiModuleWorkspace;
     private Workspace parentDependencyWorkspace;
     private DependencyResolver resolver;
@@ -33,6 +34,7 @@ public class MavenDependencyResolverTest {
     public void setUp() {
         workspace = new Workspace("src/test/resources/project_root");
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
+        pluginDefaultGroupIdWorkspace = new Workspace("src/test/resources/project_root_plugins/pluginsDefaultGroupId");
         multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
         parentDependencyWorkspace = new Workspace("src/test/resources/parent_dependency_root");
         resolver = new MavenDependencyResolver();
@@ -155,6 +157,18 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
+    void getPluginsWithDefaultGroupId(){
+        Set<Dependency> plugins = resolver.resolve(pluginDefaultGroupIdWorkspace);
+
+        assertTrue(plugins.contains(MavenDependency.builder()
+                .group("org.apache.maven.plugins")
+                .name("maven-compiler-plugin")
+                .version("3.8.1")
+                .type(DependencyType.PLUGIN)
+                .build()));
+    }
+
+    @Test
     void testEmptyBuild() {
         pluginWorkspace = new Workspace(pluginWorkspace.getProjectRoot() + "/emptyBuild");
         Set<Dependency> plugins = resolver.resolve(pluginWorkspace);
@@ -225,7 +239,7 @@ public class MavenDependencyResolverTest {
     }
 
     @Test
-    void testGetParedntDependency(){
+    void testGetParentDependency(){
         assertTrue(resolver.resolve(parentDependencyWorkspace)
                 .contains(
                         MavenDependency
