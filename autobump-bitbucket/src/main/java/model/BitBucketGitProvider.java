@@ -30,7 +30,6 @@ public class BitBucketGitProvider implements GitProvider {
     public PullRequestResponse makePullRequest(PullRequest pullRequest) {
         PullRequestBodyDto body = new PullRequestBodyDto(pullRequest.getTitle(),
                 new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())));
-        
         PullRequestResponseDto dto
                 = client.createPullRequest(pullRequest.getRepoOwner(), pullRequest.getRepoName(), body);
         return PullRequestResponse.builder()
