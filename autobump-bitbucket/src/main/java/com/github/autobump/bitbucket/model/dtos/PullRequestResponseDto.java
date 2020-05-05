@@ -1,4 +1,4 @@
-package model.dtos;
+package com.github.autobump.bitbucket.model.dtos;
 
 import lombok.Data;
 
