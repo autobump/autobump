@@ -1,4 +1,4 @@
-package model;
+package com.github.autobump.bitbucket.model;
 
 import lombok.NonNull;
 import lombok.Value;

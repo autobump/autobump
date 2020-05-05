@@ -1,8 +1,8 @@
-package model;
+package com.github.autobump.bitbucket.model;
 
-import exceptions.BranchNotFoundException;
-import exceptions.RemoteNotFoundException;
-import exceptions.UnauthorizedException;
+import com.github.autobump.bitbucket.exceptions.BranchNotFoundException;
+import com.github.autobump.bitbucket.exceptions.RemoteNotFoundException;
+import com.github.autobump.bitbucket.exceptions.UnauthorizedException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
