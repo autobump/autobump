@@ -47,12 +47,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .group(model.getGroupId())
                 .version(model.getVersion())
                 .build());
-        Set<Dependency> dependencies = getDependencies(model);
-        dependencies.addAll(getPlugins(model));
-        dependencies.addAll(getParentDependency(model));
-        dependencies.addAll(resolveModules(workspace, model.getModules(), ignoredInternal));
-        dependencies.addAll(getProfiles(model));
-        dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
+        Set<Dependency> dependencies = getDependencies(workspace, ignoredInternal, model);
         return dependencies.stream().filter(dependency ->
                 !ignoredInternal.contains(Dependency.builder()
                         .group(dependency.getGroup())
@@ -62,6 +57,16 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .filter(dependency ->
                         !dependency.getGroup().equals("${project.groupId}"))
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Set<Dependency> getDependencies(Workspace workspace, Set<Dependency> ignoredInternal, Model model) {
+        Set<Dependency> dependencies = getDependencySet(model);
+        dependencies.addAll(getPlugins(model));
+        dependencies.addAll(getParentDependency(model));
+        dependencies.addAll(resolveModules(workspace, model.getModules(), ignoredInternal));
+        dependencies.addAll(getProfiles(model));
+        dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
+        return dependencies;
     }
 
     private Set<Dependency> getProfiles(Model model) {
@@ -87,7 +92,6 @@ public class MavenDependencyResolver implements DependencyResolver {
             return profile.getDependencyManagement()
                     .getDependencies()
                     .stream()
-                    .filter(dependency -> dependency.getVersion() != null)
                     .map(dependency -> MavenDependency.builder()
                             .group(dependency.getGroupId())
                             .name(dependency.getArtifactId())
@@ -106,7 +110,6 @@ public class MavenDependencyResolver implements DependencyResolver {
 
         return profile.getDependencies()
                 .stream()
-                .filter(dependency -> dependency.getVersion() != null)
                 .map(dependency -> MavenDependency.builder()
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())
@@ -122,7 +125,6 @@ public class MavenDependencyResolver implements DependencyResolver {
     private Set<Dependency> getPluginsFromProfile(Profile profile, Model model) {
         return resolvePlugins(profile.getBuild())
                 .stream()
-                .filter(plugin -> plugin.getVersion() != null)
                 .map(plugin -> MavenDependency.builder()
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
@@ -230,7 +232,7 @@ public class MavenDependencyResolver implements DependencyResolver {
         return pluginList;
     }
 
-    private Set<Dependency> getDependencies(Model model) {
+    private Set<Dependency> getDependencySet(Model model) {
         List<org.apache.maven.model.Dependency> dependencies = model.getDependencies();
         return dependencies
                 .stream()
