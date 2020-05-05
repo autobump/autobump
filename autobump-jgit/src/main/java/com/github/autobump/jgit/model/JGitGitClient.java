@@ -28,10 +28,11 @@ public class JGitGitClient implements GitClient {
     }
 
     @Override
-    public void commitToNewBranch(Workspace workspace, Bump bump) {
+    public String commitToNewBranch(Workspace workspace, Bump bump) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            createBranch(bump, git);
+            String branchName = createBranch(bump, git);
             commitAndPushToNewBranch(bump, git);
+            return branchName;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (GitAPIException g) {
@@ -39,12 +40,13 @@ public class JGitGitClient implements GitClient {
         }
     }
 
-    public void createBranch(Bump bump, Git git) throws GitAPIException {
+    public String createBranch(Bump bump, Git git) throws GitAPIException {
         String branchName = String.format("autobump/%s/%s/%s",
                 bump.getDependency().getGroup(),
                 bump.getDependency().getName(),
                 bump.getUpdatedVersion().getVersionNumber());
         git.branchCreate().setName(branchName).call();
+        return branchName;
     }
 
     public void commitAndPushToNewBranch(Bump bump, Git git) throws GitAPIException {

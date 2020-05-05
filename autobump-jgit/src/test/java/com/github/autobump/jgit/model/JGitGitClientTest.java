@@ -188,7 +188,7 @@ class JGitGitClientTest {
         class JGitGitClientTester extends JGitGitClient {
 
             @Override
-            public void createBranch(Bump bump, Git git) throws CanceledException {
+            public String createBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
 
