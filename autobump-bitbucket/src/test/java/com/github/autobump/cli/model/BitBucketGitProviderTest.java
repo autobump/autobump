@@ -15,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class BitBucketGitProviderTest {
     private static final String API_URL = "http://localhost:8089";
@@ -62,7 +62,7 @@ class BitBucketGitProviderTest {
     }
 
     @Test
-    void makeSuccessfulPullRequest() {
+    void makeSuccessfullPullRequest() {
         PullRequest pullRequest = PullRequest.builder()
                 .repoOwner(TEST_OWNER)
                 .repoName(TEST_REPO_NAME)
@@ -70,15 +70,15 @@ class BitBucketGitProviderTest {
                 .branchName(TEST_BRANCH)
                 .build();
         var response = bitBucketGitProvider.makePullRequest(pullRequest);
-        var expected = PullRequestResponse.builder()
-                .type("pullrequest")
-                .description("")
-                .link("https://bitbucket.org/grietvermeesch/testmavenproject/pull-requests/3")
-                .title("heyhey")
-                .id(3)
-                .state("OPEN")
-                .build();
-        assertEquals(expected, response);
+        assertThat(response)
+                .isEqualToComparingFieldByField(PullRequestResponse.builder()
+                        .type("pullrequest")
+                        .description("")
+                        .link("https://bitbucket.org/grietvermeesch/testmavenproject/pull-requests/3")
+                        .title("heyhey")
+                        .id(3)
+                        .state("OPEN")
+                        .build());
     }
 
     @Test
@@ -89,7 +89,8 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(RemoteNotFoundException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
+        assertThatExceptionOfType(RemoteNotFoundException.class)
+                .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
     @Test
@@ -100,7 +101,8 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(BranchNotFoundException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
+        assertThatExceptionOfType(BranchNotFoundException.class)
+                .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
     @Test
@@ -111,7 +113,8 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(UnauthorizedException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
+        assertThatExceptionOfType(UnauthorizedException.class)
+                .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
     @Test
@@ -122,6 +125,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThrows(RuntimeException.class, () -> bitBucketGitProvider.makePullRequest(pullRequest));
+        assertThatExceptionOfType(RuntimeException.class)
+                .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 }
