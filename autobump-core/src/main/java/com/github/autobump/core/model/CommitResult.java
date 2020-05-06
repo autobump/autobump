@@ -1,4 +1,4 @@
-package com.github.autobump.jgit.model;
+package com.github.autobump.core.model;
 
 import lombok.Value;
 
