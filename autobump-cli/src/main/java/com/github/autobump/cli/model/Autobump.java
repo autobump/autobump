@@ -58,16 +58,24 @@ public class Autobump implements Callable<Integer> {
         initialize();
         Workspace workspace = gitClient.clone(new URI(url));
         Set<Dependency> dependencySet = dependencyResolver.resolve(workspace);
-
         for (Dependency dependency : dependencySet) {
-            Version latestVersion = versionRepository.getAllAvailableVersions(dependency).stream()
-                    .sorted().findFirst().orElse(null);
+            Version latestVersion = getLatestVersion(dependency);
             if (latestVersion != null && new MavenVersion(dependency.getVersion()).compareTo(latestVersion) > 0) {
                 Bump bump = doBump(workspace, dependency, latestVersion);
-                makePullRequest(workspace, bump);
+                makeAndExecutePullRequest(workspace, bump);
+
             }
         }
         return 0;
+    }
+
+    private Version getLatestVersion(Dependency dependency) {
+        return versionRepository.getAllAvailableVersions(dependency).stream()
+                .sorted().findFirst().orElse(null);
+    }
+
+    private void doPullRequest(PullRequest pullRequest) {
+        gitProvider.makePullRequest(pullRequest);
     }
 
     private void initialize() {
@@ -76,7 +84,7 @@ public class Autobump implements Callable<Integer> {
         gitProvider = new BitBucketGitProvider(bitBucketAccount, BITBUCKET_API_URL);
     }
 
-    private void makePullRequest(Workspace workspace, Bump bump) {
+    private void makeAndExecutePullRequest(Workspace workspace, Bump bump) {
         var commitResult = gitClient.commitToNewBranch(workspace, bump);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -84,7 +92,7 @@ public class Autobump implements Callable<Integer> {
                 .repoName(BitBucketHelper.getRepoName(url))
                 .repoOwner(BitBucketHelper.getOwnerName(url))
                 .build();
-        gitProvider.makePullRequest(pullRequest);
+        doPullRequest(pullRequest);
     }
 
     private Bump doBump(Workspace workspace, Dependency dependency, Version latestVersion) {
