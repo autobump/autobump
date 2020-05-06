@@ -4,9 +4,12 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -14,7 +17,12 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class JGitGitClient implements GitClient {
+    private String username;
+
+    private String password;
     @Override
     public Workspace clone(URI uri) {
         try (Repository repo = Git.cloneRepository().setURI(uri.toString())
@@ -56,6 +64,6 @@ public class JGitGitClient implements GitClient {
                 bump.getDependency().getVersion(),
                 bump.getUpdatedVersion().getVersionNumber());
         git.commit().setMessage(commitMessage);
-        git.push().call();
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();
     }
 }

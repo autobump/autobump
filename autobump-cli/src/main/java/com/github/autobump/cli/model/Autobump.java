@@ -20,13 +20,10 @@ import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
 import com.github.autobump.maven.model.MavenVersion;
 import com.github.autobump.maven.model.MavenVersionRepository;
-import lombok.extern.java.Log;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
@@ -64,7 +61,7 @@ public class Autobump implements Callable<Integer> {
     public Integer call() throws Exception {
         Logger.getAnonymousLogger().info(String.format("username: %s\npassword: %s\nurl: %s", username, password, url));
 
-        GitClient gitClient = new JGitGitClient();
+        GitClient gitClient = new JGitGitClient(username, password);
         Workspace workspace = gitClient.clone(new URI(url));
         DependencyResolver dependencyResolver = new MavenDependencyResolver();
         Set<Dependency> dependencySet = dependencyResolver.resolve(workspace);
