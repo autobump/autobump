@@ -86,7 +86,7 @@ class JGitGitClientTest {
 
         class JGitGitClientTester extends JGitGitClient {
 
-            public JGitGitClientTester(String username, String password) {
+            JGitGitClientTester(String username, String password) {
                 super(username, password);
             }
 
