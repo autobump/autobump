@@ -11,8 +11,7 @@ import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_D
 import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_PLUGIN_GROUP;
 import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_PLUGIN_NAME;
 import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_PLUGIN_VERSION;
-import static junit.framework.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenDependencyResolverProfileTest {
     private Workspace profilesWorkspace;
@@ -27,7 +26,7 @@ public class MavenDependencyResolverProfileTest {
     @Test
     void testProfiles() {
 
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version(TEST_DEPENDENCY_VERSION)
@@ -41,7 +40,7 @@ public class MavenDependencyResolverProfileTest {
     @Test
     void testPluginProfiles() {
 
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_PLUGIN)
                         .version(TEST_PLUGIN_VERSION)
@@ -55,7 +54,7 @@ public class MavenDependencyResolverProfileTest {
     @Test
     void testDependencyManagementProfiles() {
 
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version("10.14.2.0")
@@ -69,7 +68,7 @@ public class MavenDependencyResolverProfileTest {
     @Test
     void testPropertiesInProfiles() {
 
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version("10.16.2.0")
@@ -83,7 +82,7 @@ public class MavenDependencyResolverProfileTest {
     @Test
     void testMainPropertiesInProfiles() {
 
-        assertTrue(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version("10.17.2.0")
@@ -98,7 +97,7 @@ public class MavenDependencyResolverProfileTest {
     void testEmptyProfile_ShouldRetunNoDependencies() {
 
         profilesWorkspace = new Workspace(profilesWorkspace.getProjectRoot() + "/empty");
-        assertEquals(0, resolver.resolve(profilesWorkspace).size());
+        assertThat(resolver.resolve(profilesWorkspace).size()).isEqualTo(0);
 
     }
 }

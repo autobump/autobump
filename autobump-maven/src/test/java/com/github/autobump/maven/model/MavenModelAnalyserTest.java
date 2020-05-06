@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.Reader;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MavenModelAnalyserTest {
     transient MavenModelAnalyser mavenModelAnalyser;
@@ -23,8 +23,8 @@ class MavenModelAnalyserTest {
     void getModel() throws IOException, XmlPullParserException {
         Workspace workspace = new Workspace("src/test/resources/project_root");
         try(Reader dependencyDocument = workspace.getDependencyDocument("pom.xml")){
-            assertEquals(new MavenXpp3Reader().read(dependencyDocument).getDependencies().size(),
-                    mavenModelAnalyser.getModel(workspace).getDependencies().size());
+            assertThat(new MavenXpp3Reader().read(dependencyDocument).getDependencies())
+                    .hasSameSizeAs(mavenModelAnalyser.getModel(workspace).getDependencies());
         }
     }
 
@@ -34,6 +34,6 @@ class MavenModelAnalyserTest {
         String version = mavenModelAnalyser.getVersionFromProperties(
                 new MavenXpp3Reader().read(ws.getDependencyDocument("pom.xml")),
                 "${org.apache.derby.version}");
-        assertEquals("10.15.2.0", version);
+        assertThat(version).isEqualTo("10.15.2.0");
     }
 }
