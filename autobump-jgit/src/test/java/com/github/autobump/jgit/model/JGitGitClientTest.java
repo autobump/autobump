@@ -86,19 +86,23 @@ class JGitGitClientTest {
 
         class JGitGitClientTester extends JGitGitClient {
 
+            public JGitGitClientTester(String username, String password) {
+                super(username, password);
+            }
+
             @Override
-            public void createBranch(Bump bump, Git git) throws CanceledException {
+            public String createBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
 
             @Override
-            public void commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
+            public String commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
         }
 
         startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester();
+        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
         Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(GitException.class)
