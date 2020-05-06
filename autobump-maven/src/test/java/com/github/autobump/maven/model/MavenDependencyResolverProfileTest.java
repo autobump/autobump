@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_DEPENDENCY_GROUP;
 import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_DEPENDENCY_NAME;
 import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_DEPENDENCY_VERSION;
+import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_PLUGIN_GROUP;
+import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_PLUGIN_NAME;
+import static com.github.autobump.maven.model.MavenDependencyResolverTest.TEST_PLUGIN_VERSION;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -41,9 +44,9 @@ public class MavenDependencyResolverProfileTest {
         assertTrue(resolver.resolve(profilesWorkspace).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_PLUGIN)
-                        .version("10.13.2.0")
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
+                        .version(TEST_PLUGIN_VERSION)
+                        .group(TEST_PLUGIN_GROUP)
+                        .name(TEST_PLUGIN_NAME)
                         .build()
         ));
 
@@ -92,7 +95,7 @@ public class MavenDependencyResolverProfileTest {
     }
 
     @Test
-    void testemptyProfile() {
+    void testEmptyProfile_ShouldRetunNoDependencies() {
 
         profilesWorkspace = new Workspace(profilesWorkspace.getProjectRoot() + "/empty");
         assertEquals(0, resolver.resolve(profilesWorkspace).size());

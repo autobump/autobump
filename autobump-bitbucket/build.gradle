@@ -2,7 +2,6 @@ plugins {
     id 'war'
 }
 
-//group 'com.github.autobump'
 version '1.0-SNAPSHOT'
 
 repositories {

@@ -14,25 +14,22 @@ import lombok.Getter;
 @Getter
 public class BitBucketGitProvider implements GitProvider {
     private final String apiUrl;
-    private final BitBucketAccount user;
+    private final BitBucketApi client;
 
     public BitBucketGitProvider(BitBucketAccount user, String apiUrl) {
-        this.user = user;
         this.apiUrl = apiUrl;
+        client = Feign.builder()
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
+                .requestInterceptor(new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()))
+                .errorDecoder(new BitBucketErrorDecoder())
+                .target(BitBucketApi.class, apiUrl);
     }
 
     @Override
     public PullRequestResponse makePullRequest(PullRequest pullRequest) {
         PullRequestBodyDto body = new PullRequestBodyDto(pullRequest.getTitle(),
                 new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())));
-
-        BitBucketApi client = Feign.builder()
-                .encoder(new JacksonEncoder())
-                .decoder(new JacksonDecoder())
-                .requestInterceptor(new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()))
-                .errorDecoder(new BitBucketErrorDecoder())
-                .target(BitBucketApi.class, apiUrl);
-
         PullRequestResponseDto dto
                 = client.createPullRequest(pullRequest.getRepoOwner(), pullRequest.getRepoName(), body);
         return PullRequestResponse.builder()
