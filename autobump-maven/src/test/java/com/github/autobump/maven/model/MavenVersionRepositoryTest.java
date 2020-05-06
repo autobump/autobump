@@ -7,15 +7,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class MavenVersionRepositoryTest {
     private static final transient String TEST = "test";
@@ -50,27 +47,26 @@ class MavenVersionRepositoryTest {
     void getAllAvailableVersions() {
         var versions = mavenVersionRepository.getAllAvailableVersions(
                 Dependency.builder().name(TEST).group(TEST).version(TEST).build());
-        assertEquals(18, versions.size());
-        assertTrue(versions.contains(new MavenVersion("5.7.0-M1")));
+        assertThat(versions).hasSize(18);
+        assertThat(versions).contains(new MavenVersion("5.7.0-M1"));
     }
 
     @Test
     void getWrongXml() {
-        assertThrows(DependencyParserException.class, () ->
+        assertThatExceptionOfType(DependencyParserException.class).isThrownBy(() ->
                 mavenVersionRepository.getAllAvailableVersions(
                         Dependency.builder().name("test1").group(TEST).version(TEST).build()));
     }
 
     @Test
     void getFileNotFound() {
-        assertEquals(new HashSet<>(),
-                mavenVersionRepository.getAllAvailableVersions(
-                        Dependency.builder().name("bla").group("bla").version("bla").build()));
+        assertThat(mavenVersionRepository.getAllAvailableVersions(
+                        Dependency.builder().name("bla").group("bla").version("bla").build())).isEmpty();
     }
 
     @Test
     void testMalformedUrl() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
                 new MavenVersionRepository("//").getAllAvailableVersions(
                         Dependency.builder().name(TEST).group(TEST).version(TEST).build()));
     }

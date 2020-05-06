@@ -5,8 +5,8 @@ import com.github.autobump.core.model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
 public class MavenWorkspaceTest {
@@ -18,14 +18,14 @@ public class MavenWorkspaceTest {
     }
 
     @Test
-    void getDependencydocument() {
-        assertNotNull(workspace.getDependencyDocument("pom.xml"));
+    void getDependencyDocument() {
+        assertThat(workspace.getDependencyDocument("pom.xml")).isNotNull();
     }
 
     @Test
     void getDependencyDocumentFromWrongPath() {
-        assertThrows(NoDependencyFileFoundException.class,
-                () ->
-                    new Workspace("src/test/resources/project_root/testDir").getDependencyDocument("pom.xml"));
+        assertThatExceptionOfType(NoDependencyFileFoundException.class).isThrownBy(() ->
+                    new Workspace("src/test/resources/project_root/testDir")
+                            .getDependencyDocument("pom.xml"));
     }
 }

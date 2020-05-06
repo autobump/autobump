@@ -3,8 +3,8 @@ package com.github.autobump.maven.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 class MavenVersionTest {
     private  MavenVersion mv1;
@@ -26,27 +26,27 @@ class MavenVersionTest {
 
     @Test
     void compareOlderToNewVersion() {
-        assertTrue(mv2.compareTo(mv1) < 0);
+        assertThat(mv2.compareTo(mv1)).isLessThan(0);
     }
 
     @Test
     void compareBetaToNonBeta_shouldBeOlder(){
-        assertTrue(mv4.compareTo(mv5) < 0);
+        assertThat(mv4.compareTo(mv5)).isLessThan(0);
     }
 
     @Test
     void compareNewerToOlderVersion(){
-        assertTrue(mv1.compareTo(mv2) > 0);
+        assertThat(mv1.compareTo(mv2)).isGreaterThan(0);
     }
 
     @Test
     void compareSimilarVersions(){
-        assertSame(0, mv2.compareTo(mv3));
+        assertThat(mv2.compareTo(mv3)).isEqualTo(0);
     }
 
     @Test
     void compareAlphaToBeta_shouldBeOlder(){
-        assertTrue(mv6.compareTo(mv4) < 0);
+        assertThat(mv6.compareTo(mv4)).isLessThan(0);
     }
 
 }

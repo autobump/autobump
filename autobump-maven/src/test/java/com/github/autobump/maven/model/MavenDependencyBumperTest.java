@@ -18,8 +18,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class MavenDependencyBumperTest {
     private static final String DERBY_GROUP = "org.apache.derby";
@@ -50,61 +50,65 @@ class MavenDependencyBumperTest {
     }
 
     @Test
-    void testBump() {
+    void testBump_OneDependencyShouldBeUpdated() {
         var dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(MavenDependency.builder()
+        assertThat(dependencies).contains(
+                MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
                 .version(DERBY_VERSION)
                 .type(DependencyType.DEPENDENCY)
-                .build()));
+                .build());
         bumpDependency(dependency);
-        Dependency updatedDep = MavenDependency.builder()
+        dependencies = resolver.resolve(workspace);
+        assertThat(dependencies).contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
                 .version(UPDATED_VERSION)
                 .type(DependencyType.DEPENDENCY)
-                .build();
-        dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(updatedDep));
+                .build());
     }
 
     @Test
-    void testBumpProperty() {
-        Dependency dependency = MavenDependency.builder()
+    void testBumpWithDependencyThatHasVersionNumberInProperty_AssertThatVersionUpdated() {
+        var dependencies = resolver.resolve(workspace);
+        var dep = MavenDependency.builder()
                 .name("derbys")
                 .group(DERBY_GROUP)
                 .version(DERBY_VERSION)
                 .type(DependencyType.DEPENDENCY)
                 .build();
-        var dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(dependency));
-        bumpDependency(dependency);
-        Dependency updatedDep = MavenDependency.builder()
+        assertThat(dependencies).contains(dep);
+
+        bumpDependency(dep);
+
+        dependencies = resolver.resolve(workspace);
+        assertThat(dependencies).contains(
+                MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name("derbys")
                 .version(UPDATED_VERSION)
                 .type(DependencyType.DEPENDENCY)
-                .build();
-        dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(updatedDep));
+                .build());
     }
 
     @Test
-    void testThrowsIO() {
+    void testWhenIOException_NewUncheckedIOExceptionIsThrown() {
         mavenDependencyBumper = new MavenDependencyBumperTester();
-        assertThrows(UncheckedIOException.class, () ->
-                mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"),
-                        new Bump(dependency, version)));
+        assertThatExceptionOfType(UncheckedIOException.class)
+                .isThrownBy( () -> mavenDependencyBumper
+                        .bump(new Workspace("src/test/resources/project_root"),
+                                new Bump(dependency, version)));
     }
 
     @Test
     void testThrowParser(){
         mavenDependencyBumper = new MavenDependencyBumper();
         mavenDependencyBumper.mavenXpp3ReaderEx = new MavenXpp3ReaderExTester();
-        assertThrows(DependencyParserException.class, () ->
-                mavenDependencyBumper.bump(new Workspace("src/test/resources/project_root"),
-                        new Bump(dependency, version)));
+        assertThatExceptionOfType(DependencyParserException.class)
+                .isThrownBy(() -> mavenDependencyBumper
+                        .bump(new Workspace("src/test/resources/project_root"),
+                                new Bump(dependency, version)));
     }
 
     @Test
@@ -118,16 +122,35 @@ class MavenDependencyBumperTest {
                 .name(DERBY_NAME)
                 .version(DERBY_VERSION)
                 .build();
-        assertTrue(dependencies.contains(dependency));
+        assertThat(dependencies).contains(dependency);
         bumpDependency(dependency);
-        Dependency updatedDep = MavenDependency.builder()
+        dependencies = resolver.resolve(workspace);
+        assertThat(dependencies).contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
                 .version(UPDATED_VERSION)
                 .type(DependencyType.DEPENDENCY)
+                .build());
+    }
+
+    @Test
+    void testBumpNormalDependency() {
+        var dependencies = resolver.resolve(workspace);
+        MavenDependency dependency = MavenDependency.builder()
+                .group(DERBY_GROUP)
+                .type(DependencyType.DEPENDENCY)
+                .name(DERBY_NAME)
+                .version(DERBY_VERSION)
                 .build();
+        assertThat(dependencies).contains(dependency);
+        bumpDependency(dependency.getAsDependency());
         dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(updatedDep));
+        assertThat(dependencies).contains(MavenDependency.builder()
+                .group(DERBY_GROUP)
+                .name(DERBY_NAME)
+                .version(UPDATED_VERSION)
+                .type(DependencyType.DEPENDENCY)
+                .build());
     }
 
     private void bumpDependency(Dependency dependency) {
@@ -141,24 +164,4 @@ class MavenDependencyBumperTest {
         return new InputLocation(lineNumber, comumnNumber, inputSource);
     }
 
-    @Test
-    void testBumpNormalDependency() {
-        var dependencies = resolver.resolve(workspace);
-        MavenDependency dependency = MavenDependency.builder()
-                .group(DERBY_GROUP)
-                .type(DependencyType.DEPENDENCY)
-                .name(DERBY_NAME)
-                .version(DERBY_VERSION)
-                .build();
-        assertTrue(dependencies.contains(dependency));
-        bumpDependency(dependency.getAsDependency());
-        Dependency updatedDep = MavenDependency.builder()
-                .group(DERBY_GROUP)
-                .name(DERBY_NAME)
-                .version(UPDATED_VERSION)
-                .type(DependencyType.DEPENDENCY)
-                .build();
-        dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(updatedDep));
-    }
 }

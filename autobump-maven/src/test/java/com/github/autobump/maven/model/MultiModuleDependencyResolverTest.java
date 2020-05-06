@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Set;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class MultiModuleDependencyResolverTest {
 
@@ -26,14 +26,14 @@ public class MultiModuleDependencyResolverTest {
     @Test
     void testResolveMultiModuleProject() {
         Set<Dependency> dependencies = resolver.resolve(multiModuleWorkspace);
-        assertEquals(3, dependencies.size());
+        assertThat(dependencies).hasSize(3);
     }
 
     @Test
     void testResolveMultiModuleProject_withDependencyManagementSection() {
         Workspace ws = new Workspace("src/test/resources/multi_module_root_depmngt");
         Set<Dependency> dependencies = resolver.resolve(ws);
-        assertEquals(4, dependencies.size());
+        assertThat(dependencies).hasSize(4);
     }
 
     @Test
@@ -48,7 +48,8 @@ public class MultiModuleDependencyResolverTest {
         }
 
         MavenDependencyResolverTester tester = new MavenDependencyResolverTester();
-        assertThrows(UncheckedIOException.class, () ->
+
+        assertThatExceptionOfType(UncheckedIOException.class).isThrownBy(() ->
                 tester.resolve(multiModuleWorkspace));
     }
 }
