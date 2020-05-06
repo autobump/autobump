@@ -4,8 +4,8 @@ import com.github.autobump.core.exceptions.NoDependencyFileFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class WorkspaceTest {
     private  Workspace workspace;
@@ -17,11 +17,12 @@ class WorkspaceTest {
 
     @Test
     void getDependencyDocument() {
-        assertNotNull(workspace.getDependencyDocument("pom.xml"));
+        assertThat(workspace.getDependencyDocument("pom.xml")).isNotNull();
     }
 
     @Test
-    void wrongDependencytest() {
-        assertThrows(NoDependencyFileFoundException.class, () -> workspace.getDependencyDocument("build.gradle"));
+    void getDependencyNonexistentDocument_ShouldThrowException() {
+        assertThatExceptionOfType(NoDependencyFileFoundException.class)
+                .isThrownBy(() -> workspace.getDependencyDocument("build.gradle"));
     }
 }

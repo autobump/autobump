@@ -36,11 +36,34 @@ public class MavenDependencyResolver implements DependencyResolver {
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
+        return resolve(workspace, new HashSet<>());
+    }
+
+    private Set<Dependency> resolve(Workspace workspace, Set<Dependency> ignoredInternal) {
         Model model = mavenModelAnalyser.getModel(workspace);
-        Set<Dependency> dependencies = getDependencies(model);
+        ignoredInternal.add(Dependency
+                .builder()
+                .name(model.getArtifactId())
+                .group(model.getGroupId())
+                .version(model.getVersion())
+                .build());
+        Set<Dependency> dependencies = getDependencies(workspace, ignoredInternal, model);
+        return dependencies.stream().filter(dependency ->
+                !ignoredInternal.contains(Dependency.builder()
+                        .group(dependency.getGroup())
+                        .version(dependency.getVersion())
+                        .name(dependency.getName())
+                        .build()))
+                .filter(dependency ->
+                        !dependency.getGroup().equals("${project.groupId}"))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private Set<Dependency> getDependencies(Workspace workspace, Set<Dependency> ignoredInternal, Model model) {
+        Set<Dependency> dependencies = getDependencySet(model);
         dependencies.addAll(getPlugins(model));
         dependencies.addAll(getParentDependency(model));
-        dependencies.addAll(getModules(workspace, model.getModules()));
+        dependencies.addAll(resolveModules(workspace, model.getModules(), ignoredInternal));
         dependencies.addAll(getProfiles(model));
         dependencies.addAll(getDependenciesFromDependencyManagementSection(model));
         return dependencies;
@@ -69,7 +92,6 @@ public class MavenDependencyResolver implements DependencyResolver {
             return profile.getDependencyManagement()
                     .getDependencies()
                     .stream()
-                    .filter(dependency -> dependency.getVersion() != null)
                     .map(dependency -> MavenDependency.builder()
                             .group(dependency.getGroupId())
                             .name(dependency.getArtifactId())
@@ -88,7 +110,6 @@ public class MavenDependencyResolver implements DependencyResolver {
 
         return profile.getDependencies()
                 .stream()
-                .filter(dependency -> dependency.getVersion() != null)
                 .map(dependency -> MavenDependency.builder()
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())
@@ -104,7 +125,6 @@ public class MavenDependencyResolver implements DependencyResolver {
     private Set<Dependency> getPluginsFromProfile(Profile profile, Model model) {
         return resolvePlugins(profile.getBuild())
                 .stream()
-                .filter(plugin -> plugin.getVersion() != null)
                 .map(plugin -> MavenDependency.builder()
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
@@ -117,11 +137,11 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .collect(Collectors.toSet());
     }
 
-    private Set<Dependency> getModules(Workspace workspace, List<String> modules) {
+    private Set<Dependency> resolveModules(Workspace workspace, List<String> modules, Set<Dependency> toBeIgnored) {
         if (!modules.isEmpty()) {
             try {
                 var dependencies = new HashSet<Dependency>();
-                walkFiles(workspace, dependencies);
+                walkFiles(workspace, dependencies, toBeIgnored);
                 return dependencies;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -130,7 +150,8 @@ public class MavenDependencyResolver implements DependencyResolver {
         return Collections.emptySet();
     }
 
-    public void walkFiles(Workspace workspace, Set<Dependency> dependencies) throws IOException {
+    public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored)
+            throws IOException {
         Files.walkFileTree(Path.of(workspace.getProjectRoot()),
                 Set.of(),
                 2,
@@ -143,7 +164,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                                     .toAbsolutePath()
                                     .toString()
                                     .replace(File.separator + FILENAME, ""));
-                            dependencies.addAll(resolve(ws));
+                            dependencies.addAll(resolve(ws, toBeIgnored));
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -153,7 +174,6 @@ public class MavenDependencyResolver implements DependencyResolver {
     private Set<Dependency> getPlugins(Model model) {
         List<Plugin> pluginList = resolvePlugins(model.getBuild());
         return pluginList.stream()
-                .filter(plugin -> plugin.getVersion() != null)
                 .map(plugin -> MavenDependency.builder()
                         .group(plugin.getGroupId())
                         .name(plugin.getArtifactId())
@@ -172,20 +192,20 @@ public class MavenDependencyResolver implements DependencyResolver {
             return mng
                     .getDependencies()
                     .stream()
-                    .filter(dep -> dep.getVersion() != null)
                     .map(dep -> MavenDependency.builder()
                             .group(dep.getGroupId())
                             .name(dep.getArtifactId())
-                            .version(dep.getVersion())
+                            .version(mavenModelAnalyser.getVersionFromProperties(model, dep.getVersion()))
                             .type(DependencyType.DEPENDENCY)
                             .inputLocation(dep.getLocation(LOCATION_KEY))
                             .build())
+                    .filter(dependency -> dependency.getVersion() != null)
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
     }
 
-    private Set<Dependency> getParentDependency(Model model){
+    private Set<Dependency> getParentDependency(Model model) {
         var parent = model.getParent();
         Set<Dependency> dependencies = new HashSet<>();
         if (parent != null) {
@@ -212,11 +232,10 @@ public class MavenDependencyResolver implements DependencyResolver {
         return pluginList;
     }
 
-    private Set<Dependency> getDependencies(Model model) {
+    private Set<Dependency> getDependencySet(Model model) {
         List<org.apache.maven.model.Dependency> dependencies = model.getDependencies();
         return dependencies
                 .stream()
-                .filter(dependency -> dependency.getVersion() != null)
                 .map(dependency -> MavenDependency.builder()
                         .group(dependency.getGroupId())
                         .name(dependency.getArtifactId())

@@ -66,18 +66,18 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.derby</groupId>
-                        <artifactId>derby</artifactId>
-                        <version>10.13.2.0</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>2.2</version>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.derby</groupId>
-                        <artifactId>derby</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
                         <version>${shamalamadingdong}</version>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.derby</groupId>
-                        <artifactId>derby</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
