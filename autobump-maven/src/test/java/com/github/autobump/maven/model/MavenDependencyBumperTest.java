@@ -18,6 +18,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,7 +53,7 @@ class MavenDependencyBumperTest {
     @Test
     void testBump() {
         var dependencies = resolver.resolve(workspace);
-        assertTrue(dependencies.contains(MavenDependency.builder()
+        assertThat(dependencies.contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
                 .version(DERBY_VERSION)
