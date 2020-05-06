@@ -61,7 +61,7 @@ public class MavenDependencyBumper implements DependencyBumper {
     private void changeVersionLine(InputLocation versionLocation, Bump bump, List<String> out) {
         out.set(versionLocation.getLineNumber() - 1,
                 out.get(versionLocation.getLineNumber() - 1)
-                        .replace(bump.getDependency().getVersion(),
+                        .replace(bump.getDependency().getVersion().getVersionNumber(),
                                 bump.getUpdatedVersion().getVersionNumber()));
     }
 
@@ -69,7 +69,7 @@ public class MavenDependencyBumper implements DependencyBumper {
         for (int i = 0; i < out.size(); i++) {
             String line = out.get(i);
             if (line.contains("<" + groupname + ">")) {
-                out.set(i, line.replace(bump.getDependency().getVersion(),
+                out.set(i, line.replace(bump.getDependency().getVersion().getVersionNumber(),
                         bump.getUpdatedVersion().getVersionNumber()));
             }
         }

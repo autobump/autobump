@@ -4,6 +4,7 @@ import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.exceptions.NoDependencyFileFoundException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;
@@ -20,10 +21,10 @@ public class MavenDependencyResolverTest {
 
     public static final String TEST_DEPENDENCY_GROUP = "org.apache.derby";
     public static final String TEST_DEPENDENCY_NAME = "derby";
-    public static final String TEST_DEPENDENCY_VERSION = "10.15.2.0";
+    public static final Version TEST_DEPENDENCY_VERSION = new MavenVersion("10.15.2.0");
     public static final String TEST_PLUGIN_GROUP = "org.apache.maven.plugins";
     public static final String TEST_PLUGIN_NAME = "maven-clean-plugin";
-    public static final String TEST_PLUGIN_VERSION = "2.2";
+    public static final Version TEST_PLUGIN_VERSION = new MavenVersion("2.2");
     private Workspace workspace;
     private Workspace pluginWorkspace;
     private Workspace pluginDefaultGroupIdWorkspace;
@@ -86,7 +87,7 @@ public class MavenDependencyResolverTest {
         assertThat(deps).contains(MavenDependency.builder()
                 .group(TEST_DEPENDENCY_GROUP)
                 .name(TEST_DEPENDENCY_NAME)
-                .version("${org.apache.derby.version")
+                .version(new MavenVersion("${org.apache.derby.version"))
                 .type(DependencyType.DEPENDENCY)
                 .inputLocation(new InputLocation(21, 22, is))
                 .build());
@@ -156,7 +157,7 @@ public class MavenDependencyResolverTest {
         assertThat(plugins).contains(MavenDependency.builder()
                 .group("org.apache.maven.plugins")
                 .name("maven-compiler-plugin")
-                .version("3.8.1")
+                .version(new MavenVersion("3.8.1"))
                 .type(DependencyType.PLUGIN)
                 .build());
     }
@@ -209,7 +210,7 @@ public class MavenDependencyResolverTest {
                                 .builder()
                                 .name("spring-boot-starter-parent")
                                 .group("org.springframework.boot")
-                                .version("2.2.5.RELEASE")
+                                .version(new MavenVersion("2.2.5.RELEASE"))
                                 .type(DependencyType.PARENT_DEPENDENCY)
                                 .build());
     }

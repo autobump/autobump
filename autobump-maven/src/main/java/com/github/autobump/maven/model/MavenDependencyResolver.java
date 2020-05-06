@@ -45,7 +45,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .builder()
                 .name(model.getArtifactId())
                 .group(model.getGroupId())
-                .version(model.getVersion())
+                .version(new MavenVersion(model.getVersion()))
                 .build());
         Set<Dependency> dependencies = getDependencies(workspace, ignoredInternal, model);
         return dependencies.stream().filter(dependency ->
@@ -97,10 +97,10 @@ public class MavenDependencyResolver implements DependencyResolver {
                             .name(dependency.getArtifactId())
                             .type(DependencyType.PROFILE_DEPENDENCY)
                             .inputLocation(dependency.getLocation(LOCATION_KEY))
-                            .version(mavenModelAnalyser
-                                    .getVersionFromProperties(model, dependency.getVersion(), profile))
+                            .version(new MavenVersion(mavenModelAnalyser
+                                    .getVersionFromProperties(model, dependency.getVersion(), profile)))
                             .build())
-                    .filter(dependency -> dependency.getVersion() != null)
+                    .filter(dependency -> dependency.getVersion().getVersionNumber() != null)
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -115,10 +115,10 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .name(dependency.getArtifactId())
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .inputLocation(dependency.getLocation(LOCATION_KEY))
-                        .version(mavenModelAnalyser
-                                .getVersionFromProperties(model, dependency.getVersion(), profile))
+                        .version(new MavenVersion(mavenModelAnalyser
+                                .getVersionFromProperties(model, dependency.getVersion(), profile)))
                         .build())
-                .filter(dependency -> dependency.getVersion() != null)
+                .filter(dependency -> dependency.getVersion().getVersionNumber() != null)
                 .collect(Collectors.toSet());
     }
 
@@ -130,10 +130,10 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .name(plugin.getArtifactId())
                         .type(DependencyType.PROFILE_PLUGIN)
                         .inputLocation(plugin.getLocation(LOCATION_KEY))
-                        .version(mavenModelAnalyser
-                                .getVersionFromProperties(model, plugin.getVersion(), profile))
+                        .version(new MavenVersion(mavenModelAnalyser
+                                .getVersionFromProperties(model, plugin.getVersion(), profile)))
                         .build())
-                .filter(plugin -> plugin.getVersion() != null)
+                .filter(plugin -> plugin.getVersion().getVersionNumber() != null)
                 .collect(Collectors.toSet());
     }
 
@@ -179,9 +179,10 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .name(plugin.getArtifactId())
                         .type(DependencyType.PLUGIN)
                         .inputLocation(plugin.getLocation(LOCATION_KEY))
-                        .version(mavenModelAnalyser.getVersionFromProperties(model, plugin.getVersion()))
+                        .version(new MavenVersion(mavenModelAnalyser
+                                .getVersionFromProperties(model, plugin.getVersion())))
                         .build())
-                .filter(plugin -> plugin.getVersion() != null)
+                .filter(plugin -> plugin.getVersion().getVersionNumber() != null)
                 .collect(Collectors.toSet());
     }
 
@@ -195,11 +196,12 @@ public class MavenDependencyResolver implements DependencyResolver {
                     .map(dep -> MavenDependency.builder()
                             .group(dep.getGroupId())
                             .name(dep.getArtifactId())
-                            .version(mavenModelAnalyser.getVersionFromProperties(model, dep.getVersion()))
+                            .version(new MavenVersion(mavenModelAnalyser
+                                    .getVersionFromProperties(model, dep.getVersion())))
                             .type(DependencyType.DEPENDENCY)
                             .inputLocation(dep.getLocation(LOCATION_KEY))
                             .build())
-                    .filter(dependency -> dependency.getVersion() != null)
+                    .filter(dependency -> dependency.getVersion().getVersionNumber() != null)
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -214,7 +216,7 @@ public class MavenDependencyResolver implements DependencyResolver {
                     .inputLocation(parent.getLocation(LOCATION_KEY))
                     .group(parent.getGroupId())
                     .name(parent.getArtifactId())
-                    .version(parent.getVersion())
+                    .version(new MavenVersion(parent.getVersion()))
                     .type(DependencyType.PARENT_DEPENDENCY)
                     .build());
         }
@@ -241,9 +243,10 @@ public class MavenDependencyResolver implements DependencyResolver {
                         .name(dependency.getArtifactId())
                         .type(DependencyType.DEPENDENCY)
                         .inputLocation(dependency.getLocation(LOCATION_KEY))
-                        .version(mavenModelAnalyser.getVersionFromProperties(model, dependency.getVersion()))
+                        .version(new MavenVersion(mavenModelAnalyser
+                                .getVersionFromProperties(model, dependency.getVersion())))
                         .build())
-                .filter(dependency -> dependency.getVersion() != null)
+                .filter(dependency -> dependency.getVersion().getVersionNumber() != null)
                 .collect(Collectors.toSet());
     }
 }

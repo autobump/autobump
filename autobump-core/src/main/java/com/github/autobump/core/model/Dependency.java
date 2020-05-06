@@ -10,5 +10,5 @@ import lombok.experimental.SuperBuilder;
 public class Dependency {
     String group;
     String name;
-    String version;
+    Version version;
 }

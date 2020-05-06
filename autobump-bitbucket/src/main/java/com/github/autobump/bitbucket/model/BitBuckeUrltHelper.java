@@ -1,18 +1,22 @@
 package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.core.model.UrlHelper;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BitBucketHelper {
+public class BitBuckeUrltHelper implements UrlHelper {
     private static final Pattern OWNER_REPO_PATTERN =
             Pattern.compile("^https:\\/\\/(.*@)?bitbucket\\.org\\/(.*)\\/(.*)\\.git$");
-
-    public static String getOwnerName(String repositoryUrl){
+    @Override
+    public String getOwnerName(String repositoryUrl){
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
         matcher.matches();
         return matcher.group(2);
     }
-    public static String getRepoName(String repositoryUrl){
+
+    @Override
+    public String getRepoName(String repositoryUrl){
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
         matcher.matches();
         return matcher.group(3);

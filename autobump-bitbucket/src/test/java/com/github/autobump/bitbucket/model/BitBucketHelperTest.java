@@ -1,31 +1,29 @@
 package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.core.model.UrlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BitBucketHelperTest {
     private String url;
-
+    private UrlHelper urlHelper;
 
     @BeforeEach
     void setUp() {
         url = "https://SchroGlenn@bitbucket.org/grietvermeesch/testmavenproject.git";
+        urlHelper = new BitBuckeUrltHelper();
     }
 
-    @Test
-    void testCreate() {
-        new BitBucketHelper();
-    }
 
     @Test
     void getOwnerName() {
-        assertEquals("grietvermeesch", BitBucketHelper.getOwnerName(url));
+        assertThat(urlHelper.getOwnerName(url)).isEqualTo("grietvermeesch");
     }
 
     @Test
     void getRepoName() {
-        assertEquals("testmavenproject", BitBucketHelper.getRepoName(url));
+        assertThat(urlHelper.getRepoName(url)).isEqualTo("testmavenproject");
     }
 }

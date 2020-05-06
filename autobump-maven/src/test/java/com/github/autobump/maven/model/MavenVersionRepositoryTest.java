@@ -46,7 +46,7 @@ class MavenVersionRepositoryTest {
     @Test
     void getAllAvailableVersions() {
         var versions = mavenVersionRepository.getAllAvailableVersions(
-                Dependency.builder().name(TEST).group(TEST).version(TEST).build());
+                Dependency.builder().name(TEST).group(TEST).version(new MavenVersion(TEST)).build());
         assertThat(versions).hasSize(18);
         assertThat(versions).contains(new MavenVersion("5.7.0-M1"));
     }
@@ -55,19 +55,22 @@ class MavenVersionRepositoryTest {
     void getWrongXml() {
         assertThatExceptionOfType(DependencyParserException.class).isThrownBy(() ->
                 mavenVersionRepository.getAllAvailableVersions(
-                        Dependency.builder().name("test1").group(TEST).version(TEST).build()));
+                        Dependency.builder().name("test1").group(TEST)
+                                .version(new MavenVersion(TEST)).build()));
     }
 
     @Test
     void getFileNotFound() {
         assertThat(mavenVersionRepository.getAllAvailableVersions(
-                        Dependency.builder().name("bla").group("bla").version("bla").build())).isEmpty();
+                        Dependency.builder().name("bla").group("bla")
+                                .version(new MavenVersion("bla")).build())).isEmpty();
     }
 
     @Test
     void testMalformedUrl() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() ->
                 new MavenVersionRepository("//").getAllAvailableVersions(
-                        Dependency.builder().name(TEST).group(TEST).version(TEST).build()));
+                        Dependency.builder().name(TEST).group(TEST)
+                                .version(new MavenVersion(TEST)).build()));
     }
 }

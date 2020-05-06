@@ -112,6 +112,7 @@ dependencies {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn configurations.childJars
     from {
         configurations.childJars.collect { zipTree(it) }

@@ -111,7 +111,24 @@ class JGitGitClientTest {
     }
 
     private Bump getBumpForCreationBranch() {
-        Dependency dep = Dependency.builder().group("test").name("test").version("1.0.0").build();
+        class TestVersion implements Version{
+            private final String versionNumber;
+
+            TestVersion(String versionNumber) {
+                this.versionNumber = versionNumber;
+            }
+
+            @Override
+            public String getVersionNumber() {
+                return versionNumber;
+            }
+
+            @Override
+            public int compareTo(Version o) {
+                return this.versionNumber.compareTo(o.getVersionNumber());
+            }
+        }
+        Dependency dep = Dependency.builder().group("test").name("test").version(new TestVersion("1.0.0")).build();
         Version version = new Version() {
             @Override
             public int compareTo(Version o) {
