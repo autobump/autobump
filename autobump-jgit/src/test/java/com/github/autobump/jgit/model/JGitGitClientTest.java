@@ -37,7 +37,7 @@ class JGitGitClientTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        client = new JGitGitClient();
+        client = new JGitGitClient("test", "test");
         FileRepositoryBuilder.create(new File("src/test/resources/__files"));
     }
 
@@ -53,7 +53,7 @@ class JGitGitClientTest {
     @Test
     void testWrongUrl() {
         assertThrows(GitException.class, () ->
-                new JGitGitClient().clone(new URI("wrong")));
+                new JGitGitClient("test", "test").clone(new URI("wrong")));
     }
 
     private void stopServer() throws Exception {
@@ -187,19 +187,23 @@ class JGitGitClientTest {
 
         class JGitGitClientTester extends JGitGitClient {
 
+            JGitGitClientTester(String username, String password) {
+                super(username, password);
+            }
+
             @Override
             public String createBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
 
             @Override
-            public void commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
+            public String commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
         }
 
         startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester();
+        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
         Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
         Bump bump = getBumpForCreationBranch();
         assertThrows(GitException.class, () -> testClient.commitToNewBranch(workspace, bump));

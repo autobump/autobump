@@ -5,7 +5,6 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
@@ -18,11 +17,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @AllArgsConstructor
-@NoArgsConstructor
 public class JGitGitClient implements GitClient {
-    private String username;
+    private final String username;
 
-    private String password;
+    private final String password;
     @Override
     public Workspace clone(URI uri) {
         try (Repository repo = Git.cloneRepository().setURI(uri.toString())
@@ -36,11 +34,12 @@ public class JGitGitClient implements GitClient {
     }
 
     @Override
-    public String commitToNewBranch(Workspace workspace, Bump bump) {
+    public CommitResult commitToNewBranch(Workspace workspace, Bump bump) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             String branchName = createBranch(bump, git);
-            commitAndPushToNewBranch(bump, git);
-            return branchName;
+            String commitMessage = commitAndPushToNewBranch(bump, git);
+            git.checkout().setName("master").call();
+            return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (GitAPIException g) {
@@ -54,16 +53,18 @@ public class JGitGitClient implements GitClient {
                 bump.getDependency().getName(),
                 bump.getUpdatedVersion().getVersionNumber());
         git.branchCreate().setName(branchName).call();
+        git.checkout().setName(branchName).call();
         return branchName;
     }
 
-    public void commitAndPushToNewBranch(Bump bump, Git git) throws GitAPIException {
+    public String commitAndPushToNewBranch(Bump bump, Git git) throws GitAPIException {
         git.add().addFilepattern(".").call();
-        String commitMessage = String.format("Bump %s from %s to %s",
+        String commitMessage = String.format("Autobump %s from %s to %s",
                 bump.getDependency().getName(),
                 bump.getDependency().getVersion(),
                 bump.getUpdatedVersion().getVersionNumber());
-        git.commit().setMessage(commitMessage);
+        git.commit().setMessage(commitMessage).call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();
+        return commitMessage;
     }
 }

@@ -26,17 +26,17 @@ class MavenVersionTest {
 
     @Test
     void compareOlderToNewVersion() {
-        assertTrue(mv2.compareTo(mv1) < 0);
+        assertTrue(mv2.compareTo(mv1) > 0);
     }
 
     @Test
     void compareBetaToNonBeta_shouldBeOlder(){
-        assertTrue(mv4.compareTo(mv5) < 0);
+        assertTrue(mv4.compareTo(mv5) > 0);
     }
 
     @Test
     void compareNewerToOlderVersion(){
-        assertTrue(mv1.compareTo(mv2) > 0);
+        assertTrue(mv1.compareTo(mv2) < 0);
     }
 
     @Test
@@ -46,7 +46,7 @@ class MavenVersionTest {
 
     @Test
     void compareAlphaToBeta_shouldBeOlder(){
-        assertTrue(mv6.compareTo(mv4) < 0);
+        assertTrue(mv6.compareTo(mv4) > 0);
     }
 
 }

@@ -11,6 +11,6 @@ public class MavenVersion implements Version {
     @Override
     public int compareTo(Version o) {
         ComparableVersion comparableVersion = new ComparableVersion(versionNumber);
-        return comparableVersion.compareTo(new ComparableVersion(o.getVersionNumber()));
+        return new ComparableVersion(o.getVersionNumber()).compareTo(comparableVersion);
     }
 }
