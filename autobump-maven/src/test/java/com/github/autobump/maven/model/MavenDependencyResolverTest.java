@@ -44,14 +44,13 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = resolver.resolve(workspace);
         InputSource is = new InputSource();
         is.setLocation("src/test/resources/project_root/pom.xml");
-        assertThat(
-                Set.of(MavenDependency.builder()
-                        .group(TEST_DEPENDENCY_GROUP)
-                        .name(TEST_DEPENDENCY_NAME)
-                        .version(TEST_DEPENDENCY_VERSION)
-                        .type(DependencyType.DEPENDENCY)
-                        .inputLocation(new InputLocation(21, 22, is))
-                        .build()).contains(deps));
+        assertThat(deps).contains(MavenDependency.builder()
+                .group(TEST_DEPENDENCY_GROUP)
+                .name(TEST_DEPENDENCY_NAME)
+                .version(TEST_DEPENDENCY_VERSION)
+                .type(DependencyType.DEPENDENCY)
+                .inputLocation(new InputLocation(21, 22, is))
+                .build());
     }
 
     @Test
@@ -60,14 +59,13 @@ public class MavenDependencyResolverTest {
         Set<Dependency> deps = resolver.resolve(ws);
         InputSource is = new InputSource();
         is.setLocation("src/test/resources/project_root_support_properties/pom.xml");
-        assertThat(
-                Set.of(MavenDependency.builder()
+        assertThat(deps).contains(MavenDependency.builder()
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .version(TEST_DEPENDENCY_VERSION)
                         .type(DependencyType.DEPENDENCY)
                         .inputLocation(new InputLocation(25, 22, is))
-                        .build()).contains(deps));
+                        .build());
     }
 
     @Test
@@ -205,7 +203,7 @@ public class MavenDependencyResolverTest {
 
     @Test
     void testSuccessfullyResolveParentDependency(){
-        assertThat(resolver.resolve(parentDependencyWorkspace)
+        assertThat(resolver.resolve(parentDependencyWorkspace))
                 .contains(
                         MavenDependency
                                 .builder()
@@ -213,7 +211,7 @@ public class MavenDependencyResolverTest {
                                 .group("org.springframework.boot")
                                 .version("2.2.5.RELEASE")
                                 .type(DependencyType.PARENT_DEPENDENCY)
-                                .build()));
+                                .build());
     }
 
     @Test

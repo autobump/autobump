@@ -125,12 +125,12 @@ class MavenDependencyBumperTest {
         assertThat(dependencies).contains(dependency);
         bumpDependency(dependency);
         dependencies = resolver.resolve(workspace);
-        assertThat(dependencies.contains(MavenDependency.builder()
+        assertThat(dependencies).contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
                 .version(UPDATED_VERSION)
                 .type(DependencyType.DEPENDENCY)
-                .build()));
+                .build());
     }
 
     @Test
@@ -142,7 +142,7 @@ class MavenDependencyBumperTest {
                 .name(DERBY_NAME)
                 .version(DERBY_VERSION)
                 .build();
-        assertThat(dependencies.contains(dependency));
+        assertThat(dependencies).contains(dependency);
         bumpDependency(dependency.getAsDependency());
         dependencies = resolver.resolve(workspace);
         assertThat(dependencies).contains(MavenDependency.builder()

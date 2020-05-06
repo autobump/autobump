@@ -26,71 +26,66 @@ public class MavenDependencyResolverProfileTest {
     @Test
     void testProfiles() {
 
-        assertThat(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version(TEST_DEPENDENCY_VERSION)
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()
-        ));
-
+        );
     }
 
     @Test
     void testPluginProfiles() {
 
-        assertThat(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_PLUGIN)
                         .version(TEST_PLUGIN_VERSION)
                         .group(TEST_PLUGIN_GROUP)
                         .name(TEST_PLUGIN_NAME)
                         .build()
-        ));
-
+        );
     }
 
     @Test
     void testDependencyManagementProfiles() {
 
-        assertThat(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version("10.14.2.0")
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()
-        ));
-
+        );
     }
 
     @Test
     void testPropertiesInProfiles() {
 
-        assertThat(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version("10.16.2.0")
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()
-        ));
-
+        );
     }
 
     @Test
     void testMainPropertiesInProfiles() {
 
-        assertThat(resolver.resolve(profilesWorkspace).contains(
+        assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
                         .version("10.17.2.0")
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()
-        ));
-
+        );
     }
 
     @Test
