@@ -16,9 +16,9 @@ import com.github.autobump.maven.model.MavenDependencyResolver;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 
-import java.io.PrintStream;
 import java.net.URI;
 import java.util.concurrent.Callable;
 
@@ -26,7 +26,7 @@ import java.util.concurrent.Callable;
         name = "autobump",
         description = "automatically creates a pull-request for every outdated dependency in a project"
 )
-public class Autobump implements Callable<Integer> {
+public class Autobump implements Callable<AutobumpResult> {
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
     private VersionRepository versionRepository;
@@ -43,19 +43,27 @@ public class Autobump implements Callable<Integer> {
     private String repositoryUrl;
     @Option(names = {"-a", "--apiurl"}, description = "apiUrl", defaultValue = "https://api.bitbucket.org/2.0")
     private String apiUrl;
+    @CommandLine.Spec
+    private static CommandSpec spec;
 
     public static void main(String[] args) {
-        new CommandLine(new Autobump()).execute(args);
+        CommandLine cmd = new CommandLine(new Autobump());
+        cmd.execute(args);
+        AutobumpResult result = cmd.getExecutionResult();
+        spec.commandLine().getOut().println("amountBumped: " + result.getNumberOfBumps());
     }
 
     @Override
-    public Integer call() {
+    public AutobumpResult call() {
         initialize();
-        AutobumpResult result = getAutobumpUseCase().execute();
-        try (PrintStream out = System.out) {
-            out.println("amountBumped: " + result.getNumberOfBumps());
-        }
-        return 0;
+        return getAutobumpUseCase().execute();
+    }
+
+    private void initialize() {
+        versionRepository = new MavenVersionRepository(repositoryUrl);
+        gitClient = new JGitGitClient(username, password);
+        BitBucketAccount bitBucketAccount = new BitBucketAccount(username, password);
+        gitProvider = new BitBucketGitProvider(bitBucketAccount, apiUrl);
     }
 
     private AutobumpUseCase getAutobumpUseCase() {
@@ -68,12 +76,5 @@ public class Autobump implements Callable<Integer> {
                 .uri(url)
                 .versionRepository(versionRepository)
                 .build();
-    }
-
-    private void initialize() {
-        versionRepository = new MavenVersionRepository(repositoryUrl);
-        gitClient = new JGitGitClient(username, password);
-        BitBucketAccount bitBucketAccount = new BitBucketAccount(username, password);
-        gitProvider = new BitBucketGitProvider(bitBucketAccount, apiUrl);
     }
 }
