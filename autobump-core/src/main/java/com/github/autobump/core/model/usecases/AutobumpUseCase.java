@@ -1,5 +1,16 @@
-package com.github.autobump.core.model;
+package com.github.autobump.core.model.usecases;
 
+import com.github.autobump.core.model.AutobumpResult;
+import com.github.autobump.core.model.Bump;
+import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.DependencyBumper;
+import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.GitClient;
+import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.Version;
+import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -24,14 +35,18 @@ public class AutobumpUseCase {
     @NonNull
     private final URI uri;
 
+
+
     public AutobumpResult execute() {
+        PullRequestUseCase pullRequestUseCase = new PullRequestUseCase(gitProvider, gitClient, urlHelper);
+        BumpUseCase bumpUseCase = new BumpUseCase(dependencyBumper);
         int amountOfBumps = 0;
         Workspace workspace = gitClient.clone(getUri());
         for (Dependency dependency : dependencyResolver.resolve(workspace)) {
             Version latestVersion = getLatestVersion(dependency);
             if (latestVersion != null && dependency.getVersion().compareTo(latestVersion) > 0) {
-                Bump bump = doBump(workspace, dependency, latestVersion);
-                makeAndExecutePullRequest(workspace, bump);
+                Bump bump = bumpUseCase.doBump(workspace, dependency, latestVersion);
+                pullRequestUseCase.makeAndExecutePullRequest(workspace, bump, uri);
                 amountOfBumps++;
             }
         }
@@ -43,25 +58,5 @@ public class AutobumpUseCase {
                 .sorted().findFirst().orElse(null);
     }
 
-    private void doPullRequest(PullRequest pullRequest) {
-        gitProvider.makePullRequest(pullRequest);
-    }
-
-    private void makeAndExecutePullRequest(Workspace workspace, Bump bump) {
-        var commitResult = gitClient.commitToNewBranch(workspace, bump);
-        PullRequest pullRequest = PullRequest.builder()
-                .branchName(commitResult.getBranchName())
-                .title(commitResult.getCommitMessage())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
-                .build();
-        doPullRequest(pullRequest);
-    }
-
-    private Bump doBump(Workspace workspace, Dependency dependency, Version latestVersion) {
-        Bump bump = new Bump(dependency, latestVersion);
-        dependencyBumper.bump(workspace, bump);
-        return bump;
-    }
 
 }

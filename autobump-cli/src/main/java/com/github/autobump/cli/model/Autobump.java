@@ -4,7 +4,7 @@ import com.github.autobump.bitbucket.model.BitBuckeUrltHelper;
 import com.github.autobump.bitbucket.model.BitBucketAccount;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
 import com.github.autobump.core.model.AutobumpResult;
-import com.github.autobump.core.model.AutobumpUseCase;
+import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
