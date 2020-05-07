@@ -43,7 +43,7 @@ class AutobumpUseCaseTest {
         makeMocks();
         setUpMocks();
     }
-
+    @SuppressWarnings("ExecutableStatementCount")
     private void setUpMocks() {
         Workspace workspace = new Workspace("");
         Mockito.when(gitClient.clone(uri)).thenReturn(workspace);
@@ -98,9 +98,9 @@ class AutobumpUseCaseTest {
     }
 
     private static class TestVersion implements Version {
-        private String version;
+        private final String version;
 
-        public TestVersion(String version) {
+        TestVersion(String version) {
             this.version =version;
         }
 
