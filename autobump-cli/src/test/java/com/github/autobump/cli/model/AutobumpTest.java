@@ -31,8 +31,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("PMD")
 class AutobumpTest {
 
     private static final String REPO_URL = "http://localhost:8090/repourl";
@@ -146,10 +148,14 @@ class AutobumpTest {
     void main_SuccessfullyShowsResult(){
         String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL).split(" ");
         CommandLine cmd = new CommandLine(new TestAutoBump());
-        StringWriter sw = new StringWriter();
-        cmd.setOut(new PrintWriter(sw));
         cmd.execute(args);
-        assertThat(sw.toString()).contains("amountBumped: 5");
+        if (cmd.getExecutionResult() instanceof AutobumpResult) {
+            assertThat(((AutobumpResult) cmd.getExecutionResult()).getNumberOfBumps())
+                    .isEqualTo(5);
+        }
+        else {
+            fail("bad returntype");
+        }
     }
 
 
@@ -172,8 +178,6 @@ class AutobumpTest {
     }
 
     static class TestAutoBump extends Autobump {
-
-
         @Override
         public AutobumpUseCase getAutobumpUseCase() {
             AutobumpUseCase mocked = Mockito.mock(AutobumpUseCase.class);

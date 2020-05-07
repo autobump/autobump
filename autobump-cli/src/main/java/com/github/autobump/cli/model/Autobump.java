@@ -27,6 +27,8 @@ import java.util.concurrent.Callable;
         description = "automatically creates a pull-request for every outdated dependency in a project"
 )
 public class Autobump implements Callable<AutobumpResult> {
+    @CommandLine.Spec
+    private static CommandSpec spec;
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
     private VersionRepository versionRepository;
@@ -43,11 +45,9 @@ public class Autobump implements Callable<AutobumpResult> {
     private String repositoryUrl;
     @Option(names = {"-a", "--apiurl"}, description = "apiUrl", defaultValue = "https://api.bitbucket.org/2.0")
     private String apiUrl;
-    @CommandLine.Spec
-    private static CommandSpec spec;
 
     public static void main(String[] args) {
-        CommandLine cmd = new CommandLine(getAutoBump());
+        CommandLine cmd = new CommandLine(new Autobump());
         cmd.execute(args);
         AutobumpResult result = cmd.getExecutionResult();
         spec.commandLine().getOut().println("amountBumped: " + result.getNumberOfBumps());
@@ -64,10 +64,6 @@ public class Autobump implements Callable<AutobumpResult> {
         gitClient = new JGitGitClient(username, password);
         BitBucketAccount bitBucketAccount = new BitBucketAccount(username, password);
         gitProvider = new BitBucketGitProvider(bitBucketAccount, apiUrl);
-    }
-
-    public static Autobump getAutoBump(){
-        return new Autobump();
     }
 
     public AutobumpUseCase getAutobumpUseCase() {

@@ -3,7 +3,6 @@ package com.github.autobump.core.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import lombok.Value;
 
 import java.net.URI;
 
