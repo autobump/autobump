@@ -6,25 +6,35 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Workspace;
+import lombok.Builder;
 
 import java.net.URI;
 
+@Builder
 public class PullRequestUseCase {
     private final GitProvider gitProvider;
     private final GitClient gitClient;
     private final UrlHelper urlHelper;
+    private final Workspace workspace;
+    private final Bump bump;
+    private final URI uri;
 
-    public PullRequestUseCase(GitProvider gitProvider, GitClient gitClient, UrlHelper urlHelper) {
+
+    public PullRequestUseCase(GitProvider gitProvider,
+                              GitClient gitClient,
+                              UrlHelper urlHelper,
+                              Workspace workspace,
+                              Bump bump,
+                              URI uri) {
         this.gitProvider = gitProvider;
         this.gitClient = gitClient;
         this.urlHelper = urlHelper;
+        this.workspace = workspace;
+        this.bump = bump;
+        this.uri = uri;
     }
 
-    private void doPullRequest(PullRequest pullRequest) {
-        gitProvider.makePullRequest(pullRequest);
-    }
-
-    public void makeAndExecutePullRequest(Workspace workspace, Bump bump, URI uri) {
+    public void doPullRequest() {
         var commitResult = gitClient.commitToNewBranch(workspace, bump);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -33,5 +43,9 @@ public class PullRequestUseCase {
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
         doPullRequest(pullRequest);
+    }
+
+    private void doPullRequest(PullRequest pullRequest) {
+        gitProvider.makePullRequest(pullRequest);
     }
 }

@@ -1,7 +1,7 @@
 package com.github.autobump.cli.model;
 
 import com.github.autobump.core.model.AutobumpResult;
-import com.github.autobump.core.model.AutobumpUseCase;
+import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -181,7 +181,7 @@ class AutobumpTest {
         @Override
         public AutobumpUseCase getAutobumpUseCase() {
             AutobumpUseCase mocked = Mockito.mock(AutobumpUseCase.class);
-            when(mocked.execute()).thenReturn(new AutobumpResult(5));
+            when(mocked.doAutoBump()).thenReturn(new AutobumpResult(5));
             return mocked;
         }
     }

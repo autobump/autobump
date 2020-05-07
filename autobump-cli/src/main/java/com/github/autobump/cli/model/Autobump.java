@@ -4,12 +4,12 @@ import com.github.autobump.bitbucket.model.BitBuckeUrltHelper;
 import com.github.autobump.bitbucket.model.BitBucketAccount;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
 import com.github.autobump.core.model.AutobumpResult;
-import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
@@ -56,7 +56,7 @@ public class Autobump implements Callable<AutobumpResult> {
     @Override
     public AutobumpResult call() {
         initialize();
-        return getAutobumpUseCase().execute();
+        return getAutobumpUseCase().doAutoBump();
     }
 
     private void initialize() {

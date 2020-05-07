@@ -37,16 +37,28 @@ public class AutobumpUseCase {
 
 
 
-    public AutobumpResult execute() {
-        PullRequestUseCase pullRequestUseCase = new PullRequestUseCase(gitProvider, gitClient, urlHelper);
-        BumpUseCase bumpUseCase = new BumpUseCase(dependencyBumper);
+    public AutobumpResult doAutoBump() {
         int amountOfBumps = 0;
         Workspace workspace = gitClient.clone(getUri());
         for (Dependency dependency : dependencyResolver.resolve(workspace)) {
             Version latestVersion = getLatestVersion(dependency);
             if (latestVersion != null && dependency.getVersion().compareTo(latestVersion) > 0) {
-                Bump bump = bumpUseCase.doBump(workspace, dependency, latestVersion);
-                pullRequestUseCase.makeAndExecutePullRequest(workspace, bump, uri);
+                Bump bump = BumpUseCase.builder()
+                        .dependency(dependency)
+                        .dependencyBumper(dependencyBumper)
+                        .latestVersion(latestVersion)
+                        .workspace(workspace)
+                        .build()
+                        .doBump();
+                PullRequestUseCase.builder()
+                        .gitProvider(gitProvider)
+                        .gitClient(gitClient)
+                        .urlHelper(urlHelper)
+                        .workspace(workspace)
+                        .bump(bump)
+                        .uri(uri)
+                        .build()
+                        .doPullRequest();
                 amountOfBumps++;
             }
         }
