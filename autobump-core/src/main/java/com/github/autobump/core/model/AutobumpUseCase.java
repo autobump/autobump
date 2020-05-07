@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.Value;
 
 import java.net.URI;
-import java.util.Set;
 
 @Value
 @Builder
@@ -25,17 +24,20 @@ public class AutobumpUseCase {
     @NonNull
     URI uri;
 
-    public void execute() {
+    public AutobumpResult execute() {
+        int amountOfBumps = 0;
         Workspace workspace = gitClient.clone(getUri());
-        Set<Dependency> dependencySet = dependencyResolver.resolve(workspace);
-        for (Dependency dependency : dependencySet) {
+        for (Dependency dependency : dependencyResolver.resolve(workspace)) {
             Version latestVersion = getLatestVersion(dependency);
             if (latestVersion != null && dependency.getVersion().compareTo(latestVersion) > 0) {
                 Bump bump = doBump(workspace, dependency, latestVersion);
                 makeAndExecutePullRequest(workspace, bump);
+                amountOfBumps++;
             }
         }
+        return new AutobumpResult(amountOfBumps);
     }
+
     private Version getLatestVersion(Dependency dependency) {
         return versionRepository.getAllAvailableVersions(dependency).stream()
                 .sorted().findFirst().orElse(null);

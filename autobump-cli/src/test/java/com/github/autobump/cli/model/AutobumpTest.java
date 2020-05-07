@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 
@@ -54,8 +56,8 @@ class AutobumpTest {
 
     private static void createContent(File fileToWriteTo) {
         try (BufferedWriter fw = Files.newBufferedWriter(fileToWriteTo.toPath());
-             BufferedReader bufferedReader =
-                     Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
+                BufferedReader bufferedReader =
+                        Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
             copyFileContent(fw, bufferedReader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -90,6 +92,20 @@ class AutobumpTest {
         return repository;
     }
 
+    private static Server configureAndStartHttpServer(GitServlet gs) throws Exception {
+        Server server = new Server(8080);
+
+        ServletHandler handler = new ServletHandler();
+        server.setHandler(handler);
+
+        ServletHolder holder = new ServletHolder(gs);
+
+        handler.addServletWithMapping(holder, "/*");
+
+        server.start();
+        return server;
+    }
+
     @BeforeEach
     void setUp() {
         wireMockServer = new WireMockServer(options().port(8090));
@@ -111,13 +127,15 @@ class AutobumpTest {
 
     @Test
     void main() {
-        String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL).split(" ");
-        int exit = new CommandLine(
-                new Autobump(
-                        REPO_URL,
-                        API_URL))
-                .execute(args);
-        assertThat(exit).isEqualTo(0);
+        CommandLine cmd = new CommandLine(new Autobump());
+        StringWriter sw = new StringWriter();
+        cmd.setErr(new PrintWriter(sw));
+        cmd.execute();
+        assertThat(sw.toString())
+                .startsWith("Missing required options")
+                .contains("--url")
+                .contains("--username")
+                .contains("--password");
     }
 
     private void startServer() throws Exception {
@@ -136,19 +154,5 @@ class AutobumpTest {
         server = configureAndStartHttpServer(gs);
 
         // finally wait for the Server being stopped
-    }
-
-    private static Server configureAndStartHttpServer(GitServlet gs) throws Exception {
-        Server server = new Server(8080);
-
-        ServletHandler handler = new ServletHandler();
-        server.setHandler(handler);
-
-        ServletHolder holder = new ServletHolder(gs);
-
-        handler.addServletWithMapping(holder, "/*");
-
-        server.start();
-        return server;
     }
 }
