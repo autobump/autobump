@@ -1,5 +1,7 @@
 package com.github.autobump.cli.model;
 
+import com.github.autobump.core.model.AutobumpResult;
+import com.github.autobump.core.model.AutobumpUseCase;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -12,6 +14,7 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -28,6 +31,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 class AutobumpTest {
 
@@ -126,7 +130,7 @@ class AutobumpTest {
     }
 
     @Test
-    void main() {
+    void main_showsHelpWhenNoParameters() {
         CommandLine cmd = new CommandLine(new Autobump());
         StringWriter sw = new StringWriter();
         cmd.setErr(new PrintWriter(sw));
@@ -137,6 +141,17 @@ class AutobumpTest {
                 .contains("--username")
                 .contains("--password");
     }
+
+    @Test
+    void main_SuccessfullyShowsResult(){
+        String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL).split(" ");
+        CommandLine cmd = new CommandLine(new TestAutoBump());
+        StringWriter sw = new StringWriter();
+        cmd.setOut(new PrintWriter(sw));
+        cmd.execute(args);
+        assertThat(sw.toString()).contains("amountBumped: 5");
+    }
+
 
     private void startServer() throws Exception {
         Repository repository = createNewRepository();
@@ -154,5 +169,16 @@ class AutobumpTest {
         server = configureAndStartHttpServer(gs);
 
         // finally wait for the Server being stopped
+    }
+
+    static class TestAutoBump extends Autobump {
+
+
+        @Override
+        public AutobumpUseCase getAutobumpUseCase() {
+            AutobumpUseCase mocked = Mockito.mock(AutobumpUseCase.class);
+            when(mocked.execute()).thenReturn(new AutobumpResult(5));
+            return mocked;
+        }
     }
 }

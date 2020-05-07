@@ -47,7 +47,7 @@ public class Autobump implements Callable<AutobumpResult> {
     private static CommandSpec spec;
 
     public static void main(String[] args) {
-        CommandLine cmd = new CommandLine(new Autobump());
+        CommandLine cmd = new CommandLine(getAutoBump());
         cmd.execute(args);
         AutobumpResult result = cmd.getExecutionResult();
         spec.commandLine().getOut().println("amountBumped: " + result.getNumberOfBumps());
@@ -66,7 +66,11 @@ public class Autobump implements Callable<AutobumpResult> {
         gitProvider = new BitBucketGitProvider(bitBucketAccount, apiUrl);
     }
 
-    private AutobumpUseCase getAutobumpUseCase() {
+    public static Autobump getAutoBump(){
+        return new Autobump();
+    }
+
+    public AutobumpUseCase getAutobumpUseCase() {
         return AutobumpUseCase.builder()
                 .dependencyBumper(dependencyBumper)
                 .dependencyResolver(dependencyResolver)

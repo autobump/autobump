@@ -1,28 +1,29 @@
 package com.github.autobump.core.model;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.Value;
 
 import java.net.URI;
 
-@Value
+@Data
 @Builder
 public class AutobumpUseCase {
     @NonNull
-    GitProvider gitProvider;
+    private final GitProvider gitProvider;
     @NonNull
-    GitClient gitClient;
+    private final GitClient gitClient;
     @NonNull
-    DependencyResolver dependencyResolver;
+    private final DependencyResolver dependencyResolver;
     @NonNull
-    VersionRepository versionRepository;
+    private final VersionRepository versionRepository;
     @NonNull
-    DependencyBumper dependencyBumper;
+    private final DependencyBumper dependencyBumper;
     @NonNull
-    UrlHelper urlHelper;
+    private final UrlHelper urlHelper;
     @NonNull
-    URI uri;
+    private final URI uri;
 
     public AutobumpResult execute() {
         int amountOfBumps = 0;

@@ -62,7 +62,7 @@ public class JGitGitClient implements GitClient {
         git.add().addFilepattern(".").call();
         String commitMessage = String.format("Autobump %s from %s to %s",
                 bump.getDependency().getName(),
-                bump.getDependency().getVersion(),
+                bump.getDependency().getVersion().getVersionNumber(),
                 bump.getUpdatedVersion().getVersionNumber());
         git.commit().setMessage(commitMessage).call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();
