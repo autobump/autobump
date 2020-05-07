@@ -42,10 +42,10 @@ public class PullRequestUseCase {
                 .repoName(urlHelper.getRepoName(uri.toString()))
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
-        doPullRequest(pullRequest);
+        makePullRequest(pullRequest);
     }
 
-    private void doPullRequest(PullRequest pullRequest) {
+    private void makePullRequest(PullRequest pullRequest) {
         gitProvider.makePullRequest(pullRequest);
     }
 }

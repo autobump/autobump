@@ -42,7 +42,8 @@ public class AutobumpUseCase {
         Workspace workspace = gitClient.clone(getUri());
         for (Dependency dependency : dependencyResolver.resolve(workspace)) {
             Version latestVersion = getLatestVersion(dependency);
-            if (latestVersion != null && dependency.getVersion().compareTo(latestVersion) > 0) {
+            if (latestVersion != null &&
+                    dependency.getVersion().compareTo(latestVersion) > 0) {
                 Bump bump = BumpUseCase.builder()
                         .dependency(dependency)
                         .dependencyBumper(dependencyBumper)
