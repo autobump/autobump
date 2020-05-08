@@ -158,6 +158,11 @@ class AutobumpUseCaseTest {
         }
 
         @Override
+        public UpdateType getUpdateType(Version otherVersion) {
+            return null;
+        }
+
+        @Override
         public int compareTo(Version o) {
             if (this.getVersionNumber().equals("bla")) {
                 return -1;

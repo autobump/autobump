@@ -3,6 +3,10 @@ package com.github.autobump.maven.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.github.autobump.core.model.Version.UpdateType.INCREMENTAL;
+import static com.github.autobump.core.model.Version.UpdateType.MAJOR;
+import static com.github.autobump.core.model.Version.UpdateType.MINOR;
+import static com.github.autobump.core.model.Version.UpdateType.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -13,6 +17,9 @@ class MavenVersionTest {
     private  MavenVersion mv4;
     private  MavenVersion mv5;
     private  MavenVersion mv6;
+    private  MavenVersion mv7;
+    private  MavenVersion mv8;
+
 
     @BeforeEach
     void setUp(){
@@ -22,6 +29,8 @@ class MavenVersionTest {
         mv4 = new MavenVersion("1.2-beta-2");
         mv5 = new MavenVersion("1.2");
         mv6 = new MavenVersion("1.2-alpha-6");
+        mv7 = new MavenVersion("1.3");
+        mv8 = new MavenVersion("4.0.2");
     }
 
     @Test
@@ -49,4 +58,28 @@ class MavenVersionTest {
         assertThat(mv6.compareTo(mv4)).isGreaterThan(0);
     }
 
+    @Test
+    void updateType_Major() {
+        assertThat(mv2.getUpdateType(mv1)).isEqualTo(MAJOR);
+    }
+
+    @Test
+    void updateType_Minor(){
+        assertThat(mv5.getUpdateType(mv7)).isEqualTo(MINOR);
+    }
+
+    @Test
+    void updateType_Incremental(){
+        assertThat(mv2.getUpdateType(mv8)).isEqualTo(INCREMENTAL);
+    }
+
+    @Test
+    void updateType_None(){
+        assertThat(mv2.getUpdateType(mv3)).isEqualTo(NONE);
+    }
+
+    @Test
+    void updateType_betaToMinor(){
+        assertThat(mv4.getUpdateType(mv5)).isEqualTo(MINOR);
+    }
 }
