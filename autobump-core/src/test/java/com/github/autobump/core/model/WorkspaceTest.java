@@ -25,4 +25,5 @@ class WorkspaceTest {
         assertThatExceptionOfType(NoDependencyFileFoundException.class)
                 .isThrownBy(() -> workspace.getDependencyDocument("build.gradle"));
     }
+
 }
