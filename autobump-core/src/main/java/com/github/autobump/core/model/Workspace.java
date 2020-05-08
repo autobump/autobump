@@ -41,13 +41,13 @@ public class Workspace {
                     2, new SimpleFileVisitor<>() {
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                            String fileName = dependencyResolver.getBuildFileName();
-                            if (!file.toString().equals(getProjectRoot() + File.separator + fileName) &&
-                                    file.getFileName().toString().equals(fileName)) {
+                            if (!file.toString().equals(getProjectRoot()
+                                    + File.separator + dependencyResolver.getBuildFileName()) &&
+                                    file.getFileName().toString().equals(dependencyResolver.getBuildFileName())) {
                                 Workspace ws = new Workspace(file
                                         .toAbsolutePath()
                                         .toString()
-                                        .replace(File.separator + fileName, ""));
+                                        .replace(File.separator + dependencyResolver.getBuildFileName(), ""));
                                 var deps = dependencyResolver.resolve(ws, toBeIgnored);
                                 dependencies.addAll(deps == null ? Collections.emptySet() : deps);
                             }
