@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Collections;
 import java.util.Set;
 
 @Getter
@@ -47,7 +48,8 @@ public class Workspace {
                                         .toAbsolutePath()
                                         .toString()
                                         .replace(File.separator + fileName, ""));
-                                dependencies.addAll(dependencyResolver.resolve(ws, toBeIgnored));
+                                var deps = dependencyResolver.resolve(ws, toBeIgnored);
+                                dependencies.addAll(deps == null ? Collections.emptySet() : deps);
                             }
                             return FileVisitResult.CONTINUE;
                         }
