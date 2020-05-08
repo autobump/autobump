@@ -9,7 +9,6 @@ import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -53,10 +52,6 @@ class PullRequestUseCaseTest {
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
         Mockito.when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test

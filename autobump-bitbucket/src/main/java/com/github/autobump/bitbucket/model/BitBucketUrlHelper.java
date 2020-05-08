@@ -5,7 +5,7 @@ import com.github.autobump.core.model.UrlHelper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BitBuckeUrltHelper implements UrlHelper {
+public class BitBucketUrlHelper implements UrlHelper {
     private static final Pattern OWNER_REPO_PATTERN =
             Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.git$");
     @Override

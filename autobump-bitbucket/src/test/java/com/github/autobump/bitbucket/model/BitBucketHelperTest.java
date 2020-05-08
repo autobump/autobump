@@ -13,7 +13,7 @@ class BitBucketHelperTest {
     @BeforeEach
     void setUp() {
         url = "https://SchroGlenn@bitbucket.org/grietvermeesch/testmavenproject.git";
-        urlHelper = new BitBuckeUrltHelper();
+        urlHelper = new BitBucketUrlHelper();
     }
 
 

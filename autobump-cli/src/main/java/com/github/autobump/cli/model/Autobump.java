@@ -1,8 +1,8 @@
 package com.github.autobump.cli.model;
 
-import com.github.autobump.bitbucket.model.BitBuckeUrltHelper;
 import com.github.autobump.bitbucket.model.BitBucketAccount;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
+import com.github.autobump.bitbucket.model.BitBucketUrlHelper;
 import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
@@ -72,7 +72,7 @@ public class Autobump implements Callable<AutobumpResult> {
                 .dependencyResolver(dependencyResolver)
                 .gitClient(gitClient)
                 .gitProvider(gitProvider)
-                .urlHelper(new BitBuckeUrltHelper())
+                .urlHelper(new BitBucketUrlHelper())
                 .uri(url)
                 .versionRepository(versionRepository)
                 .build();

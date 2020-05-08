@@ -27,11 +27,13 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
@@ -129,6 +131,16 @@ class AutobumpTest {
                         .withBodyFile("metadata/maven-metadata.xml")));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format("/apiurl/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
+                .withRequestBody(equalToJson(
+                        "{\"title\": " +
+                                "\"Autobump derby from 10.15.1.3 to 10.15.2.0\", " +
+                                "\"source\": " +
+                                "{ \"branch\": " +
+                                "{ \"name\": " +
+                                "\"autobump/org.apache.derby/derby/10.15.2.0\"}}}",
+                        true,
+                        true
+                ))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBodyFile("succes_response.json"))
@@ -169,11 +181,10 @@ class AutobumpTest {
     }
 
     @Test
-    void main_integrationTest(){
+    void main_integrationTest() throws GitAPIException, IOException {
         String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -a %s",
                 GIT_URL, REPO_URL, API_URL).split(" ");
-        Autobump.main(args);
-        // TODO: 7/05/2020 test if the branch is made on the git repo
+        assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }
 
     private void startServer() throws Exception {
