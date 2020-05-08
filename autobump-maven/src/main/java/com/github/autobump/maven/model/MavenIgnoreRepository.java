@@ -16,7 +16,6 @@ public class MavenIgnoreRepository implements IgnoreRepository {
     }
 
     @Override
-
     public boolean isIgnored(Dependency dependency, Version latestVersion) {
         UpdateType updateType = dependency.getVersion().getUpdateType(latestVersion);
         boolean isIgnored = false;
