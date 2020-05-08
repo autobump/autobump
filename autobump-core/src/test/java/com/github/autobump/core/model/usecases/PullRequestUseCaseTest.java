@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 class PullRequestUseCaseTest {
     private GitProvider gitProvider;
     private GitClient gitClient;
@@ -56,18 +58,20 @@ class PullRequestUseCaseTest {
 
     @Test
     void doPullRequest() {
-        PullRequestUseCase.builder()
-                .bump(bump)
-                .workspace(workspace)
-                .urlHelper(urlHelper)
-                .gitClient(gitClient)
-                .gitProvider(gitProvider)
-                .uri(uri)
-                .build()
-                .doPullRequest();
+        assertThatCode(() ->
+                PullRequestUseCase.builder()
+                        .bump(bump)
+                        .workspace(workspace)
+                        .urlHelper(urlHelper)
+                        .gitClient(gitClient)
+                        .gitProvider(gitProvider)
+                        .uri(uri)
+                        .build()
+                        .doPullRequest()
+        ).doesNotThrowAnyException();
     }
 
-    private static class TestVersion implements Version{
+    private static class TestVersion implements Version {
 
         @Override
         public String getVersionNumber() {
