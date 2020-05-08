@@ -1,6 +1,5 @@
 package com.github.autobump.core.model.usecases;
 
-import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
@@ -16,7 +15,8 @@ public class PullRequestUseCase {
     private final GitClient gitClient;
     private final UrlHelper urlHelper;
     private final Workspace workspace;
-    private final Bump bump;
+    private final String groupId;
+    private final String version;
     private final URI uri;
 
 
@@ -24,18 +24,21 @@ public class PullRequestUseCase {
                               GitClient gitClient,
                               UrlHelper urlHelper,
                               Workspace workspace,
-                              Bump bump,
+                              String groupId,
+                              String version,
                               URI uri) {
         this.gitProvider = gitProvider;
         this.gitClient = gitClient;
         this.urlHelper = urlHelper;
         this.workspace = workspace;
-        this.bump = bump;
+        this.groupId = groupId;
+        this.version = version;
         this.uri = uri;
     }
 
     public void doPullRequest() {
-        var commitResult = gitClient.commitToNewBranch(workspace, bump);
+        var commitResult =
+                gitClient.commitToNewBranch(workspace, groupId, version);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())

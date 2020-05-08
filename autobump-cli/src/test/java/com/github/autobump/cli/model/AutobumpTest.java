@@ -133,11 +133,11 @@ class AutobumpTest {
                 urlEqualTo(String.format("/apiurl/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
                 .withRequestBody(equalToJson(
                         "{\"title\": " +
-                                "\"Autobump derby from 10.15.1.3 to 10.15.2.0\", " +
+                                "\"Autobump org.apache.derby version: 10.15.1.3\", " +
                                 "\"source\": " +
                                 "{ \"branch\": " +
                                 "{ \"name\": " +
-                                "\"autobump/org.apache.derby/derby/10.15.2.0\"}}}",
+                                "\"autobump/org.apache.derby/10.15.1.3\"}}}",
                         true,
                         true
                 ))
@@ -181,7 +181,7 @@ class AutobumpTest {
     }
 
     @Test
-    void main_integrationTest() throws GitAPIException, IOException {
+    void main_integrationTest() {
         String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -a %s",
                 GIT_URL, REPO_URL, API_URL).split(" ");
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();

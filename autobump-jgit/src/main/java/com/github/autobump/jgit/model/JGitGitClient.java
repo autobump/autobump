@@ -1,6 +1,5 @@
 package com.github.autobump.jgit.model;
 
-import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
@@ -35,10 +34,10 @@ public class JGitGitClient implements GitClient {
     }
 
     @Override
-    public CommitResult commitToNewBranch(Workspace workspace, Bump bump) {
+    public CommitResult commitToNewBranch(Workspace workspace, String groupId, String versionNumber) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            String branchName = createBranch(bump, git);
-            String commitMessage = commitAndPushToNewBranch(bump, git);
+            String branchName = createBranch(git, groupId, versionNumber);
+            String commitMessage = commitAndPushToNewBranch(git, groupId, versionNumber);
             git.checkout().setName("master").call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
@@ -48,22 +47,20 @@ public class JGitGitClient implements GitClient {
         }
     }
 
-    public String createBranch(Bump bump, Git git) throws GitAPIException {
-        String branchName = String.format("autobump/%s/%s/%s",
-                bump.getDependency().getGroup(),
-                bump.getDependency().getName(),
-                bump.getUpdatedVersion().getVersionNumber());
+    public String createBranch(Git git, String groupId, String versionNumber) throws GitAPIException {
+        String branchName = String.format("autobump/%s/%s",
+                groupId,
+                versionNumber);
         git.branchCreate().setName(branchName).call();
         git.checkout().setName(branchName).call();
         return branchName;
     }
 
-    public String commitAndPushToNewBranch(Bump bump, Git git) throws GitAPIException {
+    public String commitAndPushToNewBranch(Git git, String groupId, String versionNumber) throws GitAPIException {
         git.add().addFilepattern(".").call();
-        String commitMessage = String.format("Autobump %s from %s to %s",
-                bump.getDependency().getName(),
-                bump.getDependency().getVersion().getVersionNumber(),
-                bump.getUpdatedVersion().getVersionNumber());
+        String commitMessage = String.format("Autobump %s version: %s",
+                groupId,
+                versionNumber);
         git.commit().setMessage(commitMessage).call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();
         return commitMessage;
