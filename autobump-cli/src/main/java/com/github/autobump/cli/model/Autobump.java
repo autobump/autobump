@@ -48,7 +48,7 @@ public class Autobump implements Callable<AutobumpResult> {
     private String apiUrl;
     @Option(names = {"-i", "--ignored"}, description = "Dependencies to ignore for updates including update" +
             " type separated by comma", split = ",")
-    Map<String,String> ignoreDependencies;
+    private Map<String,String> ignoreDependencies;
 
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new Autobump());
