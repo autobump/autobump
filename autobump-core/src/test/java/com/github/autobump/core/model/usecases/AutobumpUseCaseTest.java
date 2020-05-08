@@ -60,8 +60,7 @@ class AutobumpUseCaseTest {
         CommitResult commitResult = new CommitResult("testName", "testMessage");
         Mockito.when(gitClient.commitToNewBranch(workspace,
                 "heyhey",
-                "test"))
-                .thenReturn(commitResult);
+                "test")).thenReturn(commitResult);
         Mockito.when(gitClient.commitToNewBranch(workspace,
                 dependency3.getGroup(),
                 dependency3.getVersion().getVersionNumber()))

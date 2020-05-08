@@ -15,9 +15,10 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 
 @Data
-@Builder
 public class AutobumpUseCase {
     @NonNull
     private final GitProvider gitProvider;
@@ -33,17 +34,38 @@ public class AutobumpUseCase {
     private final UrlHelper urlHelper;
     @NonNull
     private final URI uri;
+    private int amountofbumps;
 
-
+    @Builder
+    public AutobumpUseCase(@NonNull GitProvider gitProvider,
+                           @NonNull GitClient gitClient,
+                           @NonNull DependencyResolver dependencyResolver,
+                           @NonNull VersionRepository versionRepository,
+                           @NonNull DependencyBumper dependencyBumper,
+                           @NonNull UrlHelper urlHelper,
+                           @NonNull URI uri) {
+        this.gitProvider = gitProvider;
+        this.gitClient = gitClient;
+        this.dependencyResolver = dependencyResolver;
+        this.versionRepository = versionRepository;
+        this.dependencyBumper = dependencyBumper;
+        this.urlHelper = urlHelper;
+        this.uri = uri;
+    }
 
     public AutobumpResult doAutoBump() {
-        int amountOfBumps = 0;
         Workspace workspace = gitClient.clone(getUri());
         var dependencymap = ResolveDependenciesUseCase.builder()
                 .dependencyResolver(dependencyResolver)
                 .workspace(workspace)
                 .build()
                 .deResolve();
+        makeBumpsAndPullRequests(workspace, dependencymap);
+        return new AutobumpResult(amountofbumps);
+    }
+
+    private void makeBumpsAndPullRequests(Workspace workspace, Map<String,
+            Set<Dependency>> dependencymap) {
         for (String key : dependencymap.keySet()) {
             boolean bumped = false;
             for (Dependency dependency : dependencymap.get(key)) {
@@ -55,27 +77,25 @@ public class AutobumpUseCase {
                             .dependencyBumper(dependencyBumper)
                             .latestVersion(latestVersion)
                             .workspace(workspace)
-                            .build()
-                            .doBump();
-                    bumped = true;
-                    amountOfBumps++;
+                            .build().doBump();
+                    bumped = isBumped();
                 }
             }
             if (bumped) {
                 PullRequestUseCase.builder()
-                        .gitProvider(gitProvider)
-                        .gitClient(gitClient)
-                        .urlHelper(urlHelper)
-                        .workspace(workspace)
+                        .gitProvider(gitProvider).gitClient(gitClient)
+                        .urlHelper(urlHelper).workspace(workspace)
                         .groupId(key.split(" ")[0])
                         .version(key.split(" ")[1])
-                        .uri(uri)
-                        .build()
+                        .uri(uri).build()
                         .doPullRequest();
-
             }
         }
-        return new AutobumpResult(amountOfBumps);
+    }
+
+    private boolean isBumped() {
+        amountofbumps++;
+        return true;
     }
 
     private Version getLatestVersion(Dependency dependency) {

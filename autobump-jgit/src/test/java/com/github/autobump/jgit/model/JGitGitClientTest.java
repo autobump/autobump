@@ -94,7 +94,8 @@ class JGitGitClientTest {
             }
 
             @Override
-            public String commitAndPushToNewBranch(Git git, String groupId, String versionNumber) throws GitAPIException {
+            public String commitAndPushToNewBranch(Git git,
+                                                   String groupId, String versionNumber) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
             }
 
