@@ -55,7 +55,7 @@ public class MavenDependencyResolverProfileTest {
         assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version("10.14.2.0")
+                        .version(new MavenVersion("10.14.2.0"))
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()
@@ -68,7 +68,7 @@ public class MavenDependencyResolverProfileTest {
         assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version("10.16.2.0")
+                        .version(new MavenVersion("10.16.2.0"))
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()
@@ -81,7 +81,7 @@ public class MavenDependencyResolverProfileTest {
         assertThat(resolver.resolve(profilesWorkspace)).contains(
                 MavenDependency.builder()
                         .type(DependencyType.PROFILE_DEPENDENCY)
-                        .version("10.17.2.0")
+                        .version(new MavenVersion("10.17.2.0"))
                         .group(TEST_DEPENDENCY_GROUP)
                         .name(TEST_DEPENDENCY_NAME)
                         .build()

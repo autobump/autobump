@@ -36,7 +36,7 @@ class JGitGitClientTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        client = new JGitGitClient();
+        client = new JGitGitClient("test", "test");
         FileRepositoryBuilder.create(new File("src/test/resources/__files"));
     }
 
@@ -50,7 +50,7 @@ class JGitGitClientTest {
     @Test
     void testWrongUrl_ShouldThrowGitException() {
         assertThatExceptionOfType(GitException.class).isThrownBy(() ->
-                new JGitGitClient().clone(new URI("wrong")));
+                new JGitGitClient("test", "test").clone(new URI("wrong")));
     }
 
     @Test
@@ -86,19 +86,23 @@ class JGitGitClientTest {
 
         class JGitGitClientTester extends JGitGitClient {
 
+            JGitGitClientTester(String username, String password) {
+                super(username, password);
+            }
+
             @Override
-            public void createBranch(Bump bump, Git git) throws CanceledException {
+            public String createBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
 
             @Override
-            public void commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
+            public String commitAndPushToNewBranch(Bump bump, Git git) throws CanceledException {
                 throw new CanceledException("The call was cancelled");
             }
         }
 
         startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester();
+        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
         Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(GitException.class)
@@ -107,7 +111,24 @@ class JGitGitClientTest {
     }
 
     private Bump getBumpForCreationBranch() {
-        Dependency dep = Dependency.builder().group("test").name("test").version("1.0.0").build();
+        class TestVersion implements Version{
+            private final String versionNumber;
+
+            TestVersion(String versionNumber) {
+                this.versionNumber = versionNumber;
+            }
+
+            @Override
+            public String getVersionNumber() {
+                return versionNumber;
+            }
+
+            @Override
+            public int compareTo(Version o) {
+                return this.versionNumber.compareTo(o.getVersionNumber());
+            }
+        }
+        Dependency dep = Dependency.builder().group("test").name("test").version(new TestVersion("1.0.0")).build();
         Version version = new Version() {
             @Override
             public int compareTo(Version o) {

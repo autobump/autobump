@@ -38,7 +38,7 @@ class MavenDependencyBumperTest {
         dependency = MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
-                .version(DERBY_VERSION)
+                .version(new MavenVersion(DERBY_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build();
         mavenDependencyBumper = new MavenDependencyBumper();
@@ -56,7 +56,7 @@ class MavenDependencyBumperTest {
                 MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
-                .version(DERBY_VERSION)
+                .version(new MavenVersion(DERBY_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build());
         bumpDependency(dependency);
@@ -64,7 +64,7 @@ class MavenDependencyBumperTest {
         assertThat(dependencies).contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
-                .version(UPDATED_VERSION)
+                .version(new MavenVersion(UPDATED_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build());
     }
@@ -75,7 +75,7 @@ class MavenDependencyBumperTest {
         var dep = MavenDependency.builder()
                 .name("derbys")
                 .group(DERBY_GROUP)
-                .version(DERBY_VERSION)
+                .version(new MavenVersion(DERBY_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build();
         assertThat(dependencies).contains(dep);
@@ -87,7 +87,7 @@ class MavenDependencyBumperTest {
                 MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name("derbys")
-                .version(UPDATED_VERSION)
+                .version(new MavenVersion(UPDATED_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build());
     }
@@ -120,7 +120,7 @@ class MavenDependencyBumperTest {
                 .group(DERBY_GROUP)
                 .type(DependencyType.DEPENDENCY)
                 .name(DERBY_NAME)
-                .version(DERBY_VERSION)
+                .version(new MavenVersion(DERBY_VERSION))
                 .build();
         assertThat(dependencies).contains(dependency);
         bumpDependency(dependency);
@@ -128,7 +128,7 @@ class MavenDependencyBumperTest {
         assertThat(dependencies).contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
-                .version(UPDATED_VERSION)
+                .version(new MavenVersion(UPDATED_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build());
     }
@@ -140,7 +140,7 @@ class MavenDependencyBumperTest {
                 .group(DERBY_GROUP)
                 .type(DependencyType.DEPENDENCY)
                 .name(DERBY_NAME)
-                .version(DERBY_VERSION)
+                .version(new MavenVersion(DERBY_VERSION))
                 .build();
         assertThat(dependencies).contains(dependency);
         bumpDependency(dependency.getAsDependency());
@@ -148,7 +148,7 @@ class MavenDependencyBumperTest {
         assertThat(dependencies).contains(MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)
-                .version(UPDATED_VERSION)
+                .version(new MavenVersion(UPDATED_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build());
     }

@@ -1,10 +1,8 @@
-package com.github.autobump.cli.model;
+package com.github.autobump.bitbucket.model;
 
 import com.github.autobump.bitbucket.exceptions.BranchNotFoundException;
 import com.github.autobump.bitbucket.exceptions.RemoteNotFoundException;
 import com.github.autobump.bitbucket.exceptions.UnauthorizedException;
-import com.github.autobump.bitbucket.model.BitBucketAccount;
-import com.github.autobump.bitbucket.model.BitBucketGitProvider;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;

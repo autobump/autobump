@@ -1,3 +1,7 @@
 
 version '1.0-SNAPSHOT'
 
+dependencies {
+    testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
+}
+

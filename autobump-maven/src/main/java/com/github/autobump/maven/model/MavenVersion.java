@@ -8,9 +8,10 @@ import org.apache.maven.artifact.versioning.ComparableVersion;
 public class MavenVersion implements Version {
     String versionNumber;
 
+
     @Override
     public int compareTo(Version o) {
         ComparableVersion comparableVersion = new ComparableVersion(versionNumber);
-        return comparableVersion.compareTo(new ComparableVersion(o.getVersionNumber()));
+        return new ComparableVersion(o.getVersionNumber()).compareTo(comparableVersion);
     }
 }
