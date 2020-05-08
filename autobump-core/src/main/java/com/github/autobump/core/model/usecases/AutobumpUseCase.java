@@ -37,13 +37,13 @@ public class AutobumpUseCase {
     private int amountofbumps;
 
     @Builder
-    public AutobumpUseCase(@NonNull GitProvider gitProvider,
-                           @NonNull GitClient gitClient,
-                           @NonNull DependencyResolver dependencyResolver,
-                           @NonNull VersionRepository versionRepository,
-                           @NonNull DependencyBumper dependencyBumper,
-                           @NonNull UrlHelper urlHelper,
-                           @NonNull URI uri) {
+    public AutobumpUseCase(GitProvider gitProvider,
+                           GitClient gitClient,
+                           DependencyResolver dependencyResolver,
+                           VersionRepository versionRepository,
+                           DependencyBumper dependencyBumper,
+                           UrlHelper urlHelper,
+                           URI uri) {
         this.gitProvider = gitProvider;
         this.gitClient = gitClient;
         this.dependencyResolver = dependencyResolver;

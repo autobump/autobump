@@ -24,7 +24,7 @@ public class ResolveDependenciesUseCase {
         Map<String, Set<Dependency>> dependencyMap = new HashMap<>();
         for (Dependency dependency : dependencyResolver.resolve(workspace)) {
             String key = String.format("%s %s", dependency.getGroup(), dependency.getVersion().getVersionNumber());
-            if (dependencyMap.containsKey(dependency.getGroup() + dependency.getVersion().getVersionNumber())){
+            if (dependencyMap.containsKey(key)){
                 dependencyMap.get(key).add(dependency);
             }else {
                 dependencyMap.put(key, new HashSet<>());
