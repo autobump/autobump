@@ -99,6 +99,17 @@ class AutobumpUseCaseTest {
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
+    /*
+    add 2 dependencies in the pom file with the same group and version
+    make shure they are pushed together
+    make shure make pullrequest in gitprovider is called once
+    and commit to branch is called twice
+     */
+    @Test
+    void doAutoBump_combinedDependencies(){
+
+    }
+
     private static class TestVersion implements Version {
         private final String version;
 
