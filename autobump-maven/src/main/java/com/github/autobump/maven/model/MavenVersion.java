@@ -9,7 +9,6 @@ import org.codehaus.mojo.buildhelper.versioning.VersionInformation;
 public class MavenVersion implements Version {
     String versionNumber;
 
-
     @Override
     public int compareTo(Version o) {
         ComparableVersion comparableVersion = new ComparableVersion(versionNumber);

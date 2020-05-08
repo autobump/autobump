@@ -20,6 +20,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 @Command(
@@ -40,11 +41,14 @@ public class Autobump implements Callable<AutobumpResult> {
     private URI url;
     @Option(names = {"-p", "--password"}, description = "Password for your remote repository", required = true)
     private String password;
-    @Option(names = {"-r", "--repourl"}, description = "public repositoryUrl for dependency version information",
+    @Option(names = {"-r", "--repourl"}, description = "Public repositoryUrl for dependency version information",
             defaultValue = "https://repo1.maven.org/maven2")
     private String repositoryUrl;
     @Option(names = {"-a", "--apiurl"}, description = "apiUrl", defaultValue = "https://api.bitbucket.org/2.0")
     private String apiUrl;
+    @Option(names = {"-i", "--ignored"}, description = "Dependencies to ignore for updates including update" +
+            " type separated by comma", split = ",")
+    Map<String,String> ignoreDependencies;
 
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new Autobump());

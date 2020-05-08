@@ -102,6 +102,4 @@ public class AutobumpUseCase {
         return versionRepository.getAllAvailableVersions(dependency).stream()
                 .sorted().findFirst().orElse(null);
     }
-
-
 }
