@@ -64,8 +64,8 @@ class AutobumpTest {
 
     private static void createContent(File fileToWriteTo) {
         try (BufferedWriter fw = Files.newBufferedWriter(fileToWriteTo.toPath());
-             BufferedReader bufferedReader =
-                     Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
+                BufferedReader bufferedReader =
+                        Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
             copyFileContent(fw, bufferedReader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -170,7 +170,8 @@ class AutobumpTest {
 
     @Test
     void main_integrationTest(){
-        String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL + " -r " + REPO_URL + " -a " + API_URL).split(" ");
+        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -a %s",
+                GIT_URL, REPO_URL, API_URL).split(" ");
         Autobump.main(args);
         // TODO: 7/05/2020 test if the branch is made on the git repo
     }
