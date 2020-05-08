@@ -5,11 +5,6 @@ import lombok.Value;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.codehaus.mojo.buildhelper.versioning.VersionInformation;
 
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.IntStream;
-
 @Value
 public class MavenVersion implements Version {
     String versionNumber;
@@ -35,7 +30,8 @@ public class MavenVersion implements Version {
         UpdateType updateType;
         if (thisVersionInfo.getMajor() < otherVersionInfo.getMajor()) {
             updateType = UpdateType.MAJOR;
-        } else if (thisVersionInfo.getMinor() < otherVersionInfo.getMinor()) {
+        } else if (thisVersionInfo.getMinor() < otherVersionInfo.getMinor()
+                || thisVersionInfo.getQualifier() != null && otherVersionInfo.getQualifier() == null) {
             updateType = UpdateType.MINOR;
         } else {
             updateType = UpdateType.INCREMENTAL;
