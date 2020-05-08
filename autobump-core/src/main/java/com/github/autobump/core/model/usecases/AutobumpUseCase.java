@@ -37,13 +37,13 @@ public class AutobumpUseCase {
     private int amountofbumps;
 
     @Builder
-    public AutobumpUseCase(@NonNull GitProvider gitProvider,
-                           @NonNull GitClient gitClient,
-                           @NonNull DependencyResolver dependencyResolver,
-                           @NonNull VersionRepository versionRepository,
-                           @NonNull DependencyBumper dependencyBumper,
-                           @NonNull UrlHelper urlHelper,
-                           @NonNull URI uri) {
+    public AutobumpUseCase(GitProvider gitProvider,
+                           GitClient gitClient,
+                           DependencyResolver dependencyResolver,
+                           VersionRepository versionRepository,
+                           DependencyBumper dependencyBumper,
+                           UrlHelper urlHelper,
+                           URI uri) {
         this.gitProvider = gitProvider;
         this.gitClient = gitClient;
         this.dependencyResolver = dependencyResolver;
@@ -66,9 +66,9 @@ public class AutobumpUseCase {
 
     private void makeBumpsAndPullRequests(Workspace workspace, Map<String,
             Set<Dependency>> dependencymap) {
-        for (String key : dependencymap.keySet()) {
+        for (var entry : dependencymap.entrySet()) {
             boolean bumped = false;
-            for (Dependency dependency : dependencymap.get(key)) {
+            for (Dependency dependency : dependencymap.get(entry.getKey())) {
                 Version latestVersion = getLatestVersion(dependency);
                 if (latestVersion != null &&
                         dependency.getVersion().compareTo(latestVersion) > 0) {
@@ -85,8 +85,8 @@ public class AutobumpUseCase {
                 PullRequestUseCase.builder()
                         .gitProvider(gitProvider).gitClient(gitClient)
                         .urlHelper(urlHelper).workspace(workspace)
-                        .groupId(key.split(" ")[0])
-                        .version(key.split(" ")[1])
+                        .groupId(entry.getKey().split(" ")[0])
+                        .version(entry.getKey().split(" ")[1])
                         .uri(uri).build()
                         .doPullRequest();
             }
