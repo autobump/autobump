@@ -80,6 +80,6 @@ class MavenVersionTest {
 
     @Test
     void updateType_betaToMinor(){
-        assertThat(mv4.getUpdateType(mv5)).isEqualTo(MINOR);
+        assertThat(mv4.getUpdateType(mv5)).isEqualTo(INCREMENTAL);
     }
 }

@@ -23,53 +23,23 @@ public class MavenVersion implements Version {
 
     @Override
     public UpdateType getUpdateType(Version otherVersion) {
-        var v1 = new VersionInformation(getVersionNumber());
-        var v2 = new VersionInformation(otherVersion.getVersionNumber());
-
-        Pattern pattern = Pattern.compile("^(\\d+)(?:\\.(\\d+)(?:\\.(\\d+))?)?(?:[-.]([A-Z]+))?(?![\\d.])$");
-        String[] matches1 = pattern
-                .matcher(getVersionNumber())
-                .results()
-                .map(MatchResult::group)
-                .toArray(String[]::new);
-        String[] matches2 = pattern
-                .matcher(otherVersion.getVersionNumber())
-                .results()
-                .map(MatchResult::group)
-                .toArray(String[]::new);
-//        String[] currentVersionNodes = getVersionNumber().split("[-.]");
-//        String[] otherVersionNodes = otherVersion.getVersionNumber().split("[-.]");
-        return calculateUpdateType(matches1, matches2);
+        if (this.compareTo(otherVersion) <= 0) {
+            return UpdateType.NONE;
+        }
+        var thisVersionInfo = new VersionInformation(getVersionNumber());
+        var otherVersionInfo = new VersionInformation(otherVersion.getVersionNumber());
+        return calculateUpdateType(thisVersionInfo, otherVersionInfo);
     }
 
-    @SuppressWarnings("PMD.UseVarargs")
-    private UpdateType calculateUpdateType(String[] currentVersionNodes, String[] otherVersionNodes) {
+    private UpdateType calculateUpdateType(VersionInformation thisVersionInfo, VersionInformation otherVersionInfo) {
         UpdateType updateType;
-        int size = Math.min(currentVersionNodes.length, otherVersionNodes.length);
-        if (isIncrementedVersionNode(currentVersionNodes[0], otherVersionNodes[0])) {
+        if (thisVersionInfo.getMajor() < otherVersionInfo.getMajor()) {
             updateType = UpdateType.MAJOR;
-        } else if (size > 1 && isIncrementedVersionNode(currentVersionNodes[1], otherVersionNodes[1])) {
+        } else if (thisVersionInfo.getMinor() < otherVersionInfo.getMinor()) {
             updateType = UpdateType.MINOR;
         } else {
-            UpdateType b = UpdateType.NONE;
-            for (int i = 2; i < size; i++) {
-                if (isIncrementedVersionNode(currentVersionNodes[i], otherVersionNodes[i])) {
-                    b = UpdateType.INCREMENTAL;
-                    break;
-                }
-            }
-            updateType = b;
+            updateType = UpdateType.INCREMENTAL;
         }
         return updateType;
-    }
-
-    private boolean isIncrementedVersionNode(String currentVersionNode, String otherVersionNode) {
-        try {
-            int currentNumber = Integer.parseInt(currentVersionNode);
-            int otherNumber = Integer.parseInt(otherVersionNode);
-            return currentNumber < otherNumber;
-        } catch (NumberFormatException ex) {
-            return currentVersionNode.compareTo(otherVersionNode) < 0;
-        }
     }
 }
