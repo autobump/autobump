@@ -5,5 +5,5 @@ import java.net.URI;
 public interface GitClient {
     Workspace clone(URI uri);
 
-    CommitResult commitToNewBranch(Workspace workspace, Bump bump);
+    CommitResult commitToNewBranch(Workspace workspace, String groupId, String versionNumber);
 }

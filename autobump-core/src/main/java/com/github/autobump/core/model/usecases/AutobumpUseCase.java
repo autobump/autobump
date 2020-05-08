@@ -1,7 +1,6 @@
 package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.AutobumpResult;
-import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
@@ -40,27 +39,40 @@ public class AutobumpUseCase {
     public AutobumpResult doAutoBump() {
         int amountOfBumps = 0;
         Workspace workspace = gitClient.clone(getUri());
-        for (Dependency dependency : dependencyResolver.resolve(workspace)) {
-            Version latestVersion = getLatestVersion(dependency);
-            if (latestVersion != null &&
-                    dependency.getVersion().compareTo(latestVersion) > 0) {
-                Bump bump = BumpUseCase.builder()
-                        .dependency(dependency)
-                        .dependencyBumper(dependencyBumper)
-                        .latestVersion(latestVersion)
-                        .workspace(workspace)
-                        .build()
-                        .doBump();
+        var dependencymap = ResolveDependenciesUseCase.builder()
+                .dependencyResolver(dependencyResolver)
+                .workspace(workspace)
+                .build()
+                .deResolve();
+        for (String key : dependencymap.keySet()) {
+            boolean bumped = false;
+            for (Dependency dependency : dependencymap.get(key)) {
+                Version latestVersion = getLatestVersion(dependency);
+                if (latestVersion != null &&
+                        dependency.getVersion().compareTo(latestVersion) > 0) {
+                    BumpUseCase.builder()
+                            .dependency(dependency)
+                            .dependencyBumper(dependencyBumper)
+                            .latestVersion(latestVersion)
+                            .workspace(workspace)
+                            .build()
+                            .doBump();
+                    bumped = true;
+                    amountOfBumps++;
+                }
+            }
+            if (bumped) {
                 PullRequestUseCase.builder()
                         .gitProvider(gitProvider)
                         .gitClient(gitClient)
                         .urlHelper(urlHelper)
                         .workspace(workspace)
-                        .bump(bump)
+                        .groupId(key.split(" ")[0])
+                        .version(key.split(" ")[1])
                         .uri(uri)
                         .build()
                         .doPullRequest();
-                amountOfBumps++;
+
             }
         }
         return new AutobumpResult(amountOfBumps);
