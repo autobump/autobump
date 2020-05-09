@@ -35,7 +35,8 @@ public class AutobumpUseCase {
     private final UrlHelper urlHelper;
     @NonNull
     private final URI uri;
-    @NonNull IgnoreRepository ignoreRepository;
+    @NonNull
+    private final IgnoreRepository ignoreRepository;
     private int amountofbumps;
 
     @Builder
@@ -99,10 +100,8 @@ public class AutobumpUseCase {
 
     private Version getUpdateVersion(Dependency dependency) {
         Version latestVersion = getLatestVersion(dependency);
-        if (latestVersion != null) {
-            if (ignoreRepository.isIgnored(dependency, latestVersion)) {
-                latestVersion = null;
-            }
+        if (latestVersion != null && ignoreRepository.isIgnored(dependency, latestVersion)) {
+            latestVersion = null;
         }
         return latestVersion;
     }

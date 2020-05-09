@@ -64,16 +64,14 @@ class AutobumpUseCaseTest {
         Mockito.when(gitClient.commitToNewBranch(workspace,
                 "heyhey",
                 "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                dependency3.getGroup(),
+        Mockito.when(gitClient.commitToNewBranch(workspace, dependency3.getGroup(),
                 dependency3.getVersion().getVersionNumber()))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
                 .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
-                .build();
+                .repoOwner(urlHelper.getOwnerName(uri.toString())).build();
         Mockito.when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
         Mockito.when(ignoreRepository.isIgnored(anyObject(), anyObject())).thenReturn(false);
     }

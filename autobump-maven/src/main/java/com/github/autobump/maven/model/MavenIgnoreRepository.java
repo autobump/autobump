@@ -35,15 +35,15 @@ public class MavenIgnoreRepository implements IgnoreRepository {
 
     private boolean determineIgnored(String key, UpdateType updateType) {
         boolean isIgnored = false;
-        if (ignoreDependencies.get(key).toLowerCase() .equals("all")){
+        if (ignoreDependencies.get(key).equalsIgnoreCase("all")){
             isIgnored = true;
-        }else if (ignoreDependencies.get(key).toLowerCase().equals("major") &&
+        }else if (ignoreDependencies.get(key).equalsIgnoreCase("major") &&
                 updateType.equals(UpdateType.MAJOR)) {
             isIgnored = true;
-        } else if (ignoreDependencies.get(key).toLowerCase().equals("minor") &&
+        } else if (ignoreDependencies.get(key).equalsIgnoreCase("minor") &&
                 updateType.equals(UpdateType.MINOR)) {
             isIgnored = true;
-        } else if (ignoreDependencies.get(key).toLowerCase().equals("incremental") &&
+        } else if (ignoreDependencies.get(key).equalsIgnoreCase("incremental") &&
                 updateType.equals(UpdateType.INCREMENTAL)) {
             isIgnored = true;
         }
