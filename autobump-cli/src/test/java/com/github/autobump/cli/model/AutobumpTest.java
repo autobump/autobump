@@ -187,6 +187,13 @@ class AutobumpTest {
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }
 
+    @Test
+    void main_integrationTestWithIgnores() {
+        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -a %s -i derby=all",
+                GIT_URL, REPO_URL, API_URL).split(" ");
+        assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
+    }
+
     private void startServer() throws Exception {
         Repository repository = createNewRepository();
 

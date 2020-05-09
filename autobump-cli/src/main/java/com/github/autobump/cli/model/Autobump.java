@@ -8,11 +8,13 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
+import com.github.autobump.maven.model.MavenIgnoreRepository;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -35,6 +37,7 @@ public class Autobump implements Callable<AutobumpResult> {
     private VersionRepository versionRepository;
     private GitClient gitClient;
     private GitProvider gitProvider;
+    private IgnoreRepository ignoreRepository;
     @Option(names = {"-u", "--username"}, description = "User name for your remote repository", required = true)
     private String username;
     @Option(names = {"-l", "--url"}, paramLabel = "REPOURL", description = "project repository url", required = true)
@@ -68,6 +71,7 @@ public class Autobump implements Callable<AutobumpResult> {
         gitClient = new JGitGitClient(username, password);
         BitBucketAccount bitBucketAccount = new BitBucketAccount(username, password);
         gitProvider = new BitBucketGitProvider(bitBucketAccount, apiUrl);
+        ignoreRepository = new MavenIgnoreRepository(ignoreDependencies);
     }
 
     public AutobumpUseCase getAutobumpUseCase() {
@@ -79,6 +83,7 @@ public class Autobump implements Callable<AutobumpResult> {
                 .urlHelper(new BitBucketUrlHelper())
                 .uri(url)
                 .versionRepository(versionRepository)
+                .ignoreRepository(ignoreRepository)
                 .build();
     }
 }
