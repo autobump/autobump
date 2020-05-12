@@ -1,8 +1,6 @@
 package com.github.autobump.core.model.usecases;
 
-import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
-import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
@@ -23,7 +21,6 @@ class PullRequestUseCaseTest {
     private GitClient gitClient;
     private UrlHelper urlHelper;
     private Workspace workspace;
-    private Bump bump;
     private URI uri;
 
     @BeforeEach
@@ -34,7 +31,6 @@ class PullRequestUseCaseTest {
 
     private void createMocks() throws URISyntaxException {
         workspace = Mockito.mock(Workspace.class);
-        bump = new Bump(Dependency.builder().build(), new TestVersion());
         uri = new URI("http://www.test.test");
         urlHelper = Mockito.mock(UrlHelper.class);
         gitClient = Mockito.mock(GitClient.class);
@@ -45,7 +41,7 @@ class PullRequestUseCaseTest {
         Mockito.when(urlHelper.getOwnerName("http://www.test.test")).thenReturn("testName");
         Mockito.when(urlHelper.getRepoName("http://www.test.test")).thenReturn("testName");
         CommitResult commitResult = new CommitResult("testName", "testMessage");
-        Mockito.when(gitClient.commitToNewBranch(workspace, bump))
+        Mockito.when(gitClient.commitToNewBranch(workspace, "testGroup", "testVersion"))
                 .thenReturn(commitResult);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -60,7 +56,8 @@ class PullRequestUseCaseTest {
     void doPullRequest() {
         assertThatCode(() ->
                 PullRequestUseCase.builder()
-                        .bump(bump)
+                        .version("testVersion")
+                        .groupId("testGroup")
                         .workspace(workspace)
                         .urlHelper(urlHelper)
                         .gitClient(gitClient)
