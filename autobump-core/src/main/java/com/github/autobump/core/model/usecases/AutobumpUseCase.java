@@ -1,6 +1,7 @@
 package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.AutobumpResult;
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
@@ -16,8 +17,9 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.net.URI;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 public class AutobumpUseCase {
@@ -37,7 +39,6 @@ public class AutobumpUseCase {
     private final URI uri;
     @NonNull
     private final IgnoreRepository ignoreRepository;
-    private int amountofbumps;
 
     @Builder
     public AutobumpUseCase(GitProvider gitProvider,
@@ -60,42 +61,53 @@ public class AutobumpUseCase {
 
     public AutobumpResult doAutoBump() {
         Workspace workspace = gitClient.clone(getUri());
-        var dependencymap = ResolveDependenciesUseCase.builder()
-                .dependencyResolver(dependencyResolver)
-                .workspace(workspace)
-                .build()
-                .deResolve();
-        makeBumpsAndPullRequests(workspace, dependencymap);
-        return new AutobumpResult(amountofbumps);
+        Set<Dependency> dependencies = dependencyResolver.resolve(workspace);
+        var bumps = makeBumpSet(dependencies);
+        var combinedbumps = groupBumps(bumps);
+        makeBumpsAndPullRequests(workspace, combinedbumps);
+        return new AutobumpResult(bumps.size());
     }
 
-    private void makeBumpsAndPullRequests(Workspace workspace, Map<String,
-            Set<Dependency>> dependencymap) {
-        for (var entry : dependencymap.entrySet()) {
-            boolean bumped = false;
-            for (Dependency dependency : dependencymap.get(entry.getKey())) {
-                Version latestVersion = getUpdateVersion(dependency);
-                if (latestVersion != null &&
-                        dependency.getVersion().compareTo(latestVersion) > 0) {
-                    BumpUseCase.builder()
-                            .dependency(dependency)
-                            .dependencyBumper(dependencyBumper)
-                            .latestVersion(latestVersion)
-                            .workspace(workspace)
-                            .build().doBump();
-                    bumped = isBumped();
-                }
-            }
-            if (bumped) {
-                PullRequestUseCase.builder()
-                        .gitProvider(gitProvider).gitClient(gitClient)
-                        .urlHelper(urlHelper).workspace(workspace)
-                        .groupId(entry.getKey().split(" ")[0])
-                        .version(entry.getKey().split(" ")[1])
-                        .uri(uri).build()
-                        .doPullRequest();
+    private Set<Bump> groupBumps(Set<Bump> bumps) {
+        Set<Bump> groupedBumps = bumps.stream().collect(Collectors.collectingAndThen(
+                Collectors.toUnmodifiableMap(b -> b.getGroup() + ":" + b.getUpdatedVersion(), b -> b, Bump::combine),
+                map -> Set.copyOf(map.values())));
+        return groupedBumps;
+    }
+
+    private Set<Bump> makeBumpSet(Set<Dependency> dependencies) {
+        Set<Bump> bumps = new HashSet<>();
+        for (Dependency dependency : dependencies) {
+            Version latestVersion = getUpdateVersion(dependency);
+            if (latestVersion != null && dependency.getVersion().compareTo(latestVersion) > 0) {
+                //newer version is found => make bump
+                bumps.add(new Bump(Set.of(dependency), latestVersion));
             }
         }
+        return bumps;
+    }
+
+    private void makeBumpsAndPullRequests(Workspace workspace, Set<Bump> bumps) {
+        //bumpUsecase
+        //prUsecase
+        for (Bump bump : bumps) {
+            BumpUseCase.builder()
+                    .dependencyBumper(dependencyBumper)
+                    .workspace(workspace)
+                    .bump(bump)
+                    .build()
+                    .doBump();
+            PullRequestUseCase.builder()
+                    .uri(uri)
+                    .gitProvider(gitProvider)
+                    .gitClient(gitClient)
+                    .urlHelper(urlHelper)
+                    .workspace(workspace)
+                    .bump(bump)
+                    .build()
+                    .doPullRequest();
+        }
+
     }
 
 
@@ -105,11 +117,6 @@ public class AutobumpUseCase {
             latestVersion = null;
         }
         return latestVersion;
-    }
-
-    private boolean isBumped() {
-        amountofbumps++;
-        return true;
     }
 
     private Version getLatestVersion(Dependency dependency) {

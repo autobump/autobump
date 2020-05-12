@@ -61,13 +61,13 @@ class JGitGitClientTest {
             Bump bump = getBumpForCreationBranch();
 
             client.commitToNewBranch(workspace,
-                    bump.getDependency().getGroup(),
-                    bump.getDependency().getVersion().getVersionNumber());
+                    bump.getDependencies().getGroup(),
+                    bump.getDependencies().getVersion().getVersionNumber());
 
             assertThat(git.branchList().call()).hasSize(2);
             assertThat(String.format("refs/heads/autobump/%s/%s",
-                    bump.getDependency().getGroup(),
-                    bump.getDependency().getVersion().getVersionNumber()))
+                    bump.getDependencies().getGroup(),
+                    bump.getDependencies().getVersion().getVersionNumber()))
                     .isEqualTo(git.branchList().call().get(0).getName())
             ;
         }
@@ -80,8 +80,8 @@ class JGitGitClientTest {
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(UncheckedIOException.class)
                 .isThrownBy(() -> client.commitToNewBranch(invalidWorkspace,
-                        bump.getDependency().getGroup(),
-                        bump.getDependency().getVersion().getVersionNumber()));
+                        bump.getDependencies().getGroup(),
+                        bump.getDependencies().getVersion().getVersionNumber()));
     }
 
     @Test
@@ -112,8 +112,8 @@ class JGitGitClientTest {
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(GitException.class)
                 .isThrownBy(() -> testClient.commitToNewBranch(workspace,
-                        bump.getDependency().getGroup(),
-                        bump.getDependency().getVersion().getVersionNumber()));
+                        bump.getDependencies().getGroup(),
+                        bump.getDependencies().getVersion().getVersionNumber()));
         stopServer();
     }
 

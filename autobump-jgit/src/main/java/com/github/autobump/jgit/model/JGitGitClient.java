@@ -1,5 +1,6 @@
 package com.github.autobump.jgit.model;
 
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
@@ -34,10 +35,10 @@ public class JGitGitClient implements GitClient {
     }
 
     @Override
-    public CommitResult commitToNewBranch(Workspace workspace, String groupId, String versionNumber) {
+    public CommitResult commitToNewBranch(Workspace workspace, Bump bump) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            String branchName = createBranch(git, groupId, versionNumber);
-            String commitMessage = commitAndPushToNewBranch(git, groupId, versionNumber);
+            String branchName = createBranch(git, bump);
+            String commitMessage = commitAndPushToNewBranch(git, bump);
             git.checkout().setName("master").call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
@@ -47,20 +48,20 @@ public class JGitGitClient implements GitClient {
         }
     }
 
-    public String createBranch(Git git, String groupId, String versionNumber) throws GitAPIException {
+    public String createBranch(Git git, Bump bump) throws GitAPIException {
         String branchName = String.format("autobump/%s/%s",
-                groupId,
-                versionNumber);
+                bump.getGroup(),
+                bump.getUpdatedVersion().getVersionNumber());
         git.branchCreate().setName(branchName).call();
         git.checkout().setName(branchName).call();
         return branchName;
     }
 
-    public String commitAndPushToNewBranch(Git git, String groupId, String versionNumber) throws GitAPIException {
+    public String commitAndPushToNewBranch(Git git, Bump bump) throws GitAPIException {
         git.add().addFilepattern(".").call();
         String commitMessage = String.format("Autobump %s version: %s",
-                groupId,
-                versionNumber);
+                bump.getGroup(),
+                bump.getUpdatedVersion().getVersionNumber());
         git.commit().setMessage(commitMessage).call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password)).call();
         return commitMessage;

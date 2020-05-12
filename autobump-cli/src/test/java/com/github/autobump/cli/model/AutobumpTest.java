@@ -133,11 +133,11 @@ class AutobumpTest {
                 urlEqualTo(String.format("/apiurl/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
                 .withRequestBody(equalToJson(
                         "{\"title\": " +
-                                "\"Autobump org.apache.derby version: 10.15.1.3\", " +
+                                "\"Bumped org.apache.derby:derby to version: 10.15.2.0\", " +
                                 "\"source\": " +
                                 "{ \"branch\": " +
                                 "{ \"name\": " +
-                                "\"autobump/org.apache.derby/10.15.1.3\"}}}",
+                                "\"autobump/org.apache.derby/10.15.2.0\"}}}",
                         true,
                         true
                 ))

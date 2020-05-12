@@ -1,5 +1,6 @@
 package com.github.autobump.core.model.usecases;
 
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
@@ -61,11 +62,8 @@ class AutobumpUseCaseTest {
         Mockito.when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         Mockito.when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                "heyhey",
-                "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace, dependency3.getGroup(),
-                dependency3.getVersion().getVersionNumber()))
+        Mockito.when(gitClient.commitToNewBranch(workspace,new Bump(dependency1, tv))).thenReturn(commitResult);
+        Mockito.when(gitClient.commitToNewBranch(workspace, new Bump(dependency3,dependency3.getVersion())))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -116,7 +114,6 @@ class AutobumpUseCaseTest {
                 .urlHelper(urlHelper)
                 .versionRepository(versionRepository)
                 .ignoreRepository(ignoreRepository)
-
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(pullRequest);
@@ -153,12 +150,10 @@ class AutobumpUseCaseTest {
         Mockito.when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         Mockito.when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                "same",
-                "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                dependency4.getGroup(),
-                dependency4.getVersion().getVersionNumber()))
+        Mockito.when(gitClient.commitToNewBranch(workspace,new Bump(dependency4, tv))).thenReturn(commitResult);
+        Mockito.when(gitClient.commitToNewBranch(workspace, new Bump(
+                dependency4,
+                dependency4.getVersion())))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())

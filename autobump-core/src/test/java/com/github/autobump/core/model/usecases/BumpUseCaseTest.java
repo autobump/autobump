@@ -1,5 +1,6 @@
 package com.github.autobump.core.model.usecases;
 
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.Version;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 class BumpUseCaseTest {
     private DependencyBumper dependencyBumper;
@@ -26,15 +27,13 @@ class BumpUseCaseTest {
 
     @Test
     void doBump() {
-        var bump = BumpUseCase.builder()
+        assertThatCode(() -> BumpUseCase.builder()
                 .workspace(workspace)
-                .latestVersion(latestVersion)
+                .bump(new Bump(dependency, latestVersion))
                 .dependencyBumper(dependencyBumper)
-                .dependency(dependency)
                 .build()
-                .doBump();
-        assertThat(bump.getDependency()).isEqualTo(dependency);
-        assertThat(bump.getUpdatedVersion()).isEqualTo(latestVersion);
+                .doBump())
+        .doesNotThrowAnyException();
     }
 
     private static class TestVersion implements Version {
