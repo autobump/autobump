@@ -2,10 +2,12 @@ package com.github.autobump.core.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 @Data
 @Builder
+@EqualsAndHashCode(of = "key")
 public final class Setting {
     @NonNull
     private SettingsType type;
@@ -15,7 +17,7 @@ public final class Setting {
     private String value;
 
 
-    enum SettingsType{
+    public enum SettingsType{
         IGNORE
     }
 }
