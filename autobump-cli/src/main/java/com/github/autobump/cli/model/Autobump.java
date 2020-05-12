@@ -17,9 +17,9 @@ import com.github.autobump.maven.model.MavenDependencyResolver;
 import com.github.autobump.maven.model.MavenIgnoreRepository;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import picocli.CommandLine;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Spec;
-import picocli.CommandLine.Mixin;
 
 import java.util.concurrent.Callable;
 
