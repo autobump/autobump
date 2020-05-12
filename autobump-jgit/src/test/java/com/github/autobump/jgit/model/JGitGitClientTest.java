@@ -60,14 +60,11 @@ class JGitGitClientTest {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             Bump bump = getBumpForCreationBranch();
 
-            client.commitToNewBranch(workspace,
-                    bump.getDependencies().getGroup(),
-                    bump.getDependencies().getVersion().getVersionNumber());
+            client.commitToNewBranch(workspace, bump);
 
             assertThat(git.branchList().call()).hasSize(2);
-            assertThat(String.format("refs/heads/autobump/%s/%s",
-                    bump.getDependencies().getGroup(),
-                    bump.getDependencies().getVersion().getVersionNumber()))
+            assertThat(String.format("refs/heads/autobump/%s/%s", bump.getGroup(),
+                    bump.getUpdatedVersion().getVersionNumber()))
                     .isEqualTo(git.branchList().call().get(0).getName())
             ;
         }
@@ -79,9 +76,7 @@ class JGitGitClientTest {
         Workspace invalidWorkspace = new Workspace("test/test/test");
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> client.commitToNewBranch(invalidWorkspace,
-                        bump.getDependencies().getGroup(),
-                        bump.getDependencies().getVersion().getVersionNumber()));
+                .isThrownBy(() -> client.commitToNewBranch(invalidWorkspace, bump));
     }
 
     @Test
@@ -95,12 +90,12 @@ class JGitGitClientTest {
 
             @Override
             public String commitAndPushToNewBranch(Git git,
-                                                   String groupId, String versionNumber) throws GitAPIException {
+                                                   Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
             }
 
             @Override
-            public String createBranch(Git git, String groupId, String versionNumber) throws GitAPIException {
+            public String createBranch(Git git, Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
             }
 
@@ -111,9 +106,7 @@ class JGitGitClientTest {
         Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(GitException.class)
-                .isThrownBy(() -> testClient.commitToNewBranch(workspace,
-                        bump.getDependencies().getGroup(),
-                        bump.getDependencies().getVersion().getVersionNumber()));
+                .isThrownBy(() -> testClient.commitToNewBranch(workspace,bump));
         stopServer();
     }
 

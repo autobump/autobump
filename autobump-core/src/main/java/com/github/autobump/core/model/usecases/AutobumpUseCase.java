@@ -9,7 +9,6 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.UrlHelper;
-import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
@@ -17,9 +16,7 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.net.URI;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 public class AutobumpUseCase {
@@ -62,30 +59,16 @@ public class AutobumpUseCase {
     public AutobumpResult doAutoBump() {
         Workspace workspace = gitClient.clone(getUri());
         Set<Dependency> dependencies = dependencyResolver.resolve(workspace);
-        var bumps = makeBumpSet(dependencies);
-        var combinedbumps = groupBumps(bumps);
+        var combinedbumps = BumpResolverUseCase.builder()
+                .dependencies(dependencies)
+                .ignoreRepository(ignoreRepository)
+                .versionRepository(versionRepository)
+                .build()
+                .doResolve();
         makeBumpsAndPullRequests(workspace, combinedbumps);
-        return new AutobumpResult(bumps.size());
+        return new AutobumpResult(combinedbumps.size());
     }
 
-    private Set<Bump> groupBumps(Set<Bump> bumps) {
-        Set<Bump> groupedBumps = bumps.stream().collect(Collectors.collectingAndThen(
-                Collectors.toUnmodifiableMap(b -> b.getGroup() + ":" + b.getUpdatedVersion(), b -> b, Bump::combine),
-                map -> Set.copyOf(map.values())));
-        return groupedBumps;
-    }
-
-    private Set<Bump> makeBumpSet(Set<Dependency> dependencies) {
-        Set<Bump> bumps = new HashSet<>();
-        for (Dependency dependency : dependencies) {
-            Version latestVersion = getUpdateVersion(dependency);
-            if (latestVersion != null && dependency.getVersion().compareTo(latestVersion) > 0) {
-                //newer version is found => make bump
-                bumps.add(new Bump(Set.of(dependency), latestVersion));
-            }
-        }
-        return bumps;
-    }
 
     private void makeBumpsAndPullRequests(Workspace workspace, Set<Bump> bumps) {
         //bumpUsecase
@@ -110,17 +93,4 @@ public class AutobumpUseCase {
 
     }
 
-
-    private Version getUpdateVersion(Dependency dependency) {
-        Version latestVersion = getLatestVersion(dependency);
-        if (latestVersion != null && ignoreRepository.isIgnored(dependency, latestVersion)) {
-            latestVersion = null;
-        }
-        return latestVersion;
-    }
-
-    private Version getLatestVersion(Dependency dependency) {
-        return versionRepository.getAllAvailableVersions(dependency).stream()
-                .sorted().findFirst().orElse(null);
-    }
 }

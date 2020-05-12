@@ -35,15 +35,7 @@ public class Bump {
     public String getTitle() {
         StringBuilder titleBuilder = new StringBuilder("Bumped ");
         if (isMultiBump()) {
-            int i = 0;
-
-            for (Dependency dependency : dependencies) {
-                i++;
-                titleBuilder.append(String.format("%s:%s", dependency.getGroup(), dependency.getName()));
-                if (i != dependencies.size()) {
-                    titleBuilder.append(" and ");
-                }
-            }
+            titleBuilder.append(addDependenciesToTitle());
         } else {
             for (Dependency dependency : dependencies) {
                 titleBuilder.append(String.format("%s:%s", dependency.getGroup(), dependency.getName()));
@@ -51,6 +43,19 @@ public class Bump {
         }
         titleBuilder.append(String.format(" to version: %s", updatedVersion .getVersionNumber()));
         return titleBuilder.toString();
+    }
+
+    private String addDependenciesToTitle() {
+        int i = 0;
+        StringBuilder builder = new StringBuilder();
+        for (Dependency dependency : dependencies) {
+            i++;
+            builder.append(String.format("%s:%s", dependency.getGroup(), dependency.getName()));
+            if (i != dependencies.size()) {
+                builder.append(" and ");
+            }
+        }
+        return builder.toString();
     }
 
     public boolean isMultiBump() {

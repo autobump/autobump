@@ -33,7 +33,7 @@ class BumpUseCaseTest {
                 .dependencyBumper(dependencyBumper)
                 .build()
                 .doBump())
-        .doesNotThrowAnyException();
+                .doesNotThrowAnyException();
     }
 
     private static class TestVersion implements Version {
