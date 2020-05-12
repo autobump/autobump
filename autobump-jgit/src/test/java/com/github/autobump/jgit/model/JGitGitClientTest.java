@@ -118,23 +118,6 @@ class JGitGitClientTest {
     }
 
     private Bump getBumpForCreationBranch() {
-        class TestVersion implements Version{
-            private final String versionNumber;
-
-            TestVersion(String versionNumber) {
-                this.versionNumber = versionNumber;
-            }
-
-            @Override
-            public String getVersionNumber() {
-                return versionNumber;
-            }
-
-            @Override
-            public int compareTo(Version o) {
-                return this.versionNumber.compareTo(o.getVersionNumber());
-            }
-        }
         Dependency dep = Dependency.builder().group("test").name("test").version(new TestVersion("1.0.0")).build();
         Version version = new Version() {
             @Override
@@ -145,6 +128,11 @@ class JGitGitClientTest {
             @Override
             public String getVersionNumber() {
                 return "2.0.0";
+            }
+
+            @Override
+            public UpdateType getUpdateType(Version otherVersion) {
+                return null;
             }
         };
         return new Bump(dep, version);
@@ -250,5 +238,26 @@ class JGitGitClientTest {
         return repository;
     }
 
+    class TestVersion implements Version{
+        private final String versionNumber;
 
+        TestVersion(String versionNumber) {
+            this.versionNumber = versionNumber;
+        }
+
+        @Override
+        public String getVersionNumber() {
+            return versionNumber;
+        }
+
+        @Override
+        public UpdateType getUpdateType(Version otherVersion) {
+            return null;
+        }
+
+        @Override
+        public int compareTo(Version o) {
+            return this.versionNumber.compareTo(o.getVersionNumber());
+        }
+    }
 }

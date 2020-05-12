@@ -6,6 +6,7 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Version;
@@ -20,6 +21,8 @@ import java.net.URISyntaxException;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -34,6 +37,7 @@ class AutobumpUseCaseTest {
     private DependencyBumper dependencyBumper;
     private UrlHelper urlHelper;
     private PullRequest pullRequest;
+    private IgnoreRepository ignoreRepository;
     private URI uri;
 
     @BeforeEach
@@ -60,17 +64,16 @@ class AutobumpUseCaseTest {
         Mockito.when(gitClient.commitToNewBranch(workspace,
                 "heyhey",
                 "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                dependency3.getGroup(),
+        Mockito.when(gitClient.commitToNewBranch(workspace, dependency3.getGroup(),
                 dependency3.getVersion().getVersionNumber()))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
                 .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
-                .build();
+                .repoOwner(urlHelper.getOwnerName(uri.toString())).build();
         Mockito.when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
+        Mockito.when(ignoreRepository.isIgnored(anyObject(), anyObject())).thenReturn(false);
     }
 
     private void makeMocks() throws URISyntaxException {
@@ -81,6 +84,7 @@ class AutobumpUseCaseTest {
         dependencyBumper = Mockito.mock(DependencyBumper.class);
         versionRepository = Mockito.mock(VersionRepository.class);
         dependencyResolver = Mockito.mock(DependencyResolver.class);
+        ignoreRepository = Mockito.mock(IgnoreRepository.class);
     }
 
     @Test
@@ -94,6 +98,7 @@ class AutobumpUseCaseTest {
                 .uri(uri)
                 .urlHelper(urlHelper)
                 .versionRepository(versionRepository)
+                .ignoreRepository(ignoreRepository)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -110,12 +115,31 @@ class AutobumpUseCaseTest {
                 .uri(uri)
                 .urlHelper(urlHelper)
                 .versionRepository(versionRepository)
+                .ignoreRepository(ignoreRepository)
+
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(pullRequest);
         assertThat(result.getNumberOfBumps()).isEqualTo(2);
     }
 
+    @Test
+    void doAutoBump_ignoredependencyShouldntBump() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        Mockito.when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
+        var result = AutobumpUseCase.builder()
+                .dependencyBumper(dependencyBumper)
+                .dependencyResolver(dependencyResolver)
+                .gitClient(gitClient)
+                .gitProvider(gitProvider)
+                .uri(uri)
+                .urlHelper(urlHelper)
+                .versionRepository(versionRepository)
+                .ignoreRepository(ignoreRepository)
+                .build()
+                .doAutoBump();
+        assertThat(result.getNumberOfBumps()).isEqualTo(0);
+    }
     @SuppressWarnings("ExecutableStatementCount")
     private void setUpdoAutoBump_combinedDependenciesMocks() {
         Workspace workspace = new Workspace("");
@@ -155,6 +179,11 @@ class AutobumpUseCaseTest {
         @Override
         public String getVersionNumber() {
             return version;
+        }
+
+        @Override
+        public UpdateType getUpdateType(Version otherVersion) {
+            return null;
         }
 
         @Override

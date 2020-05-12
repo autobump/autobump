@@ -6,6 +6,7 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -34,6 +35,8 @@ public class AutobumpUseCase {
     private final UrlHelper urlHelper;
     @NonNull
     private final URI uri;
+    @NonNull
+    private final IgnoreRepository ignoreRepository;
     private int amountofbumps;
 
     @Builder
@@ -43,6 +46,7 @@ public class AutobumpUseCase {
                            VersionRepository versionRepository,
                            DependencyBumper dependencyBumper,
                            UrlHelper urlHelper,
+                           IgnoreRepository ignoreRepository,
                            URI uri) {
         this.gitProvider = gitProvider;
         this.gitClient = gitClient;
@@ -50,6 +54,7 @@ public class AutobumpUseCase {
         this.versionRepository = versionRepository;
         this.dependencyBumper = dependencyBumper;
         this.urlHelper = urlHelper;
+        this.ignoreRepository = ignoreRepository;
         this.uri = uri;
     }
 
@@ -69,7 +74,7 @@ public class AutobumpUseCase {
         for (var entry : dependencymap.entrySet()) {
             boolean bumped = false;
             for (Dependency dependency : dependencymap.get(entry.getKey())) {
-                Version latestVersion = getLatestVersion(dependency);
+                Version latestVersion = getUpdateVersion(dependency);
                 if (latestVersion != null &&
                         dependency.getVersion().compareTo(latestVersion) > 0) {
                     BumpUseCase.builder()
@@ -93,6 +98,15 @@ public class AutobumpUseCase {
         }
     }
 
+
+    private Version getUpdateVersion(Dependency dependency) {
+        Version latestVersion = getLatestVersion(dependency);
+        if (latestVersion != null && ignoreRepository.isIgnored(dependency, latestVersion)) {
+            latestVersion = null;
+        }
+        return latestVersion;
+    }
+
     private boolean isBumped() {
         amountofbumps++;
         return true;
@@ -102,6 +116,4 @@ public class AutobumpUseCase {
         return versionRepository.getAllAvailableVersions(dependency).stream()
                 .sorted().findFirst().orElse(null);
     }
-
-
 }

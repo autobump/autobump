@@ -44,6 +44,11 @@ class BumpUseCaseTest {
         }
 
         @Override
+        public UpdateType getUpdateType(Version otherVersion) {
+            return null;
+        }
+
+        @Override
         public int compareTo(Version o) {
             return 0;
         }
