@@ -18,6 +18,8 @@ import org.mockito.Mockito;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,33 +41,53 @@ class AutobumpUseCaseTest {
     private PullRequest pullRequest;
     private IgnoreRepository ignoreRepository;
     private URI uri;
+    private final Workspace workspace = new Workspace("");
+    private TestVersion tv;
+    private TestVersion tv1;
+    private List<Dependency> dependencyList;
+
 
     @BeforeEach
     void setUp() throws URISyntaxException {
         makeMocks();
+        dependencyList = createDependencies();
     }
 
-    @SuppressWarnings("ExecutableStatementCount")
-    private void setUpdoAutoBumpMocks() {
-        Workspace workspace = new Workspace("");
+    private List<Dependency> createDependencies() {
+        createTestVersions();
+        List<Dependency> dependencies = new ArrayList<>();
+        dependencies.add(Dependency.builder().group("heyhey").name("test").version(tv).build());
+        dependencies.add(Dependency.builder().group("blabla").name("testo").version(tv).build());
+        dependencies.add(Dependency.builder().group("tadaa").name("bla").version(tv1).build());
+        dependencies.add(Dependency.builder().group("same").name("testo").version(tv).build());
+        dependencies.add(Dependency.builder().group("same").name("bla").version(tv).build());
+        return dependencies;
+    }
+
+    private void createTestVersions() {
+        tv = new TestVersion("test");
+        tv1 = new TestVersion("bla");
+    }
+
+    private void setUpdoAutoBumpMocks_forTestSingleBump() {
         Mockito.when(gitClient.clone(uri)).thenReturn(workspace);
-        TestVersion tv = new TestVersion("test");
-        TestVersion tv1 = new TestVersion("bla");
-        Dependency dependency1 = Dependency.builder().group("heyhey").name("test").version(tv).build();
-        Dependency dependency2 = Dependency.builder().group("blabla").name("testo").version(tv).build();
-        Dependency dependency3 = Dependency.builder().group("tadaa").name("bla").version(tv1).build();
-        Mockito.when(dependencyResolver.resolve(workspace)).thenReturn(Set.of(dependency1, dependency2, dependency3));
-        Mockito.when(versionRepository.getAllAvailableVersions(dependency1)).thenReturn(Set.of(tv));
-        Mockito.when(versionRepository.getAllAvailableVersions(dependency3)).thenReturn(Set.of(tv));
-        Mockito.when(versionRepository.getAllAvailableVersions(dependency2)).thenReturn(Set.of());
+        Mockito.when(dependencyResolver.resolve(workspace))
+                .thenReturn(Set.of(dependencyList.get(0), dependencyList.get(1), dependencyList.get(2)));
+        Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(0))).thenReturn(Set.of(tv));
+        Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(2))).thenReturn(Set.of(tv));
+        Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(1))).thenReturn(Set.of());
         Mockito.when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         Mockito.when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        setUpGitClassesMocks_forTestSingleBump();
+    }
+
+    private void setUpGitClassesMocks_forTestSingleBump() {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
         Mockito.when(gitClient.commitToNewBranch(workspace,
                 "heyhey",
                 "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace, dependency3.getGroup(),
-                dependency3.getVersion().getVersionNumber()))
+        Mockito.when(gitClient.commitToNewBranch(workspace, dependencyList.get(2).getGroup(),
+                dependencyList.get(2).getVersion().getVersionNumber()))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -89,7 +111,7 @@ class AutobumpUseCaseTest {
 
     @Test
     void doAutoBump() {
-        setUpdoAutoBumpMocks();
+        setUpdoAutoBumpMocks_forTestSingleBump();
         var result = AutobumpUseCase.builder()
                 .dependencyBumper(dependencyBumper)
                 .dependencyResolver(dependencyResolver)
@@ -116,7 +138,6 @@ class AutobumpUseCaseTest {
                 .urlHelper(urlHelper)
                 .versionRepository(versionRepository)
                 .ignoreRepository(ignoreRepository)
-
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(pullRequest);
@@ -124,7 +145,7 @@ class AutobumpUseCaseTest {
     }
 
     @Test
-    void doAutoBump_ignoredependencyShouldntBump() {
+    void doAutoBump_ignoreDependencyShouldnotBump() {
         setUpdoAutoBump_combinedDependenciesMocks();
         Mockito.when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
         var result = AutobumpUseCase.builder()
@@ -140,25 +161,26 @@ class AutobumpUseCaseTest {
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
     }
-    @SuppressWarnings("ExecutableStatementCount")
+
     private void setUpdoAutoBump_combinedDependenciesMocks() {
-        Workspace workspace = new Workspace("");
         Mockito.when(gitClient.clone(uri)).thenReturn(workspace);
-        TestVersion tv = new TestVersion("test");
-        Dependency dependency4 = Dependency.builder().group("same").name("testo").version(tv).build();
-        Dependency dependency5 = Dependency.builder().group("same").name("bla").version(tv).build();
-        Mockito.when(dependencyResolver.resolve(workspace)).thenReturn(Set.of(dependency4, dependency5));
-        Mockito.when(versionRepository.getAllAvailableVersions(dependency4)).thenReturn(Set.of(tv));
-        Mockito.when(versionRepository.getAllAvailableVersions(dependency5)).thenReturn(Set.of(tv));
+        Mockito.when(dependencyResolver.resolve(workspace))
+                .thenReturn(Set.of(dependencyList.get(3), dependencyList.get(4)));
+        Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(3))).thenReturn(Set.of(tv));
+        Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(4))).thenReturn(Set.of(tv));
         Mockito.when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         Mockito.when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        setUpGitClassesMocks_forTestCombinedBumps();
+    }
+
+    private void setUpGitClassesMocks_forTestCombinedBumps() {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
         Mockito.when(gitClient.commitToNewBranch(workspace,
                 "same",
                 "test")).thenReturn(commitResult);
         Mockito.when(gitClient.commitToNewBranch(workspace,
-                dependency4.getGroup(),
-                dependency4.getVersion().getVersionNumber()))
+                dependencyList.get(4).getGroup(),
+                dependencyList.get(4).getVersion().getVersionNumber()))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
