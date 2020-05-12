@@ -1,6 +1,8 @@
 package com.github.autobump.core.model.usecases;
 
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
+import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
@@ -22,6 +24,7 @@ class PullRequestUseCaseTest {
     private UrlHelper urlHelper;
     private Workspace workspace;
     private URI uri;
+    private Bump bump;
 
     @BeforeEach
     void setUp() throws URISyntaxException {
@@ -35,13 +38,19 @@ class PullRequestUseCaseTest {
         urlHelper = Mockito.mock(UrlHelper.class);
         gitClient = Mockito.mock(GitClient.class);
         gitProvider = Mockito.mock(GitProvider.class);
+        bump = new Bump(Dependency.builder()
+                .group("testGroup")
+                .name("testName")
+                .version(new TestVersion("tetversion"))
+                .build(),
+                new TestVersion("heyehey"));
     }
 
     private void setUpMocks() {
         Mockito.when(urlHelper.getOwnerName("http://www.test.test")).thenReturn("testName");
         Mockito.when(urlHelper.getRepoName("http://www.test.test")).thenReturn("testName");
         CommitResult commitResult = new CommitResult("testName", "testMessage");
-        Mockito.when(gitClient.commitToNewBranch(workspace, "testGroup", "testVersion"))
+        Mockito.when(gitClient.commitToNewBranch(workspace, bump))
                 .thenReturn(commitResult);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -56,8 +65,7 @@ class PullRequestUseCaseTest {
     void doPullRequest() {
         assertThatCode(() ->
                 PullRequestUseCase.builder()
-                        .version("testVersion")
-                        .groupId("testGroup")
+                        .bump(bump)
                         .workspace(workspace)
                         .urlHelper(urlHelper)
                         .gitClient(gitClient)
@@ -69,10 +77,15 @@ class PullRequestUseCaseTest {
     }
 
     private static class TestVersion implements Version {
+        private final String versionNumber;
+
+        TestVersion(String versionNumber){
+            this.versionNumber = versionNumber;
+        }
 
         @Override
         public String getVersionNumber() {
-            return null;
+            return versionNumber;
         }
 
         @Override

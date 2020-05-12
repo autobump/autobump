@@ -1,5 +1,6 @@
 package com.github.autobump.core.model.usecases;
 
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
@@ -76,19 +77,13 @@ class AutobumpUseCaseTest {
         Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(0))).thenReturn(Set.of(tv));
         Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(2))).thenReturn(Set.of(tv));
         Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(1))).thenReturn(Set.of());
-        Mockito.when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
-        Mockito.when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        setupUrlHelper();
         setUpGitClassesMocks_forTestSingleBump();
     }
 
     private void setUpGitClassesMocks_forTestSingleBump() {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                "heyhey",
-                "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace, dependencyList.get(2).getGroup(),
-                dependencyList.get(2).getVersion().getVersionNumber()))
-                .thenReturn(commitResult);
+        Mockito.when(gitClient.commitToNewBranch(anyObject(), anyObject())).thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
@@ -140,8 +135,8 @@ class AutobumpUseCaseTest {
                 .ignoreRepository(ignoreRepository)
                 .build()
                 .doAutoBump();
-        verify(gitProvider, times(1)).makePullRequest(pullRequest);
-        assertThat(result.getNumberOfBumps()).isEqualTo(2);
+        verify(gitProvider, times(1)).makePullRequest(any());
+        assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
     @Test
@@ -168,19 +163,24 @@ class AutobumpUseCaseTest {
                 .thenReturn(Set.of(dependencyList.get(3), dependencyList.get(4)));
         Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(3))).thenReturn(Set.of(tv));
         Mockito.when(versionRepository.getAllAvailableVersions(dependencyList.get(4))).thenReturn(Set.of(tv));
+        setupUrlHelper();
+        CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
+        Mockito.when(gitClient.commitToNewBranch(any(), any())).thenReturn(commitResult);
+        setUpGitClassesMocks_forTestCombinedBumps();
+    }
+
+    private void setupUrlHelper() {
         Mockito.when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
         Mockito.when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
-        setUpGitClassesMocks_forTestCombinedBumps();
     }
 
     private void setUpGitClassesMocks_forTestCombinedBumps() {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
         Mockito.when(gitClient.commitToNewBranch(workspace,
-                "same",
-                "test")).thenReturn(commitResult);
-        Mockito.when(gitClient.commitToNewBranch(workspace,
-                dependencyList.get(4).getGroup(),
-                dependencyList.get(4).getVersion().getVersionNumber()))
+                new Bump(dependencyList.get(3), tv))).thenReturn(commitResult);
+        Mockito.when(gitClient.commitToNewBranch(workspace, new Bump(
+                dependencyList.get(3),
+                dependencyList.get(3).getVersion())))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())

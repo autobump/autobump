@@ -1,6 +1,7 @@
 package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.AutobumpResult;
+import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
@@ -8,7 +9,6 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.UrlHelper;
-import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
@@ -16,7 +16,6 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -37,7 +36,6 @@ public class AutobumpUseCase {
     private final URI uri;
     @NonNull
     private final IgnoreRepository ignoreRepository;
-    private int amountofbumps;
 
     @Builder
     public AutobumpUseCase(GitProvider gitProvider,
@@ -60,60 +58,39 @@ public class AutobumpUseCase {
 
     public AutobumpResult doAutoBump() {
         Workspace workspace = gitClient.clone(getUri());
-        var dependencymap = ResolveDependenciesUseCase.builder()
-                .dependencyResolver(dependencyResolver)
-                .workspace(workspace)
+        Set<Dependency> dependencies = dependencyResolver.resolve(workspace);
+        var combinedbumps = BumpResolverUseCase.builder()
+                .dependencies(dependencies)
+                .ignoreRepository(ignoreRepository)
+                .versionRepository(versionRepository)
                 .build()
-                .deResolve();
-        makeBumpsAndPullRequests(workspace, dependencymap);
-        return new AutobumpResult(amountofbumps);
+                .doResolve();
+        makeBumpsAndPullRequests(workspace, combinedbumps);
+        return new AutobumpResult(combinedbumps.size());
     }
 
-    private void makeBumpsAndPullRequests(Workspace workspace, Map<String,
-            Set<Dependency>> dependencymap) {
-        for (var entry : dependencymap.entrySet()) {
-            boolean bumped = false;
-            for (Dependency dependency : dependencymap.get(entry.getKey())) {
-                Version latestVersion = getUpdateVersion(dependency);
-                if (latestVersion != null &&
-                        dependency.getVersion().compareTo(latestVersion) > 0) {
-                    BumpUseCase.builder()
-                            .dependency(dependency)
-                            .dependencyBumper(dependencyBumper)
-                            .latestVersion(latestVersion)
-                            .workspace(workspace)
-                            .build().doBump();
-                    bumped = isBumped();
-                }
-            }
-            if (bumped) {
-                PullRequestUseCase.builder()
-                        .gitProvider(gitProvider).gitClient(gitClient)
-                        .urlHelper(urlHelper).workspace(workspace)
-                        .groupId(entry.getKey().split(" ")[0])
-                        .version(entry.getKey().split(" ")[1])
-                        .uri(uri).build()
-                        .doPullRequest();
-            }
+
+    private void makeBumpsAndPullRequests(Workspace workspace, Set<Bump> bumps) {
+        //bumpUsecase
+        //prUsecase
+        for (Bump bump : bumps) {
+            BumpUseCase.builder()
+                    .dependencyBumper(dependencyBumper)
+                    .workspace(workspace)
+                    .bump(bump)
+                    .build()
+                    .doBump();
+            PullRequestUseCase.builder()
+                    .uri(uri)
+                    .gitProvider(gitProvider)
+                    .gitClient(gitClient)
+                    .urlHelper(urlHelper)
+                    .workspace(workspace)
+                    .bump(bump)
+                    .build()
+                    .doPullRequest();
         }
+
     }
 
-
-    private Version getUpdateVersion(Dependency dependency) {
-        Version latestVersion = getLatestVersion(dependency);
-        if (latestVersion != null && ignoreRepository.isIgnored(dependency, latestVersion)) {
-            latestVersion = null;
-        }
-        return latestVersion;
-    }
-
-    private boolean isBumped() {
-        amountofbumps++;
-        return true;
-    }
-
-    private Version getLatestVersion(Dependency dependency) {
-        return versionRepository.getAllAvailableVersions(dependency).stream()
-                .sorted().findFirst().orElse(null);
-    }
 }

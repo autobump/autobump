@@ -1,9 +1,7 @@
 package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
-import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 
@@ -11,23 +9,17 @@ import lombok.Builder;
 public class BumpUseCase {
     private final DependencyBumper dependencyBumper;
     private final Workspace workspace;
-    private final Dependency dependency;
-    private final Version latestVersion;
+    private final Bump bump;
 
     public BumpUseCase(DependencyBumper dependencyBumper,
-                       Workspace workspace,
-                       Dependency dependency,
-                       Version latestVersion) {
+                       Workspace workspace, Bump bump) {
         this.dependencyBumper = dependencyBumper;
-        this.dependency = dependency;
-        this.latestVersion = latestVersion;
         this.workspace = workspace;
+        this.bump = bump;
     }
 
-    public Bump doBump() {
-        Bump bump = new Bump(dependency, latestVersion);
+    public void doBump() {
         dependencyBumper.bump(workspace, bump);
-        return bump;
     }
 
 }
