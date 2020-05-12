@@ -9,6 +9,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MavenDependencyResolver implements DependencyResolver {
-    private static final String FILENAME = "pom.xml";
     private static final String LOCATION_KEY = "version";
 
     private final MavenModelAnalyser mavenModelAnalyser;
@@ -50,11 +50,6 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .filter(dependency ->
                         !dependency.getGroup().equals("${project.groupId}"))
                 .collect(Collectors.toUnmodifiableSet());
-    }
-
-    @Override
-    public String getBuildFileName() {
-        return FILENAME;
     }
 
     private Set<Dependency> getDependencies(Workspace workspace, Set<Dependency> ignoredInternal, Model model) {
@@ -138,7 +133,10 @@ public class MavenDependencyResolver implements DependencyResolver {
     Set<Dependency> resolveModules(Workspace workspace, List<String> modules, Set<Dependency> toBeIgnored) {
         if (!modules.isEmpty()) {
             var dependencies = new HashSet<Dependency>();
-            workspace.walkFiles(dependencies, toBeIgnored, this);
+            for (String module : modules) {
+                dependencies.addAll(resolve(
+                        new Workspace(workspace.getProjectRoot() + File.separator + module), toBeIgnored));
+            }
             return dependencies;
         }
         return Collections.emptySet();
