@@ -7,7 +7,6 @@ import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Version;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Set;
@@ -19,30 +18,8 @@ class PullRequestClosedUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        makeMocks();
-        setUpMocks();
+        settingsRepository = new TestSettingsRepo();
     }
-
-    private void makeMocks() {
-        settingsRepository = Mockito.mock(SettingsRepository.class);
-    }
-
-    private void setUpMocks() {
-        Setting setting1 = Setting.builder()
-                .key("org.springframework:spring-core")
-                .value("5.2.5.RELEASE")
-                .type(Setting.SettingsType.IGNORE)
-                .build();
-        Setting setting2 = Setting.builder()
-                .key("org.springframework:spring-beans")
-                .value("5.2.5.RELEASE")
-                .type(Setting.SettingsType.IGNORE)
-                .build();
-        List<Setting> settingslist = List.of(setting1, setting2);
-        Mockito.when(settingsRepository.saveAllSettings(settingslist))
-                .thenReturn(settingslist);
-    }
-
 
     @Test
     void doClose() {
@@ -55,7 +32,8 @@ class PullRequestClosedUseCaseTest {
                 .settingsRepository(settingsRepository)
                 .build()
                 .doClose();
-        assertThat(setting).isNotEmpty();
+        assertThat(setting.size()).isEqualTo(2);
+
     }
 
     private class TestVersion implements Version {
@@ -78,6 +56,24 @@ class PullRequestClosedUseCaseTest {
         @Override
         public int compareTo(Version o) {
             return 0;
+        }
+    }
+
+    private class TestSettingsRepo implements SettingsRepository{
+
+        @Override
+        public List<Setting> getSettings() {
+            return List.of();
+        }
+
+        @Override
+        public Setting saveSetting(Setting setting) {
+            return setting;
+        }
+
+        @Override
+        public List<Setting> saveAllSettings(List<Setting> settings) {
+            return settings;
         }
     }
 }
