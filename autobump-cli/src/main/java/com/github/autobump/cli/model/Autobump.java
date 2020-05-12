@@ -18,13 +18,15 @@ import com.github.autobump.maven.model.MavenIgnoreRepository;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import picocli.CommandLine;
 import picocli.CommandLine.Model.CommandSpec;
+import picocli.CommandLine.Spec;
+import picocli.CommandLine.Mixin;
 
 import java.util.concurrent.Callable;
 
 public class Autobump implements Callable<AutobumpResult> {
-    @CommandLine.Spec
+    @Spec
     private static CommandSpec spec;
-    @CommandLine.Mixin
+    @Mixin
     AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
