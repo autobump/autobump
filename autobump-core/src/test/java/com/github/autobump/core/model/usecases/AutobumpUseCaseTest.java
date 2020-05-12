@@ -116,6 +116,7 @@ class AutobumpUseCaseTest {
                 .urlHelper(urlHelper)
                 .versionRepository(versionRepository)
                 .ignoreRepository(ignoreRepository)
+
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(pullRequest);
@@ -139,7 +140,7 @@ class AutobumpUseCaseTest {
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
     }
-
+  
     @SuppressWarnings("ExecutableStatementCount")
     private void setUpdoAutoBump_combinedDependenciesMocks() {
         Workspace workspace = new Workspace("");

@@ -98,6 +98,7 @@ public class AutobumpUseCase {
         }
     }
 
+
     private Version getUpdateVersion(Dependency dependency) {
         Version latestVersion = getLatestVersion(dependency);
         if (latestVersion != null && ignoreRepository.isIgnored(dependency, latestVersion)) {
