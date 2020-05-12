@@ -9,14 +9,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,7 +31,8 @@ public class MavenDependencyResolver implements DependencyResolver {
         return resolve(workspace, new HashSet<>());
     }
 
-    private Set<Dependency> resolve(Workspace workspace, Set<Dependency> ignoredInternal) {
+    @Override
+    public Set<Dependency> resolve(Workspace workspace, Set<Dependency> ignoredInternal) {
         Model model = mavenModelAnalyser.getModel(workspace);
         ignoredInternal.add(Dependency
                 .builder()
@@ -57,6 +50,11 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .filter(dependency ->
                         !dependency.getGroup().equals("${project.groupId}"))
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Override
+    public String getBuildFileName() {
+        return FILENAME;
     }
 
     private Set<Dependency> getDependencies(Workspace workspace, Set<Dependency> ignoredInternal, Model model) {
@@ -137,38 +135,13 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .collect(Collectors.toSet());
     }
 
-    private Set<Dependency> resolveModules(Workspace workspace, List<String> modules, Set<Dependency> toBeIgnored) {
+    Set<Dependency> resolveModules(Workspace workspace, List<String> modules, Set<Dependency> toBeIgnored) {
         if (!modules.isEmpty()) {
-            try {
-                var dependencies = new HashSet<Dependency>();
-                walkFiles(workspace, dependencies, toBeIgnored);
-                return dependencies;
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            var dependencies = new HashSet<Dependency>();
+            workspace.walkFiles(dependencies, toBeIgnored, this);
+            return dependencies;
         }
         return Collections.emptySet();
-    }
-
-    public void walkFiles(Workspace workspace, Set<Dependency> dependencies, Set<Dependency> toBeIgnored)
-            throws IOException {
-        Files.walkFileTree(Path.of(workspace.getProjectRoot()),
-                Set.of(),
-                2,
-                new SimpleFileVisitor<>() {
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                        if (!file.toString().equals(workspace.getProjectRoot() + File.separator + FILENAME) &&
-                                file.getFileName().toString().equals(FILENAME)) {
-                            Workspace ws = new Workspace(file
-                                    .toAbsolutePath()
-                                    .toString()
-                                    .replace(File.separator + FILENAME, ""));
-                            dependencies.addAll(resolve(ws, toBeIgnored));
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
     }
 
     private Set<Dependency> getPlugins(Model model) {
@@ -185,7 +158,6 @@ public class MavenDependencyResolver implements DependencyResolver {
                 .filter(plugin -> plugin.getVersion().getVersionNumber() != null)
                 .collect(Collectors.toSet());
     }
-
 
     private Set<Dependency> getDependenciesFromDependencyManagementSection(Model model) {
         DependencyManagement mng = model.getDependencyManagement();
