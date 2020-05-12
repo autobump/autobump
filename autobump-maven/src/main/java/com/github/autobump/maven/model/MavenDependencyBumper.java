@@ -5,8 +5,8 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 
 import java.io.IOException;
@@ -28,47 +28,55 @@ public class MavenDependencyBumper implements DependencyBumper {
     @Override
     public void bump(Workspace workspace, Bump bump) {
         try {
-            InputLocation versionLocation = null;
             for (Dependency dependency : bump.getDependencies()) {
                 if (dependency instanceof MavenDependency &&
-                        ((MavenDependency) dependency).getInputLocation() != null){
-                    versionLocation = ((MavenDependency) dependency).getInputLocation();
-                }else {
+                        ((MavenDependency) dependency).getInputLocation() != null) {
+                    MavenUpdate u = new MavenUpdate((MavenDependency) dependency, bump.getUpdatedVersion());
+                    updateDependency(u);
+                } else {
                     throw new IllegalArgumentException(dependency.toString() + " not of type MavenDependency");
                 }
-                updateDependency(versionLocation, dependency, bump.getUpdatedVersion());
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    public void updateDependency(InputLocation versionLocation, Dependency dependency, Version version) throws IOException {
-        Path file = Paths.get(versionLocation.getSource().getLocation());
+    public void updateDependency(MavenUpdate update)
+            throws IOException {
+        Path file = Paths.get(update.getDependency().getInputLocation().getSource().getLocation());
         List<String> out = Files.readAllLines(file);
-        Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(out.get(versionLocation.getLineNumber() - 1));
-        if (matcher.matches()){
-            changeProperty(out, dependency, version, matcher.group(1));
-        }else {
-            changeVersionLine(versionLocation, dependency, version, out);
+        Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(
+                out.get(update.getDependency().getInputLocation().getLineNumber() - 1));
+        if (matcher.matches()) {
+            changeProperty(out, update, matcher.group(1));
+        } else {
+            changeVersionLine(out, update);
         }
         Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 
-    private void changeVersionLine(InputLocation versionLocation, Dependency dependency, Version version, List<String> out) {
-        out.set(versionLocation.getLineNumber() - 1,
-                out.get(versionLocation.getLineNumber() - 1)
-                        .replace(dependency.getVersion().getVersionNumber(),
-                                version.getVersionNumber()));
+    private void changeVersionLine(List<String> out, MavenUpdate update) {
+        out.set(update.getDependency().getInputLocation().getLineNumber() - 1,
+                out.get(update.getDependency().getInputLocation().getLineNumber() - 1)
+                        .replace(update.getDependency().getVersion().getVersionNumber(),
+                                update.getVersion().getVersionNumber()));
     }
 
-    private void changeProperty(List<String> out, Dependency dependency, Version version, String groupname) {
+    private void changeProperty(List<String> out, MavenUpdate update, String propertyName) {
         for (int i = 0; i < out.size(); i++) {
             String line = out.get(i);
-            if (line.contains("<" + groupname + ">")) {
-                out.set(i, line.replace(dependency.getVersion().getVersionNumber(),
-                        version.getVersionNumber()));
+            if (line.contains("<" + propertyName + ">")) {
+                out.set(i, line.replace(update.getDependency().getVersion().getVersionNumber(),
+                        update.getVersion().getVersionNumber()));
             }
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class MavenUpdate {
+        private final MavenDependency dependency;
+        private final Version version;
     }
 }

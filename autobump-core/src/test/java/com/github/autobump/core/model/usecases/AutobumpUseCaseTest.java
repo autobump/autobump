@@ -136,7 +136,7 @@ class AutobumpUseCaseTest {
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(any());
-        assertThat(result.getNumberOfBumps()).isEqualTo(2);
+        assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
     @Test

@@ -52,8 +52,7 @@ class MavenDependencyBumperTest {
     @Test
     void testBumpWithDependencyThatHasVersionNumberInProperty_AssertThatVersionUpdated() {
         var dependencies = resolver.resolve(workspace);
-        InputSource inputSource = new InputSource();
-        inputSource.setLocation(String.format("%s%spom.xml", workspace.getProjectRoot(), File.separator));
+        InputSource inputSource = getInputSource();
         InputLocation inputLocation = new InputLocation(49, 22, inputSource);
         MavenDependency dep = MavenDependency.builder()
                 .name("derbys")
@@ -63,9 +62,7 @@ class MavenDependencyBumperTest {
                 .inputLocation(inputLocation)
                 .build();
         assertThat(dependencies).contains(dep);
-
         bumpDependency(dep);
-
         dependencies = resolver.resolve(workspace);
         assertThat(dependencies).contains(
                 MavenDependency.builder()
@@ -74,6 +71,12 @@ class MavenDependencyBumperTest {
                 .version(new MavenVersion(UPDATED_VERSION))
                 .type(DependencyType.DEPENDENCY)
                 .build());
+    }
+
+    private InputSource getInputSource() {
+        InputSource inputSource = new InputSource();
+        inputSource.setLocation(String.format("%s%spom.xml", workspace.getProjectRoot(), File.separator));
+        return inputSource;
     }
 
     @Test
