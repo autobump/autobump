@@ -29,7 +29,7 @@ class PullRequestClosedUseCaseTest {
 
     private void setUpMocks() {
         Setting setting1 = Setting.builder()
-                .key("org.springframework:spring-beans")
+                .key("org.springframework:spring-core")
                 .value("5.2.5.RELEASE")
                 .type(Setting.SettingsType.IGNORE)
                 .build();
@@ -46,8 +46,8 @@ class PullRequestClosedUseCaseTest {
 
     @Test
     void doClose() {
-        Dependency dependency1 = Dependency.builder().group("org.springframework").name("derby").build();
-        Dependency dependency2 = Dependency.builder().group("org.springframework").name("hibernate").build();
+        Dependency dependency1 = Dependency.builder().group("org.springframework").name("spring-core").build();
+        Dependency dependency2 = Dependency.builder().group("org.springframework").name("spring-beans").build();
         var dependencySet = Set.of(dependency1, dependency2);
         Bump bump = new Bump(dependencySet, new TestVersion("5.2.5.RELEASE"));
         var setting = PullRequestClosedUseCase.builder()
@@ -55,7 +55,7 @@ class PullRequestClosedUseCaseTest {
                 .settingsRepository(settingsRepository)
                 .build()
                 .doClose();
-        assertThat(setting).isNotNull();
+        assertThat(setting).isNotEmpty();
     }
 
     private class TestVersion implements Version {
