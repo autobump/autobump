@@ -140,7 +140,6 @@ class AutobumpUseCaseTest {
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
     }
-  
     @SuppressWarnings("ExecutableStatementCount")
     private void setUpdoAutoBump_combinedDependenciesMocks() {
         Workspace workspace = new Workspace("");
