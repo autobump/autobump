@@ -39,9 +39,10 @@ public class AutoBumpHandler implements RequestStreamHandler {
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
         List<String> errors = new ArrayList<>();
         AutoBumpResponse response = getAutoBumpResponse(input, errors);
-        PrintWriter writer =
-                new PrintWriter(new BufferedWriter(new OutputStreamWriter(output, StandardCharsets.US_ASCII)));
-        writer.write(gson.toJson(response));
+        try(PrintWriter writer =
+                new PrintWriter(new BufferedWriter(new OutputStreamWriter(output, StandardCharsets.US_ASCII)))){
+            writer.write(gson.toJson(response));
+        }
     }
 
     @SuppressWarnings("PMD")
