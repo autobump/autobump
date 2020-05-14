@@ -19,3 +19,7 @@ dependencies {
 configurations {
     all*.exclude module : 'spring-boot-starter-logging'
 }
+
+bootJar {
+    enabled = true
+}

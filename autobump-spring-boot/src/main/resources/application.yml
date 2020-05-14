@@ -1,5 +1,4 @@
 spring.datasource.url: jdbc:h2:mem:testdb
-#spring.datasource.url: jdbc:h2:tcp://localhost:9092/default
 spring.datasource.driverClassName: org.h2.Driver
 spring.datasource.username: sa
 spring.datasource.password: password
@@ -12,7 +11,6 @@ autobump.bitbucket.key: autobump.kdg.xplore.dev01
 autobump.bitbucket.base-url: https://ad1372b3.ngrok.io
 
 atlassian.connect.allow-reinstall-missing-host: true
-
 
 spring:
     profiles:
