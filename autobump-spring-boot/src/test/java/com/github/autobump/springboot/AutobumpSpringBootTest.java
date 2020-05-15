@@ -1,13 +1,15 @@
 package com.github.autobump.springboot;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 @ActiveProfiles("test")
 public class AutobumpSpringBootTest {
     @Test
-    void contextLoads() {
+    public void main_applicationStarts() {
+        String[] args = {};
+        assertThatCode(() -> AutobumpSpringBoot.main(args)).doesNotThrowAnyException();
     }
 }
