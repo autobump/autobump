@@ -100,26 +100,43 @@ codeCoverageReport.dependsOn {
 
 test.finalizedBy(codeCoverageReport)
 
-// build jar with submodules
+// all tasks below: build jars with submodules
 configurations {
-    childJars
+    childJarsCli
 }
 
 dependencies {
     subprojects.each {
-        childJars project(it.path)
+        if (!it.path.contains('autobump-springboot'))
+            childJarsCli project(it.path)
     }
 }
 
-jar {
+task jar_cli(type: Jar) {
+    archiveFileName = "autobump-cli.jar"
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn configurations.childJars
+    dependsOn configurations.childJarsCli
     from {
-        configurations.childJars.collect { zipTree(it) }
+        configurations.childJarsCli.collect { zipTree(it) }
     } {
         exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     }
     manifest {
         attributes 'Main-Class': 'com.github.autobump.cli.model.Autobump'
     }
+
 }
+
+task jar_springboot(type: Copy) {
+    from project(':autobump-spring-boot').getBuildDir().toString() + "/libs"
+    include '**/*.jar'
+    into getBuildDir().toString() + "/libs"
+}
+
+jar_springboot.dependsOn(':autobump-spring-boot:bootJar')
+
+task BuildAndMakeJars(dependsOn: [build, jar_springboot, jar_cli]) {
+}
+
+
+jar.enabled = false
