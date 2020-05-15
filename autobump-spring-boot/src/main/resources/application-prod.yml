@@ -1,0 +1,8 @@
+spring.datasource.url: ${DB_URL}
+spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
+
+spring.datasource.username: ${DB_USERNAME}
+spring.datasource.password: ${DB_PASSWORD}
+
+autobump.bitbucket.key: ${BITBUCKET_KEY}
+autobump.bitbucket.base-url: ${BITBUCKET_BASE_URL}
