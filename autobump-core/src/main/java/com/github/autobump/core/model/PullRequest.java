@@ -1,18 +1,18 @@
 package com.github.autobump.core.model;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.NonNull;
-import lombok.Value;
 
-@Value
+@Data
 @Builder
 public class PullRequest {
     @NonNull
-    String title;
+    final String title;
     @NonNull
-    String branchName;
+    final String branchName;
     @NonNull
-    String repoOwner;
+    final String repoOwner;
     @NonNull
-    String repoName;
+    final String repoName;
 }
