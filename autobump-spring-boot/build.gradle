@@ -1,6 +1,5 @@
 plugins {
     id 'org.springframework.boot' version '2.2.7.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 }
 
 version '1.0-SNAPSHOT'
@@ -15,9 +14,7 @@ dependencies {
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation project(':autobump-core')
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
-
+    implementation platform('org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE')
 }
 
 configurations {
