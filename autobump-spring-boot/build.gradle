@@ -15,6 +15,7 @@ dependencies {
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation project(':autobump-core')
+
 }
 
 configurations {

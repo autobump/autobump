@@ -9,19 +9,22 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Data
-@Builder
 @EqualsAndHashCode(of = "key")
 @Entity
 public final class Setting {
-    @NonNull
     private SettingsType type;
-    @NonNull
     @Id
     private String key;
-    @NonNull
     private String value;
 
     protected Setting(){
+    }
+
+    @Builder
+    public Setting(@NonNull SettingsType type, @NonNull String key, @NonNull String value){
+        this.type = type;
+        this.key = key;
+        this.value = value;
     }
 
     public enum SettingsType{
