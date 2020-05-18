@@ -3,11 +3,11 @@ package com.github.autobump.springboot.repositories;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Repository
+@Component
 public class SpringSettingsRepository implements SettingsRepository {
     @Autowired
     private JpaSettingsRepository jpaSettingsRepository;
