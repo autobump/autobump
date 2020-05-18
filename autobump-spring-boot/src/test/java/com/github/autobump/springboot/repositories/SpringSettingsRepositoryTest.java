@@ -2,10 +2,8 @@ package com.github.autobump.springboot.repositories;
 
 import com.github.autobump.core.model.Setting;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -13,10 +11,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-@EnableJpaRepositories
+@ActiveProfiles("test")
 class SpringSettingsRepositoryTest {
-    @Autowired
-    private JpaRepository jpaRepository;
+
+    private final SpringSettingsRepository springSettingsRepository;
+
+    SpringSettingsRepositoryTest(SpringSettingsRepository springSettingsRepository) {
+        this.springSettingsRepository = springSettingsRepository;
+    }
 
     @Test
     void saveSetting() {
@@ -25,7 +27,7 @@ class SpringSettingsRepositoryTest {
                 .value("Minor")
                 .type(Setting.SettingsType.IGNORE)
                 .build();
-        assertThat(jpaRepository.save(setting)).isEqualToComparingFieldByField(setting);
+        assertThat(springSettingsRepository.saveSetting(setting)).isEqualToComparingFieldByField(setting);
     }
 
     @Test
@@ -40,6 +42,7 @@ class SpringSettingsRepositoryTest {
                 .value("Major")
                 .type(Setting.SettingsType.IGNORE)
                 .build();
-        assertThat(jpaRepository.saveAll(List.of(setting, setting2)).containsAll(List.of(setting, setting2)));
+        assertThat(springSettingsRepository.saveAllSettings(List.of(setting, setting2))
+                .containsAll(List.of(setting, setting2)));
     }
 }
