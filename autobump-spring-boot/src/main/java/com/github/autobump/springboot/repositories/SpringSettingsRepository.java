@@ -2,15 +2,17 @@ package com.github.autobump.springboot.repositories;
 
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Component
+@Repository
 public class SpringSettingsRepository implements SettingsRepository {
-    @Autowired
-    private JpaSettingsRepository jpaSettingsRepository;
+    private final JpaSettingsRepository jpaSettingsRepository;
+
+    public SpringSettingsRepository(JpaSettingsRepository jpaSettingsRepository) {
+        this.jpaSettingsRepository = jpaSettingsRepository;
+    }
 
     @Override
     public Setting saveSetting(Setting setting) {
