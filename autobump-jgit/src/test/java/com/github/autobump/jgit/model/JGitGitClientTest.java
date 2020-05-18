@@ -43,7 +43,7 @@ class JGitGitClientTest {
     @Test
     void testClone() throws Exception {
         startServer(MAVENTYPE);
-        assertThat(client.clone(new URI("http://localhost:8080/TestRepo"))).isNotNull();
+        assertThat(client.clone(new URI("http://localhost:8090/TestRepo"))).isNotNull();
         stopServer();
     }
 
@@ -56,7 +56,7 @@ class JGitGitClientTest {
     @Test
     void commitToNewBranch_CheckThatBranchIsAddedAndHasCorrectName() throws Exception {
         startServer(MAVENTYPE);
-        Workspace workspace = client.clone(new URI("http://localhost:8080/TestRepo"));
+        Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             Bump bump = getBumpForCreationBranch();
 
@@ -104,7 +104,7 @@ class JGitGitClientTest {
 
         startServer(MAVENTYPE);
         JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
-        Workspace workspace = testClient.clone(new URI("http://localhost:8080/TestRepo"));
+        Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
         Bump bump = getBumpForCreationBranch();
         assertThatExceptionOfType(GitException.class)
                 .isThrownBy(() -> testClient.commitToNewBranch(workspace,bump));
@@ -155,7 +155,7 @@ class JGitGitClientTest {
     }
 
     private static Server configureAndStartHttpServer(GitServlet gs) throws Exception {
-        Server server = new Server(8080);
+        Server server = new Server(8090);
 
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);

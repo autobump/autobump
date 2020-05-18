@@ -28,6 +28,7 @@ subprojects {
 
 allprojects {
     dependencies {
+        implementation 'com.atlassian.connect:atlassian-connect-spring-boot-jpa-starter:2.0.6'
         compileOnly 'org.projectlombok:lombok:1.18.12'
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
         implementation "org.slf4j:slf4j-simple:1.7.30"
@@ -36,6 +37,7 @@ allprojects {
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 
         testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.16.0'
+
     }
     test {
         useJUnitPlatform()

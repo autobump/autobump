@@ -11,19 +11,19 @@ public class CommentCreatedUseCase {
 
     public Setting handleComment(CommentCreatedEvent commentEvent){
         String comment = commentEvent.getComment();
-        String pullRequestTitle = commentEvent.getPullRequestTitle();
         Setting setting = null;
         if ("Ignore this major".equalsIgnoreCase(comment)){
-            setting = ignoreMajor(pullRequestTitle);
+            setting = ignoreMajor(commentEvent);
         }
         else if ("Ignore this minor".equalsIgnoreCase(comment)){
-            setting = ignoreMinor(pullRequestTitle);
+            setting = ignoreMinor(commentEvent);
         }
         return setting;
     }
 
-    private Setting ignoreMajor(String pullRequestTitle) {
-        Setting setting = extractSettingFromComment(pullRequestTitle, "Major");
+    private Setting ignoreMajor(CommentCreatedEvent commentCreatedEvent) {
+        Setting setting = extractSettingFromComment(commentCreatedEvent.getPullRequestTitle(), "Major",
+                commentCreatedEvent.getRepositoryName());
         IgnoreMajorUseCase ignoreMajorUseCase = IgnoreMajorUseCase
                 .builder()
                 .settingsRepository(settingsRepository)
@@ -32,8 +32,9 @@ public class CommentCreatedUseCase {
         return setting;
     }
 
-    private Setting ignoreMinor(String pullRequestTitle){
-        Setting setting = extractSettingFromComment(pullRequestTitle, "Minor");
+    private Setting ignoreMinor(CommentCreatedEvent commentCreatedEvent){
+        Setting setting = extractSettingFromComment(commentCreatedEvent.getPullRequestTitle(), "Minor",
+                commentCreatedEvent.getRepositoryName());
         IgnoreMinorUseCase ignoreMinorUseCase = IgnoreMinorUseCase
                 .builder()
                 .settingsRepository(settingsRepository)
@@ -42,11 +43,12 @@ public class CommentCreatedUseCase {
         return setting;
     }
 
-    private Setting extractSettingFromComment(String pullRequestTitle, String type) {
+    private Setting extractSettingFromComment(String pullRequestTitle, String type, String repoName) {
         String [] elements = pullRequestTitle.split(" ");
         return Setting.builder()
                 .key(String.format("%s:%s", elements[1], elements[4]))
                 .value(type)
+                .repositoryName(repoName)
                 .type(Setting.SettingsType.IGNORE)
                 .build();
     }
