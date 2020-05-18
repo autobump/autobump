@@ -71,6 +71,7 @@ class JGitGitClientTest {
         stopServer();
     }
 
+
     @Test
     void commitNewBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
         Workspace invalidWorkspace = new Workspace("test/test/test");

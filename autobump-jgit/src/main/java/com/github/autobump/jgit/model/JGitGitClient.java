@@ -48,6 +48,19 @@ public class JGitGitClient implements GitClient {
         }
     }
 
+    @Override
+    public void rebaseBranch(Workspace workspace, String branchName) {
+        try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
+            git.checkout().setName(branchName).call();
+            git.rebase().call();
+            git.push().call();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (GitAPIException g) {
+            throw new GitException("Something went wrong while checking out the branch or rebasing to it", g);
+        }
+    }
+
     public String createBranch(Git git, Bump bump) throws GitAPIException {
         String branchName = String.format("autobump/%s/%s",
                 bump.getGroup(),
