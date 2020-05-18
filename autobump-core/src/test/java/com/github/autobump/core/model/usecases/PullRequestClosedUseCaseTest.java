@@ -62,11 +62,6 @@ class PullRequestClosedUseCaseTest {
     private class TestSettingsRepo implements SettingsRepository{
 
         @Override
-        public List<Setting> getSettings() {
-            return List.of();
-        }
-
-        @Override
         public Setting saveSetting(Setting setting) {
             return setting;
         }

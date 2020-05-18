@@ -12,9 +12,9 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     implementation 'com.atlassian.connect:atlassian-connect-spring-boot-starter:2.0.6'
-    implementation 'com.atlassian.connect:atlassian-connect-spring-boot-jpa-starter:2.0.6'
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
     testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    implementation project(':autobump-core')
 }
 
 configurations {
