@@ -9,9 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-public class AutobumpSpringBootTest {
+class AutobumpSpringBootTest {
     @Test
-    public void main_applicationStarts() {
+    void main_applicationStarts() {
         String[] args = {};
         assertThatCode(() -> AutobumpSpringBoot.main(args)).doesNotThrowAnyException();
     }
