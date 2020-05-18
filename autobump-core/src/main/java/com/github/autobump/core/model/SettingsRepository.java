@@ -9,5 +9,4 @@ public interface SettingsRepository {
     Setting saveSetting(Setting setting);
 
     List<Setting> saveAllSettings(List<Setting> settings);
-
 }
