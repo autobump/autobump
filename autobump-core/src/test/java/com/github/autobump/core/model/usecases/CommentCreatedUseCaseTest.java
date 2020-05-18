@@ -23,10 +23,12 @@ class CommentCreatedUseCaseTest {
         eventMajorIgnore = CommentCreatedEvent.builder()
                 .pullRequestTitle(pullRequestTitle)
                 .comment("Ignore this major")
+                .repositoryName("test")
                 .build();
         eventMinorIgnore = CommentCreatedEvent.builder()
                 .pullRequestTitle(pullRequestTitle)
                 .comment("Ignore this minor")
+                .repositoryName("test")
                 .build();
         eventWronglyFormulated = CommentCreatedEvent.builder()
                 .pullRequestTitle(pullRequestTitle)
@@ -44,24 +46,26 @@ class CommentCreatedUseCaseTest {
                 .handleComment(eventMajorIgnore))
                 .isEqualToComparingFieldByField(
                         Setting.builder()
-                        .key("com.h2database:h2:1.4.200")
-                        .value("Major")
-                        .type(Setting.SettingsType.IGNORE).build());
+                                .key("com.h2database:h2:1.4.200")
+                                .value("Major")
+                                .repositoryName("test")
+                                .type(Setting.SettingsType.IGNORE).build());
     }
 
     @Test
-    void handleIgnoreMinorComment(){
+    void handleIgnoreMinorComment() {
         assertThat(commentCreatedUseCase
                 .handleComment(eventMinorIgnore))
                 .isEqualToComparingFieldByField(
                         Setting.builder()
                                 .key("com.h2database:h2:1.4.200")
                                 .value("Minor")
+                                .repositoryName("test")
                                 .type(Setting.SettingsType.IGNORE).build());
     }
 
     @Test
-    void handleWronglyFormulatedComment(){
+    void handleWronglyFormulatedComment() {
         assertThat(commentCreatedUseCase
                 .handleComment(eventWronglyFormulated))
                 .isNull();

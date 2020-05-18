@@ -27,7 +27,8 @@ public final class Setting {
     }
 
     @Builder
-    public Setting(@NonNull SettingsType type, @NonNull String key, @NonNull String value, @NonNull String repositoryName){
+    public Setting(@NonNull SettingsType type, @NonNull String key, @NonNull String value,
+                   @NonNull String repositoryName){
         this.type = type;
         this.key = key;
         this.value = value;
