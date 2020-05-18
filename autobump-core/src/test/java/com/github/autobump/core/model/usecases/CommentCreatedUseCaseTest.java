@@ -46,7 +46,7 @@ class CommentCreatedUseCaseTest {
                         Setting.builder()
                         .key("com.h2database:h2:1.4.200")
                         .value("Major")
-                        .type(Setting.SettingsType.IGNORE));
+                        .type(Setting.SettingsType.IGNORE).build());
     }
 
     @Test
@@ -57,7 +57,7 @@ class CommentCreatedUseCaseTest {
                         Setting.builder()
                                 .key("com.h2database:h2:1.4.200")
                                 .value("Minor")
-                                .type(Setting.SettingsType.IGNORE));
+                                .type(Setting.SettingsType.IGNORE).build());
     }
 
     @Test
