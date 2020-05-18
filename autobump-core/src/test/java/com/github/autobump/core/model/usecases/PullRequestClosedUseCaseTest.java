@@ -30,6 +30,7 @@ class PullRequestClosedUseCaseTest {
         var setting = PullRequestClosedUseCase.builder()
                 .bump(bump)
                 .settingsRepository(settingsRepository)
+                .repositoryName("test")
                 .build()
                 .doClose();
         assertThat(setting.size()).isEqualTo(2);
@@ -60,11 +61,6 @@ class PullRequestClosedUseCaseTest {
     }
 
     private class TestSettingsRepo implements SettingsRepository{
-
-        @Override
-        public List<Setting> getSettings() {
-            return List.of();
-        }
 
         @Override
         public Setting saveSetting(Setting setting) {
