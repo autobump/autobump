@@ -13,11 +13,29 @@ public class CommentCreatedUseCase {
         String comment = commentEvent.getComment();
         String pullRequestTitle = commentEvent.getPullRequestTitle();
         if ("Ignore this major".equalsIgnoreCase(comment)){
-            ignoreMajor(extractSettingFromComment(pullRequestTitle, "Major"));
+            ignoreMajor(pullRequestTitle);
         }
         else if ("Ignore this minor".equalsIgnoreCase(comment)){
-            ignoreMinor(extractSettingFromComment(pullRequestTitle, "Minor"));
+            ignoreMinor(pullRequestTitle);
         }
+    }
+
+    private void ignoreMajor(String pullRequestTitle) {
+        Setting setting = extractSettingFromComment(pullRequestTitle, "Major");
+        IgnoreMajorUseCase ignoreMajorUseCase = IgnoreMajorUseCase
+                .builder()
+                .settingsRepository(settingsRepository)
+                .build();
+        ignoreMajorUseCase.addIgnoreMajorSetting(setting);
+    }
+
+    private void ignoreMinor(String pullRequestTitle){
+        Setting setting = extractSettingFromComment(pullRequestTitle, "Minor");
+        IgnoreMinorUseCase ignoreMinorUseCase = IgnoreMinorUseCase
+                .builder()
+                .settingsRepository(settingsRepository)
+                .build();
+        ignoreMinorUseCase.addIgnoreMinorSetting(setting);
     }
 
     private Setting extractSettingFromComment(String pullRequestTitle, String type) {
@@ -27,21 +45,5 @@ public class CommentCreatedUseCase {
                 .value(type)
                 .type(Setting.SettingsType.IGNORE)
                 .build();
-    }
-
-    private void ignoreMajor(Setting setting) {
-        IgnoreMajorUseCase ignoreMajorUseCase = IgnoreMajorUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
-        ignoreMajorUseCase.addIgnoreMajorSetting(setting);
-    }
-
-    private void ignoreMinor(Setting setting){
-        IgnoreMinorUseCase ignoreMinorUseCase = IgnoreMinorUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
-        ignoreMinorUseCase.addIgnoreMinorSetting(setting);
     }
 }
