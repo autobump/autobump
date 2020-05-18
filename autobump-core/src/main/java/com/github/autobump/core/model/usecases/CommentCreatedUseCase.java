@@ -9,33 +9,37 @@ import lombok.Builder;
 public class CommentCreatedUseCase {
     SettingsRepository settingsRepository;
 
-    public void handleComment(CommentCreatedEvent commentEvent){
+    public Setting handleComment(CommentCreatedEvent commentEvent){
         String comment = commentEvent.getComment();
         String pullRequestTitle = commentEvent.getPullRequestTitle();
+        Setting setting = null;
         if ("Ignore this major".equalsIgnoreCase(comment)){
-            ignoreMajor(pullRequestTitle);
+            setting = ignoreMajor(pullRequestTitle);
         }
         else if ("Ignore this minor".equalsIgnoreCase(comment)){
-            ignoreMinor(pullRequestTitle);
+            setting = ignoreMinor(pullRequestTitle);
         }
+        return setting;
     }
 
-    private void ignoreMajor(String pullRequestTitle) {
+    private Setting ignoreMajor(String pullRequestTitle) {
         Setting setting = extractSettingFromComment(pullRequestTitle, "Major");
         IgnoreMajorUseCase ignoreMajorUseCase = IgnoreMajorUseCase
                 .builder()
                 .settingsRepository(settingsRepository)
                 .build();
         ignoreMajorUseCase.addIgnoreMajorSetting(setting);
+        return setting;
     }
 
-    private void ignoreMinor(String pullRequestTitle){
+    private Setting ignoreMinor(String pullRequestTitle){
         Setting setting = extractSettingFromComment(pullRequestTitle, "Minor");
         IgnoreMinorUseCase ignoreMinorUseCase = IgnoreMinorUseCase
                 .builder()
                 .settingsRepository(settingsRepository)
                 .build();
         ignoreMinorUseCase.addIgnoreMinorSetting(setting);
+        return setting;
     }
 
     private Setting extractSettingFromComment(String pullRequestTitle, String type) {

@@ -1,12 +1,13 @@
 package com.github.autobump.core.model.usecases;
 
+import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.events.CommentCreatedEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class CommentCreatedUseCaseTest {
     SettingsRepository settingsRepository;
@@ -29,33 +30,40 @@ class CommentCreatedUseCaseTest {
                 .build();
         eventWronglyFormulated = CommentCreatedEvent.builder()
                 .pullRequestTitle(pullRequestTitle)
-                .comment("wrongly forulated comment")
+                .comment("Wrongly formulated comment")
                 .build();
         commentCreatedUseCase = CommentCreatedUseCase
                 .builder()
                 .settingsRepository(settingsRepository)
                 .build();
-
     }
 
     @Test
     void handleIgnoreMajorComment() {
-        assertThatCode(() -> commentCreatedUseCase
+        assertThat(commentCreatedUseCase
                 .handleComment(eventMajorIgnore))
-                .doesNotThrowAnyException();
+                .isEqualToComparingFieldByField(
+                        Setting.builder()
+                        .key("com.h2database:h2:1.4.200")
+                        .value("Major")
+                        .type(Setting.SettingsType.IGNORE));
     }
 
     @Test
     void handleIgnoreMinorComment(){
-        assertThatCode(() -> commentCreatedUseCase
+        assertThat(commentCreatedUseCase
                 .handleComment(eventMinorIgnore))
-                .doesNotThrowAnyException();
+                .isEqualToComparingFieldByField(
+                        Setting.builder()
+                                .key("com.h2database:h2:1.4.200")
+                                .value("Minor")
+                                .type(Setting.SettingsType.IGNORE));
     }
 
     @Test
     void handleWronglyFormulatedComment(){
-        assertThatCode(() -> commentCreatedUseCase
+        assertThat(commentCreatedUseCase
                 .handleComment(eventWronglyFormulated))
-                .doesNotThrowAnyException();
+                .isNull();
     }
 }
