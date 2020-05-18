@@ -30,6 +30,7 @@ class PullRequestClosedUseCaseTest {
         var setting = PullRequestClosedUseCase.builder()
                 .bump(bump)
                 .settingsRepository(settingsRepository)
+                .repositoryName("test")
                 .build()
                 .doClose();
         assertThat(setting.size()).isEqualTo(2);

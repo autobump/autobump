@@ -13,6 +13,7 @@ import java.util.List;
 public class PullRequestClosedUseCase {
     private final SettingsRepository settingsRepository;
     private final Bump bump;
+    private final String repositoryName;
 
     public List<Setting> doClose(){
         List<Setting> settings = new ArrayList<>();
@@ -21,6 +22,7 @@ public class PullRequestClosedUseCase {
                     .key(String.format("%s:%s", dependency.getGroup(), dependency.getName()))
                     .value(bump.getUpdatedVersion().getVersionNumber())
                     .type(Setting.SettingsType.IGNORE)
+                    .repositoryName(repositoryName)
                     .build());
         }
         return settingsRepository.saveAllSettings(settings);
