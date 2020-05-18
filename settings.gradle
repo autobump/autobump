@@ -4,4 +4,5 @@ include 'autobump-maven'
 include 'autobump-jgit'
 include 'autobump-bitbucket'
 include 'autobump-cli'
+include 'autobump-spring-boot'
 

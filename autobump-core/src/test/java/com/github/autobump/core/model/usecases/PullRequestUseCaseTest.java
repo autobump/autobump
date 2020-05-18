@@ -11,17 +11,26 @@ import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class PullRequestUseCaseTest {
+    @Mock
     private GitProvider gitProvider;
+    @Mock
     private GitClient gitClient;
+    @Mock
     private UrlHelper urlHelper;
+    @Mock
     private Workspace workspace;
     private URI uri;
     private Bump bump;
@@ -33,11 +42,7 @@ class PullRequestUseCaseTest {
     }
 
     private void createMocks() throws URISyntaxException {
-        workspace = Mockito.mock(Workspace.class);
         uri = new URI("http://www.test.test");
-        urlHelper = Mockito.mock(UrlHelper.class);
-        gitClient = Mockito.mock(GitClient.class);
-        gitProvider = Mockito.mock(GitProvider.class);
         bump = new Bump(Dependency.builder()
                 .group("testGroup")
                 .name("testName")
@@ -47,10 +52,10 @@ class PullRequestUseCaseTest {
     }
 
     private void setUpMocks() {
-        Mockito.when(urlHelper.getOwnerName("http://www.test.test")).thenReturn("testName");
-        Mockito.when(urlHelper.getRepoName("http://www.test.test")).thenReturn("testName");
+        when(urlHelper.getOwnerName("http://www.test.test")).thenReturn("testName");
+        when(urlHelper.getRepoName("http://www.test.test")).thenReturn("testName");
         CommitResult commitResult = new CommitResult("testName", "testMessage");
-        Mockito.when(gitClient.commitToNewBranch(workspace, bump))
+        when(gitClient.commitToNewBranch(workspace, bump))
                 .thenReturn(commitResult);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
@@ -58,7 +63,7 @@ class PullRequestUseCaseTest {
                 .repoName(urlHelper.getRepoName(uri.toString()))
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
-        Mockito.when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
+        lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
     }
 
     @Test
