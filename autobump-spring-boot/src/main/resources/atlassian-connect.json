@@ -10,8 +10,10 @@
     "installed": "/installed",
     "uninstalled": "/uninstalled"
   },
-  "scopes": [
-    "repository",
-    "project"
-  ]
+    "scopes": [
+        "repository",
+        "project",
+        "account",
+        "webhook "
+    ]
 }
