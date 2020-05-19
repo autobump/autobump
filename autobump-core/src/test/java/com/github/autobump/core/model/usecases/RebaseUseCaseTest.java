@@ -6,7 +6,6 @@ import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.core.model.events.PushEvent;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,11 +47,11 @@ class RebaseUseCaseTest {
         when(gitClient.clone(any())).thenReturn(workspace);
         when(urlHelper.getOwnerName(anyString())).thenReturn("test");
         when(urlHelper.getRepoName(anyString())).thenReturn("test");
-        List<PullRequest> prs = createDummyPullRequests();
+        Set<PullRequest> prs = createDummyPullRequests();
         when(gitProvider.getOpenPullRequests("test", "test")).thenReturn(prs);
     }
 
-    private List<PullRequest> createDummyPullRequests() {
+    private Set<PullRequest> createDummyPullRequests() {
         PullRequest pr1 = PullRequest.builder()
                 .branchName("com.h2database:h2")
                 .title(pullRequestTitle1)
@@ -71,7 +70,7 @@ class RebaseUseCaseTest {
                 .repoName("test")
                 .repoOwner("test")
                 .build();
-        return List.of(pr1, pr2, pr3);
+        return Set.of(pr1, pr2, pr3);
     }
 
     @Test

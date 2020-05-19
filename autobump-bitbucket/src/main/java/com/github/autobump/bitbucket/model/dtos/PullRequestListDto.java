@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class PullRequestListDto {
-    List<PullRequestDto> pullRequestDtoList;
+    List<PullRequestResponseDto> values;
 }

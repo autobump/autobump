@@ -5,19 +5,21 @@ import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.UrlHelper;
 import feign.Feign;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import lombok.Getter;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public class BitBucketGitProvider implements GitProvider {
     private final String apiUrl;
     private final BitBucketApi client;
+    private final UrlHelper bitBucketUrlHelper;
 
     public BitBucketGitProvider(BitBucketAccount user, String apiUrl) {
         this.apiUrl = apiUrl;
@@ -27,6 +29,7 @@ public class BitBucketGitProvider implements GitProvider {
                 .requestInterceptor(new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()))
                 .errorDecoder(new BitBucketErrorDecoder())
                 .target(BitBucketApi.class, apiUrl);
+        bitBucketUrlHelper = new BitBucketUrlHelper();
     }
 
     @Override
@@ -46,15 +49,29 @@ public class BitBucketGitProvider implements GitProvider {
     }
 
     @Override
-    public List<PullRequest> getOpenPullRequests(String repoOwner, String repoName) {
-        //PullRequestListDto pullRequestListDto = client.getOpenPullRequests(repoOwner, repoName);
-        //List<PullRequest> pullRequests = new ArrayList<>();
-        //TODO extract pullrequests from dto
-        return Collections.emptyList();
+    public Set<PullRequest> getOpenPullRequests(String repoOwner, String repoName) {
+        return client.getOpenPullRequests(repoOwner, repoName)
+                .stream().map(d -> PullRequest.builder()
+                .pullRequestId(bitBucketUrlHelper.getPullRequestId(d.getLink()))
+                .repoName(repoName)
+                .repoOwner(repoOwner)
+                .title(d.getTitle())
+                .branchName(parseBranchName(d))
+                .build())
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    private String parseBranchName(PullRequestResponseDto dto) {
+        String[] elements = dto.getTitle().split(" ");
+        String groupId = elements[1].split(":")[0];
+        String version = elements[5];
+        return String.format("autobump/%s/%s", groupId, version);
     }
 
     @Override
     public void closePullRequest(PullRequest pullRequest) {
-        client.closePullRequest(pullRequest.getRepoOwner(), pullRequest.getRepoName(), pullRequest.getPullRequestId());
+        client.closePullRequest(pullRequest.getRepoOwner(),
+                pullRequest.getRepoName(),
+                String.valueOf(pullRequest.getPullRequestId()));
     }
 }

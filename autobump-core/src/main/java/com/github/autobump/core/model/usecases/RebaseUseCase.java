@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 public class RebaseUseCase {
@@ -41,7 +42,7 @@ public class RebaseUseCase {
 
     private List<String> getOpenPullRequests(String repoOwner, String repoName) {
         List<String> branchNames = new ArrayList<>();
-        List<PullRequest> pullRequests = gitProvider.getOpenPullRequests(repoOwner, repoName);
+        Set<PullRequest> pullRequests = gitProvider.getOpenPullRequests(repoOwner, repoName);
         for (PullRequest pr: pullRequests
              ) {
             if (pr.getTitle().startsWith("Bumped")){
