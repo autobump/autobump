@@ -90,8 +90,8 @@ class JGitGitClientTest {
             }
 
             @Override
-            public String commitAndPushToNewBranch(Git git,
-                                                   Bump bump) throws GitAPIException {
+            public String commitAndPushToBranch(Git git,
+                                                Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
             }
 

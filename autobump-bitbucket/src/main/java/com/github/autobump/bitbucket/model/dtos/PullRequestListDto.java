@@ -1,9 +1,10 @@
 package com.github.autobump.bitbucket.model.dtos;
 
-import com.github.autobump.core.model.PullRequest;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 public class PullRequestListDto {
     List<PullRequestDto> pullRequestDtoList;
 }

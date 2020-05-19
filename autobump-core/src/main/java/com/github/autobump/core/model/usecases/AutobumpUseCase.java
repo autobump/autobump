@@ -71,8 +71,6 @@ public class AutobumpUseCase {
 
 
     private void makeBumpsAndPullRequests(Workspace workspace, Set<Bump> bumps) {
-        //bumpUsecase
-        //prUsecase
         for (Bump bump : bumps) {
             BumpUseCase.builder()
                     .dependencyBumper(dependencyBumper)

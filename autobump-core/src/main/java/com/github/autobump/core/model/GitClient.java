@@ -7,5 +7,7 @@ public interface GitClient {
 
     CommitResult commitToNewBranch(Workspace workspace, Bump bump);
 
-    void rebaseBranch(Workspace workspace, String branchName);
+    CommitResult commitToExistingBranch(Workspace workspace, Bump bump, String branchName);
+
+    AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName);
 }
