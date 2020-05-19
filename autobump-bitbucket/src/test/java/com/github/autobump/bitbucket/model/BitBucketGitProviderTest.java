@@ -11,12 +11,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class BitBucketGitProviderTest {
+    private static final String REPO_URL = "/repositories/%s/%s/pullrequests";
     private static final String API_URL = "http://localhost:8089";
     private static final String TEST_BRANCH = "testBranch";
     private static final String TEST_OWNER = "testOwner";
@@ -44,19 +46,24 @@ class BitBucketGitProviderTest {
 
     private void setupStub() {
         wireMockServer.stubFor(post(
-                urlEqualTo(String.format("/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
+                urlEqualTo(String.format(REPO_URL, TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBodyFile("succes_response.json")));
         wireMockServer.stubFor(post(
-                urlEqualTo(String.format("/repositories/%s/%s/pullrequests", "BADBRANCHE", TEST_REPO_NAME)))
+                urlEqualTo(String.format(REPO_URL, "BADBRANCHE", TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(400)));
         wireMockServer.stubFor(post(
-                urlEqualTo(String.format("/repositories/%s/%s/pullrequests", "BADAUTH", TEST_REPO_NAME)))
+                urlEqualTo(String.format(REPO_URL, "BADAUTH", TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(401)));
         wireMockServer.stubFor(post(
-                urlEqualTo(String.format("/repositories/%s/%s/pullrequests", "COFFEE", TEST_REPO_NAME)))
+                urlEqualTo(String.format(REPO_URL, "COFFEE", TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(418)));
+        wireMockServer.stubFor(get(
+                urlEqualTo(String.format(REPO_URL, TEST_OWNER, TEST_REPO_NAME)))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBodyFile("getAllOpenPullRequests.json")));
     }
 
     @Test
@@ -125,5 +132,12 @@ class BitBucketGitProviderTest {
                 .build();
         assertThatExceptionOfType(RuntimeException.class)
                 .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
+    }
+
+    @Test
+    void getOpenPullRequests(){
+        assertThat(bitBucketGitProvider
+                .getOpenPullRequests(TEST_OWNER, TEST_REPO_NAME))
+                .hasSize(3);
     }
 }

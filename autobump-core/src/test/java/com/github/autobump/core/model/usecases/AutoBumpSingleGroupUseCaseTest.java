@@ -1,7 +1,5 @@
 package com.github.autobump.core.model.usecases;
 
-import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -97,18 +94,6 @@ class AutoBumpSingleGroupUseCaseTest {
                 .thenReturn(Collections.emptySet());
     }
 
-    /*private void setUpGitClassesMocks() {
-        CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
-        when(gitClient.commitToNewBranch(any(), any())).thenReturn(commitResult);
-        pullRequest = PullRequest.builder()
-                .branchName(commitResult.getBranchName())
-                .title(commitResult.getCommitMessage())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString())).build();
-        Mockito.lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
-        when(ignoreRepository.isIgnored(any(), any())).thenReturn(false);
-    }*/
-
     @Test
     void doSingleGroupAutoBump() {
         setUpdoAutoBumpMocks();
@@ -146,30 +131,6 @@ class AutoBumpSingleGroupUseCaseTest {
                 .doSingleGroupAutoBump();
         verify(gitProvider, times(1)).closePullRequest(pullRequest);
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
-    }
-
-
-
-    /*private void setupUrlHelper() {
-        when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
-        when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
-    }*/
-
-    private void setUpGitClassesMocks_forTestCombinedBumps() {
-        CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
-        when(gitClient.commitToNewBranch(workspace,
-                new Bump(dependencyList.get(3), tv))).thenReturn(commitResult);
-        Mockito.lenient().when(gitClient.commitToNewBranch(workspace, new Bump(
-                dependencyList.get(3),
-                dependencyList.get(3).getVersion())))
-                .thenReturn(commitResult);
-        pullRequest = PullRequest.builder()
-                .branchName(commitResult.getBranchName())
-                .title(commitResult.getCommitMessage())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
-                .build();
-        Mockito.lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
     }
 
     private static class TestVersion implements Version {
