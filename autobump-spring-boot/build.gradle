@@ -6,6 +6,7 @@ version '1.0-SNAPSHOT'
 
 
 dependencies {
+    implementation 'com.atlassian.connect:atlassian-connect-spring-boot-jpa-starter:2.0.6'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
