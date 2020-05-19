@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class JGitGitClientTest {
     static final String MAVENTYPE = "Maven";
+    static final String TESTBRANCHNAME = "refs/heads/autobump/test/2.0.0";
     Server server;
     JGitGitClient client;
 
@@ -58,10 +59,8 @@ class JGitGitClientTest {
         startServer(MAVENTYPE);
         Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            Bump bump = getBumpForCreationBranch();
-
+            Bump bump = createBumpForTest();
             client.commitToNewBranch(workspace, bump);
-
             assertThat(git.branchList().call()).hasSize(2);
             assertThat(String.format("refs/heads/autobump/%s/%s", bump.getGroup(),
                     bump.getUpdatedVersion().getVersionNumber()))
@@ -75,7 +74,7 @@ class JGitGitClientTest {
     @Test
     void commitNewBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
         Workspace invalidWorkspace = new Workspace("test/test/test");
-        Bump bump = getBumpForCreationBranch();
+        Bump bump = createBumpForTest();
         assertThatExceptionOfType(UncheckedIOException.class)
                 .isThrownBy(() -> client.commitToNewBranch(invalidWorkspace, bump));
     }
@@ -105,13 +104,74 @@ class JGitGitClientTest {
         startServer(MAVENTYPE);
         JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
         Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
-        Bump bump = getBumpForCreationBranch();
+        Bump bump = createBumpForTest();
         assertThatExceptionOfType(GitException.class)
                 .isThrownBy(() -> testClient.commitToNewBranch(workspace,bump));
         stopServer();
     }
 
-    private Bump getBumpForCreationBranch() {
+    @Test
+    void commitToExistingBranch() throws Exception {
+        startServer(MAVENTYPE);
+        Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
+        try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
+            Bump bump = createBumpForTest();
+            client.commitToNewBranch(workspace, bump);
+            client.commitToExistingBranch(workspace, bump, TESTBRANCHNAME);
+            assertThat(TESTBRANCHNAME)
+                    .isEqualTo(git.branchList().call().get(0).getName());
+        }
+        stopServer();
+    }
+
+    @Test
+    void commitExistingBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
+        Workspace invalidWorkspace = new Workspace("test/test/test");
+        Bump bump = createBumpForTest();
+        assertThatExceptionOfType(UncheckedIOException.class)
+                .isThrownBy(() -> client.commitToExistingBranch(invalidWorkspace, bump, TESTBRANCHNAME));
+    }
+
+    @Test
+    void commitToExistingBranch_shouldThrowGitException() throws Exception {
+
+        class JGitGitClientTester extends JGitGitClient {
+
+            JGitGitClientTester(String username, String password) {
+                super(username, password);
+            }
+
+            @Override
+            public String commitAndPushToBranch(Git git,
+                                                Bump bump) throws GitAPIException {
+                throw new CanceledException("The call was cancelled");
+            }
+
+            @Override
+            public String createBranch(Git git, Bump bump) throws GitAPIException {
+                throw new CanceledException("The call was cancelled");
+            }
+
+        }
+
+        startServer(MAVENTYPE);
+        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
+        Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
+        Bump bump = createBumpForTest();
+        assertThatExceptionOfType(GitException.class)
+                .isThrownBy(() -> testClient.commitToExistingBranch(workspace, bump, TESTBRANCHNAME));
+        stopServer();
+    }
+
+
+    @Test
+    void rebaseBranchFromMaster() throws Exception{
+        startServer(MAVENTYPE);
+        stopServer();
+    }
+
+
+    private Bump createBumpForTest() {
         Dependency dep = Dependency.builder().group("test").name("test").version(new TestVersion("1.0.0")).build();
         Version version = new Version() {
             @Override

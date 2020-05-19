@@ -15,6 +15,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class BitBucketGitProviderTest {
@@ -64,6 +65,9 @@ class BitBucketGitProviderTest {
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBodyFile("getAllOpenPullRequests.json")));
+        wireMockServer.stubFor(post(
+                urlEqualTo(String.format("/repositories/%s/%s/pullrequests/1/decline", TEST_OWNER, TEST_REPO_NAME)))
+                .willReturn(aResponse().withStatus(200)));
     }
 
     @Test
@@ -139,5 +143,18 @@ class BitBucketGitProviderTest {
         assertThat(bitBucketGitProvider
                 .getOpenPullRequests(TEST_OWNER, TEST_REPO_NAME))
                 .hasSize(3);
+    }
+
+    @Test
+    void closePullRequest(){
+        PullRequest pullRequest = PullRequest.builder()
+                .repoOwner(TEST_OWNER)
+                .repoName(TEST_REPO_NAME)
+                .title("Bumped org.hibernate:hibernate-core to version: 6.0.0.Alpha5")
+                .branchName("autobump/org.hibernate/6.0.0.Alpha5")
+                .pullRequestId(1)
+                .build();
+        assertThatCode(() -> bitBucketGitProvider
+                .closePullRequest(pullRequest)).doesNotThrowAnyException();
     }
 }
