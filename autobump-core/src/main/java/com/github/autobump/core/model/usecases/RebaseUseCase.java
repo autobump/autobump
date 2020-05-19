@@ -1,12 +1,18 @@
 package com.github.autobump.core.model.usecases;
 
-import com.github.autobump.core.model.*;
+import com.github.autobump.core.model.DependencyBumper;
+import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.GitClient;
+import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.IgnoreRepository;
+import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.Workspace;
 import com.github.autobump.core.model.events.PushEvent;
 import lombok.Builder;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Builder
 public class RebaseUseCase {
@@ -18,17 +24,15 @@ public class RebaseUseCase {
     DependencyBumper dependencyBumper;
 
     public void handlePushEvent(PushEvent event){
-        List<String> branchNames = getOpenPullRequests(
+        List<PullRequest> pullRequests = getOpenPullRequests(
                 urlHelper.getOwnerName(event.getUri().toString()),
                 urlHelper.getRepoName(event.getUri().toString()));
-        for (String branchName: branchNames) {
+        for (PullRequest p: pullRequests) {
             Workspace workspace = gitClient.clone(event.getUri());
-            boolean hasConflicts = gitClient.rebaseBranchFromMaster(workspace, branchName).isHasConflicts();
+            boolean hasConflicts = gitClient.rebaseBranchFromMaster(workspace, p.getBranchName()).isHasConflicts();
             if (hasConflicts){
-                String groupId = branchName.split("/")[1];
                 AutoBumpSingleGroupUseCase.builder()
-                        .branchName(branchName)
-                        .groupId(groupId)
+                        .pullRequest(p)
                         .gitClient(gitClient)
                         .gitProvider(gitProvider)
                         .ignoreRepository(ignoreRepository)
@@ -40,15 +44,10 @@ public class RebaseUseCase {
         }
     }
 
-    private List<String> getOpenPullRequests(String repoOwner, String repoName) {
-        List<String> branchNames = new ArrayList<>();
-        Set<PullRequest> pullRequests = gitProvider.getOpenPullRequests(repoOwner, repoName);
-        for (PullRequest pr: pullRequests
-             ) {
-            if (pr.getTitle().startsWith("Bumped")){
-                branchNames.add(pr.getBranchName());
-            }
-        }
-        return branchNames;
+    private List<PullRequest> getOpenPullRequests(String repoOwner, String repoName) {
+        return gitProvider.getOpenPullRequests(repoOwner, repoName)
+                .stream()
+                .filter(p -> p.getTitle().startsWith("Bumped"))
+                .collect(Collectors.toUnmodifiableList());
     }
 }

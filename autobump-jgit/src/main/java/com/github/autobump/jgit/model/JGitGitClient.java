@@ -1,6 +1,10 @@
 package com.github.autobump.jgit.model;
 
-import com.github.autobump.core.model.*;
+import com.github.autobump.core.model.AutoBumpRebaseResult;
+import com.github.autobump.core.model.Bump;
+import com.github.autobump.core.model.CommitResult;
+import com.github.autobump.core.model.GitClient;
+import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
 import org.eclipse.jgit.api.Git;

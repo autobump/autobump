@@ -1,6 +1,17 @@
 package com.github.autobump.core.model.usecases;
 
-import com.github.autobump.core.model.*;
+import com.github.autobump.core.model.AutobumpResult;
+import com.github.autobump.core.model.Bump;
+import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.DependencyBumper;
+import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.GitClient;
+import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.IgnoreRepository;
+import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.core.model.Workspace;
 import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Data;
@@ -29,9 +40,7 @@ public class AutoBumpSingleGroupUseCase{
     @NonNull
     private final IgnoreRepository ignoreRepository;
     @NotNull
-    private final String groupId;
-    @NotNull
-    private final String branchName;
+    private final PullRequest pullRequest;
 
     @Builder
     public AutoBumpSingleGroupUseCase(GitProvider gitProvider,
@@ -42,8 +51,7 @@ public class AutoBumpSingleGroupUseCase{
                                       UrlHelper urlHelper,
                                       IgnoreRepository ignoreRepository,
                                       URI uri,
-                                      String groupId,
-                                      String branchName) {
+                                      PullRequest pullRequest) {
         this.gitProvider = gitProvider;
         this.gitClient = gitClient;
         this.dependencyResolver = dependencyResolver;
@@ -52,20 +60,17 @@ public class AutoBumpSingleGroupUseCase{
         this.urlHelper = urlHelper;
         this.ignoreRepository = ignoreRepository;
         this.uri = uri;
-        this.groupId = groupId;
-        this.branchName = branchName;
+        this.pullRequest = pullRequest;
     }
 
     public AutobumpResult doSingleGroupAutoBump() {
         Workspace workspace = gitClient.clone(getUri());
         Set<Dependency> dependencies = dependencyResolver.resolve(workspace)
-                .stream().filter(d -> d.getGroup().equalsIgnoreCase(groupId))
+                .stream().filter(d -> d.getGroup()
+                        .equalsIgnoreCase(parseGroupName(pullRequest.getTitle())))
                 .collect(Collectors.toUnmodifiableSet());
         if(dependencies.isEmpty()){
-            String repoName = urlHelper.getRepoName(uri.toString());
-            String repoOwner = urlHelper.getOwnerName(uri.toString());
-
-            gitProvider.closePullRequest();
+            gitProvider.closePullRequest(pullRequest);
         }
         var combinedbumps = BumpResolverUseCase.builder()
                 .dependencies(dependencies)
@@ -73,7 +78,7 @@ public class AutoBumpSingleGroupUseCase{
                 .versionRepository(versionRepository)
                 .build()
                 .doResolve();
-        makeBumpsAndPush(workspace, combinedbumps, branchName);
+        makeBumpsAndPush(workspace, combinedbumps, pullRequest.getBranchName());
         return new AutobumpResult(combinedbumps.size());
     }
 
@@ -90,4 +95,10 @@ public class AutoBumpSingleGroupUseCase{
                     .doPush(workspace, bump, branchName);
         }
     }
+
+    private String parseGroupName(String title) {
+        String[] elements = title.split(" ");
+        return elements[1].split(":")[0];
+    }
+
 }
