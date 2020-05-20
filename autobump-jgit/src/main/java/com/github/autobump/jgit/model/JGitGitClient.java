@@ -19,6 +19,7 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class JGitGitClient implements GitClient {
@@ -41,7 +42,7 @@ public class JGitGitClient implements GitClient {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             String branchName = createBranch(git, bump);
             String commitMessage = commitAndPushToBranch(git, bump);
-            git.checkout().setName("master").call();
+            git.checkout().setName("refs/heads/master").call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -55,7 +56,7 @@ public class JGitGitClient implements GitClient {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             git.checkout().setName(branchName).call();
             String commitMessage = commitAndPushToBranch(git, bump);
-            git.checkout().setName("master").call();
+            git.checkout().setName("refs/heads/master").call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -67,17 +68,24 @@ public class JGitGitClient implements GitClient {
     @Override
     public AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            git.fetch();
-            git.checkout().
-                    setCreateBranch(true).
+            git.fetch().call();
+            git.pull().setRemoteBranchName(branchName).call();
+            var checkout = git.checkout();
+               if (!git.branchList().call().stream()
+                    .map(b -> b.getName())
+                    .collect(Collectors.toUnmodifiableSet())
+                    .contains(branchName)){
+                checkout.setCreateBranch(true);
+            }
+            checkout.
                     setName(branchName).
-                    setStartPoint("origin/" + branchName).
+                    setStartPoint(branchName).
                     call();
             RebaseResult rr = git.rebase()
                     .setStrategy(MergeStrategy.THEIRS)
                     .setUpstream("master")
                     .call();
-            return new AutoBumpRebaseResult(!rr.getConflicts().isEmpty());
+            return new AutoBumpRebaseResult(rr.getConflicts()!=null || !rr.getConflicts().isEmpty());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }catch (GitAPIException g) {
