@@ -8,10 +8,21 @@ import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.attributes.AttributesNodeProvider;
+import org.eclipse.jgit.errors.IllegalTodoFileModification;
+import org.eclipse.jgit.lib.ObjectDatabase;
+import org.eclipse.jgit.lib.RebaseTodoLine;
+import org.eclipse.jgit.lib.RefDatabase;
+import org.eclipse.jgit.lib.ReflogReader;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.RepositoryBuilder;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.merge.MergeStrategy;
+import org.eclipse.jgit.merge.ResolveMerger;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.IOException;
@@ -19,6 +30,7 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -69,26 +81,35 @@ public class JGitGitClient implements GitClient {
     public AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             git.fetch().call();
-            git.pull().setRemoteBranchName(branchName).call();
             var checkout = git.checkout();
-               if (!git.branchList().call().stream()
+            if (!git.branchList().call().stream()
                     .map(b -> b.getName())
                     .collect(Collectors.toUnmodifiableSet())
-                    .contains(branchName)){
+                    .contains("refs/heads/" + branchName)) {
                 checkout.setCreateBranch(true);
             }
             checkout.
                     setName(branchName).
                     setStartPoint(branchName).
                     call();
-            RebaseResult rr = git.rebase()
-                    .setStrategy(MergeStrategy.THEIRS)
-                    .setUpstream("master")
+            git.pull().setRemoteBranchName(branchName).call();
+
+//            ResolveMerger merger = (ResolveMerger) MergeStrategy.OURS.newMerger(git.getRepository(),false);
+
+            PullResult result = git.pull()
+                    .setRemoteBranchName("master")
+                    .setRemote("origin")
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+
+//                    .setStrategy(MergeStrategy.THEIRS)
+                    .setRebase(true)
                     .call();
-            return new AutoBumpRebaseResult(rr.getConflicts()!=null || !rr.getConflicts().isEmpty());
+
+            return new AutoBumpRebaseResult(result.getRebaseResult().getConflicts() != null
+                    && !result.getRebaseResult().getConflicts().isEmpty());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        }catch (GitAPIException g) {
+        } catch (GitAPIException g) {
             throw new GitException("Something went wrong while checking out the branch or rebasing to it", g);
         }
     }

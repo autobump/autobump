@@ -173,8 +173,8 @@ class JGitGitClientTest {
             git.push().call();
             Bump newerBump = createBumpForTest("3.0.0");
             makeChangesToPom(workspace,"3.0.0");
-            client.commitToExistingBranch(workspace, newerBump, "refs/heads/master");
-            AutoBumpRebaseResult result = client.rebaseBranchFromMaster(workspace, TESTBRANCHNAME);
+            client.commitToExistingBranch(workspace, newerBump, "master");
+            AutoBumpRebaseResult result = client.rebaseBranchFromMaster(workspace, "autobump/test/2.0.0");
         }
         stopServer();
     }

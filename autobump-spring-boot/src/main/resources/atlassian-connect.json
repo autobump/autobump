@@ -1,17 +1,19 @@
 {
-  "key": "${autobump.bitbucket.key}",
-  "baseUrl": "${autobump.bitbucket.base-url}",
-  "name": "Autobump BitBucket Cloud-App",
-  "description": "Autobump automatically updates your repository dependencies",
-  "authentication": {
-    "type": "jwt"
-  },
-  "lifecycle": {
-    "installed": "/installed",
-    "uninstalled": "/uninstalled"
-  },
-  "scopes": [
-    "repository",
-    "project"
-  ]
+    "key": "${autobump.bitbucket.key}",
+    "baseUrl": "${autobump.bitbucket.base-url}",
+    "name": "Autobump BitBucket Cloud-App",
+    "description": "Autobump automatically updates your repository dependencies",
+    "authentication": {
+        "type": "jwt"
+    },
+    "lifecycle": {
+        "installed": "/installed",
+        "uninstalled": "/uninstalled"
+    },
+    "scopes": [
+        "repository",
+        "project",
+        "account",
+        "webhook "
+    ]
 }

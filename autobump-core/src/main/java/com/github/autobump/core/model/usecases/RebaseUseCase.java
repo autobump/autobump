@@ -23,14 +23,14 @@ public class RebaseUseCase {
     DependencyResolver dependencyResolver;
     DependencyBumper dependencyBumper;
 
-    public void handlePushEvent(PushEvent event){
+    public void handlePushEvent(PushEvent event) {
         List<PullRequest> pullRequests = getOpenPullRequests(
                 urlHelper.getOwnerName(event.getUri().toString()),
                 urlHelper.getRepoName(event.getUri().toString()));
-        for (PullRequest p: pullRequests) {
-            Workspace workspace = gitClient.clone(event.getUri());
+        Workspace workspace = gitClient.clone(event.getUri());
+        for (PullRequest p : pullRequests) {
             boolean hasConflicts = gitClient.rebaseBranchFromMaster(workspace, p.getBranchName()).isHasConflicts();
-            if (hasConflicts){
+            if (hasConflicts) {
                 AutoBumpSingleGroupUseCase.builder()
                         .pullRequest(p)
                         .gitClient(gitClient)
