@@ -29,8 +29,7 @@ public class RebaseUseCase {
                 urlHelper.getRepoName(event.getUri().toString()));
         Workspace workspace = gitClient.clone(event.getUri());
         for (PullRequest p : pullRequests) {
-            boolean hasConflicts = gitClient.rebaseBranchFromMaster(workspace, p.getBranchName()).isHasConflicts();
-            if (hasConflicts) {
+            if (gitClient.rebaseBranchFromMaster(workspace, p.getBranchName()).isConflicted()) {
                 AutoBumpSingleGroupUseCase.builder()
                         .pullRequest(p)
                         .gitClient(gitClient)

@@ -4,9 +4,9 @@ spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
 spring.datasource.username: sa
 spring.datasource.password: password
 
-spring.jpa.hibernate.ddl-auto: update
+spring.jpa.hibernate.ddl-auto: create
 
 autobump.bitbucket.key: autobump.kdg.xplore.dev01 # key should be unique for your own app instance
-autobump.bitbucket.base-url: https://ad1372b3.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
+autobump.bitbucket.base-url: https://50a9302a.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
 
 atlassian.connect.allow-reinstall-missing-host: true

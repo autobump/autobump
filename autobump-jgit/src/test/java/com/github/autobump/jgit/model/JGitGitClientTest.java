@@ -1,6 +1,9 @@
 package com.github.autobump.jgit.model;
 
-import com.github.autobump.core.model.*;
+import com.github.autobump.core.model.Bump;
+import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.Version;
+import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -11,6 +14,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.http.server.GitServlet;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -83,17 +87,14 @@ class JGitGitClientTest {
     void commitToNewBranch_shouldThrowGitException() throws Exception {
 
         class JGitGitClientTester extends JGitGitClient {
-
             JGitGitClientTester(String username, String password) {
                 super(username, password);
             }
-
             @Override
             public String commitAndPushToBranch(Git git,
                                                 Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
             }
-
             @Override
             public String createBranch(Git git, Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
@@ -136,17 +137,14 @@ class JGitGitClientTest {
     void commitToExistingBranch_shouldThrowGitException() throws Exception {
 
         class JGitGitClientTester extends JGitGitClient {
-
             JGitGitClientTester(String username, String password) {
                 super(username, password);
             }
-
             @Override
             public String commitAndPushToBranch(Git git,
                                                 Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
             }
-
             @Override
             public String createBranch(Git git, Bump bump) throws GitAPIException {
                 throw new CanceledException("The call was cancelled");
@@ -163,18 +161,19 @@ class JGitGitClientTest {
     }
 
     @Test
-    void rebaseBranchFromMaster() throws Exception {
+    void rebaseBranchFromMasterHasConflicts() throws Exception {
         startServer(MAVENTYPE);
         Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             Bump bump = createBumpForTest("2.0.0");
             makeChangesToPom(workspace,"2.0.0");
             client.commitToNewBranch(workspace, bump);
-            git.push().call();
+            git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("test", "test"))
+                    .call();
             Bump newerBump = createBumpForTest("3.0.0");
             makeChangesToPom(workspace,"3.0.0");
             client.commitToExistingBranch(workspace, newerBump, "master");
-            AutoBumpRebaseResult result = client.rebaseBranchFromMaster(workspace, "autobump/test/2.0.0");
+            assertThat(client.rebaseBranchFromMaster(workspace, "autobump/test/2.0.0").isConflicted()).isTrue();
         }
         stopServer();
     }
@@ -188,23 +187,8 @@ class JGitGitClientTest {
 
 
     private Bump createBumpForTest(String versionNumber) {
-        Dependency dep = Dependency.builder().group("test").name("test").version(new TestVersion(versionNumber)).build();
-        Version version = new Version() {
-            @Override
-            public int compareTo(Version o) {
-                return 0;
-            }
-
-            @Override
-            public String getVersionNumber() {
-                return versionNumber;
-            }
-
-            @Override
-            public UpdateType getUpdateType(Version otherVersion) {
-                return null;
-            }
-        };
+        Version version = new TestVersion(versionNumber);
+        Dependency dep = Dependency.builder().group("test").name("test").version(version).build();
         return new Bump(dep, version);
     }
 
@@ -300,24 +284,20 @@ class JGitGitClientTest {
 
     class TestVersion implements Version {
         private final String versionNumber;
-
         TestVersion(String versionNumber) {
             this.versionNumber = versionNumber;
         }
-
         @Override
         public String getVersionNumber() {
             return versionNumber;
         }
-
         @Override
         public UpdateType getUpdateType(Version otherVersion) {
             return null;
         }
-
         @Override
         public int compareTo(Version o) {
-            return this.versionNumber.compareTo(o.getVersionNumber());
+            return 1;
         }
     }
 }

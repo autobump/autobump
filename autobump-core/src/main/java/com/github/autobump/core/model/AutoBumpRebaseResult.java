@@ -6,6 +6,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class AutoBumpRebaseResult {
-    private final boolean hasConflicts;
-
+    private final boolean conflicted;
 }

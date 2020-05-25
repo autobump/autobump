@@ -8,21 +8,14 @@ import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.attributes.AttributesNodeProvider;
-import org.eclipse.jgit.errors.IllegalTodoFileModification;
-import org.eclipse.jgit.lib.ObjectDatabase;
-import org.eclipse.jgit.lib.RebaseTodoLine;
-import org.eclipse.jgit.lib.RefDatabase;
-import org.eclipse.jgit.lib.ReflogReader;
+import org.eclipse.jgit.internal.storage.file.FileRepository;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.RepositoryBuilder;
-import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.merge.MergeStrategy;
-import org.eclipse.jgit.merge.ResolveMerger;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.IOException;
@@ -30,8 +23,10 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.eclipse.jgit.lib.Constants.MASTER;
+import static org.eclipse.jgit.lib.Constants.R_HEADS;
 
 @AllArgsConstructor
 public class JGitGitClient implements GitClient {
@@ -54,7 +49,7 @@ public class JGitGitClient implements GitClient {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             String branchName = createBranch(git, bump);
             String commitMessage = commitAndPushToBranch(git, bump);
-            git.checkout().setName("refs/heads/master").call();
+            git.checkout().setName("master").call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -68,7 +63,7 @@ public class JGitGitClient implements GitClient {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             git.checkout().setName(branchName).call();
             String commitMessage = commitAndPushToBranch(git, bump);
-            git.checkout().setName("refs/heads/master").call();
+            git.checkout().setName("master").call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -80,33 +75,31 @@ public class JGitGitClient implements GitClient {
     @Override
     public AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            git.fetch().call();
             var checkout = git.checkout();
             if (!git.branchList().call().stream()
                     .map(b -> b.getName())
                     .collect(Collectors.toUnmodifiableSet())
-                    .contains("refs/heads/" + branchName)) {
+                    .contains(R_HEADS + branchName)) {
                 checkout.setCreateBranch(true);
             }
             checkout.
                     setName(branchName).
-                    setStartPoint(branchName).
                     call();
-            git.pull().setRemoteBranchName(branchName).call();
-
-//            ResolveMerger merger = (ResolveMerger) MergeStrategy.OURS.newMerger(git.getRepository(),false);
-
-            PullResult result = git.pull()
-                    .setRemoteBranchName("master")
-                    .setRemote("origin")
+            git.pull()
                     .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+                    .setRemoteBranchName(branchName).call();
 
-//                    .setStrategy(MergeStrategy.THEIRS)
-                    .setRebase(true)
-                    .call();
+            git.rebase().setUpstream(R_HEADS + "master").call();
+            AutoBumpRebaseResult result = new AutoBumpRebaseResult(git.status().call().getConflicting() != null
+                    && !git.status().call().getConflicting().isEmpty());
 
-            return new AutoBumpRebaseResult(result.getRebaseResult().getConflicts() != null
-                    && !result.getRebaseResult().getConflicts().isEmpty());
+            if (result.isConflicted()) {
+                git.rebase().setOperation(RebaseCommand.Operation.ABORT).call();
+                MergeResult mergeResult = git.merge().include(git.getRepository()
+                        .exactRef(R_HEADS + MASTER)).setStrategy(MergeStrategy.THEIRS).call();
+            }
+
+            return result;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (GitAPIException g) {
