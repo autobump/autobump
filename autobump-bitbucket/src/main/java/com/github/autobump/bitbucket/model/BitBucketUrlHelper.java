@@ -30,7 +30,5 @@ public class BitBucketUrlHelper implements UrlHelper {
         Matcher matcher = PULL_REQUEST_PATTERN.matcher(pullRequestUrl);
         matcher.matches();
         return Integer.parseInt(matcher.group(5));
-
     }
-
 }
