@@ -75,36 +75,40 @@ public class JGitGitClient implements GitClient {
     @Override
     public AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            var checkout = git.checkout();
-            if (!git.branchList().call().stream()
-                    .map(b -> b.getName())
-                    .collect(Collectors.toUnmodifiableSet())
-                    .contains(R_HEADS + branchName)) {
-                checkout.setCreateBranch(true);
-            }
-            checkout.
-                    setName(branchName).
-                    call();
-            git.pull()
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
-                    .setRemoteBranchName(branchName).call();
-
-            git.rebase().setUpstream(R_HEADS + "master").call();
-            AutoBumpRebaseResult result = new AutoBumpRebaseResult(git.status().call().getConflicting() != null
-                    && !git.status().call().getConflicting().isEmpty());
-
-            if (result.isConflicted()) {
-                git.rebase().setOperation(RebaseCommand.Operation.ABORT).call();
-                MergeResult mergeResult = git.merge().include(git.getRepository()
-                        .exactRef(R_HEADS + MASTER)).setStrategy(MergeStrategy.THEIRS).call();
-            }
-
+            AutoBumpRebaseResult result = getAutoBumpRebaseResult(branchName, git);
             return result;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (GitAPIException g) {
             throw new GitException("Something went wrong while checking out the branch or rebasing to it", g);
         }
+    }
+
+    public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git) throws GitAPIException, IOException {
+        var checkout = git.checkout();
+        if (!git.branchList().call().stream()
+                .map(b -> b.getName())
+                .collect(Collectors.toUnmodifiableSet())
+                .contains(R_HEADS + branchName)) {
+            checkout.setCreateBranch(true);
+        }
+        checkout.
+                setName(branchName).
+                call();
+        git.pull()
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+                .setRemoteBranchName(branchName).call();
+
+        git.rebase().setUpstream(R_HEADS + "master").call();
+        AutoBumpRebaseResult result = new AutoBumpRebaseResult(git.status().call().getConflicting() != null
+                && !git.status().call().getConflicting().isEmpty());
+
+        if (result.isConflicted()) {
+            git.rebase().setOperation(RebaseCommand.Operation.ABORT).call();
+            MergeResult mergeResult = git.merge().include(git.getRepository()
+                    .exactRef(R_HEADS + MASTER)).setStrategy(MergeStrategy.THEIRS).call();
+        }
+        return result;
     }
 
     public String createBranch(Git git, Bump bump) throws GitAPIException {
