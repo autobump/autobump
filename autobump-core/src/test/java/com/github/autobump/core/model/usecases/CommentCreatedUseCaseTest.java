@@ -43,7 +43,7 @@ class CommentCreatedUseCaseTest {
     @Test
     void handleIgnoreMajorComment() {
         assertThat(commentCreatedUseCase
-                .handleComment(eventMajorIgnore))
+                .doHandle(eventMajorIgnore))
                 .isEqualToComparingFieldByField(
                         Setting.builder()
                                 .key("com.h2database:h2:1.4.200")
@@ -55,7 +55,7 @@ class CommentCreatedUseCaseTest {
     @Test
     void handleIgnoreMinorComment() {
         assertThat(commentCreatedUseCase
-                .handleComment(eventMinorIgnore))
+                .doHandle(eventMinorIgnore))
                 .isEqualToComparingFieldByField(
                         Setting.builder()
                                 .key("com.h2database:h2:1.4.200")
@@ -67,7 +67,7 @@ class CommentCreatedUseCaseTest {
     @Test
     void handleWronglyFormulatedComment() {
         assertThat(commentCreatedUseCase
-                .handleComment(eventWronglyFormulated))
+                .doHandle(eventWronglyFormulated))
                 .isNull();
     }
 }

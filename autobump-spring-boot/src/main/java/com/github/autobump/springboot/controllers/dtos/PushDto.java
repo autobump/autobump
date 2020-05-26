@@ -8,7 +8,6 @@ import java.util.ArrayList;
 @Data
 public class PushDto {
     Data data;
-    String repository;
 
     public String getBranchName(){
         return data.getBranchName();

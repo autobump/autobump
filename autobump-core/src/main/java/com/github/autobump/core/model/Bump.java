@@ -38,7 +38,10 @@ public class Bump {
             titleBuilder.append(addDependenciesToTitle());
         } else {
             for (Dependency dependency : dependencies) {
-                titleBuilder.append(String.format("%s:%s", dependency.getGroup(), dependency.getName()));
+                titleBuilder.append(String.format("%s:%s:%s",
+                        dependency.getGroup(),
+                        dependency.getName(),
+                        dependency.getVersion().getVersionNumber()));
             }
         }
         titleBuilder.append(String.format(" to version: %s", updatedVersion .getVersionNumber()));
@@ -50,7 +53,10 @@ public class Bump {
         StringBuilder builder = new StringBuilder();
         for (Dependency dependency : dependencies) {
             i++;
-            builder.append(String.format("%s:%s", dependency.getGroup(), dependency.getName()));
+            builder.append(String.format("%s:%s:%s",
+                    dependency.getGroup(),
+                    dependency.getName(),
+                    dependency.getVersion().getVersionNumber()));
             if (i != dependencies.size()) {
                 builder.append(" and ");
             }
