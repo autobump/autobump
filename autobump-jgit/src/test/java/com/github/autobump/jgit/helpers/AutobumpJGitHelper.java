@@ -50,16 +50,16 @@ public class AutobumpJGitHelper {
         // finally wait for the Server being stopped
     }
 
-    @SuppressWarnings({"PMD.AvoidCatchingGenericException","PMD.PreserveStackTrace"})
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public static void stopServer() {
         try {
             server.stop();
         } catch (Exception e) {
-            throw new GitTestServerException("Error stopping Git Test Server", e.getCause());
+            throw new GitTestServerException("Error stopping Git Test Server", e);
         }
     }
 
-    @SuppressWarnings({"PMD.AvoidCatchingGenericException","PMD.PreserveStackTrace"})
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     private static Server configureAndStartHttpServer(GitServlet gs) {
         server = new Server(8090);
         ServletHandler handler = new ServletHandler();
@@ -69,7 +69,7 @@ public class AutobumpJGitHelper {
         try {
             server.start();
         } catch (Exception e) {
-            throw new GitTestServerException("Error starting Git Test Server", e.getCause());
+            throw new GitTestServerException("Error starting Git Test Server", e);
         }
         return server;
 
