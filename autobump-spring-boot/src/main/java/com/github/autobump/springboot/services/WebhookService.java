@@ -7,6 +7,8 @@ import com.github.autobump.core.model.usecases.CommentCreatedUseCase;
 import com.github.autobump.core.model.usecases.PullRequestClosedUseCase;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
+
 @Service
 public class WebhookService {
     private final SettingsRepository settingsRepository;
@@ -16,7 +18,7 @@ public class WebhookService {
     }
 
     public void handleComment(String prTitle, String comment, String reponame) {
-        if (prTitle.toLowerCase().startsWith("bumped")) {
+        if (prTitle.toLowerCase(Locale.US).startsWith("bumped")) {
             var event = CommentCreatedEvent.builder()
                     .comment(comment)
                     .pullRequestTitle(prTitle)
@@ -32,7 +34,7 @@ public class WebhookService {
     }
 
     public void handleReject(String prTitle, String repoName) {
-        if (prTitle.toLowerCase().startsWith("bumped")) {
+        if (prTitle.toLowerCase(Locale.US).startsWith("bumped")) {
             var event = PrClosedEvent.builder()
                     .prName(prTitle)
                     .repoName(repoName)

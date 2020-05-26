@@ -3,7 +3,7 @@ package com.github.autobump.springboot.controllers.dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class PushDto {
@@ -21,7 +21,7 @@ public class PushDto {
         }
         @lombok.Data
         public static class Push {
-            ArrayList<Change> changes;
+            List<Change> changes;
 
             public String getBranchName() {
                 return changes.stream().map(Change::getBranchName).findAny().get();

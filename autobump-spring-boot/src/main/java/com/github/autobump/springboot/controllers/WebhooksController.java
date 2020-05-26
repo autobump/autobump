@@ -29,9 +29,10 @@ public class WebhooksController {
     }
 
     @PostMapping("push")
+
     public void push(@RequestBody PushDto pushDto) {
-        if (pushDto.getBranchName().equalsIgnoreCase("master")) {
-            // TODO: add code that does things
-        }
+//        if (pushDto.getBranchName().equalsIgnoreCase("master")) {
+//            // TODO: add code that does things
+//        }
     }
 }
