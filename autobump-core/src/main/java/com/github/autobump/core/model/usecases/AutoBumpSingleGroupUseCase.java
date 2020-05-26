@@ -12,7 +12,6 @@ import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
-import com.sun.istack.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -39,7 +38,7 @@ public class AutoBumpSingleGroupUseCase{
     private final URI uri;
     @NonNull
     private final IgnoreRepository ignoreRepository;
-    @NotNull
+    @NonNull
     private final PullRequest pullRequest;
 
     @Builder
