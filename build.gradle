@@ -28,7 +28,6 @@ subprojects {
 
 allprojects {
     dependencies {
-        implementation 'com.atlassian.connect:atlassian-connect-spring-boot-jpa-starter:2.0.6'
         compileOnly 'org.projectlombok:lombok:1.18.12'
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
         implementation "org.slf4j:slf4j-simple:1.7.30"
