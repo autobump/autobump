@@ -36,7 +36,7 @@ public class AutobumpJGitHelper {
     public static final String TEST_VNUMBER = "2.0.0";
     public static Server server;
 
-    public static void startServer(String dependencyType) throws Exception {
+    public static void startServer(String dependencyType) throws IOException, GitAPIException {
         Repository repository = createNewRepository();
         populateRepository(repository, dependencyType);
         // Create the JGit Servlet which handles the Git protocol
@@ -50,22 +50,34 @@ public class AutobumpJGitHelper {
         // finally wait for the Server being stopped
     }
 
-    public static void stopServer() throws Exception {
-        server.stop();
+    @SuppressWarnings({"PMD.AvoidCatchingGenericException","PMD.PreserveStackTrace"})
+    public static void stopServer() {
+        try {
+            server.stop();
+        } catch (Exception e) {
+            throw new GitTestServerException("Error stopping Git Test Server", e.getCause());
+        }
     }
 
-    private static Server configureAndStartHttpServer(GitServlet gs) throws Exception {
+    @SuppressWarnings({"PMD.AvoidCatchingGenericException","PMD.PreserveStackTrace"})
+    private static Server configureAndStartHttpServer(GitServlet gs) {
         server = new Server(8090);
         ServletHandler handler = new ServletHandler();
         server.setHandler(handler);
         ServletHolder holder = new ServletHolder(gs);
         handler.addServletWithMapping(holder, "/*");
-        server.start();
+        try {
+            server.start();
+        } catch (Exception e) {
+            throw new GitTestServerException("Error starting Git Test Server", e.getCause());
+        }
         return server;
+
+
     }
 
     private static void populateRepository(Repository repository,
-                                          String dependencyType)
+                                           String dependencyType)
             throws GitAPIException {
         // enable pushing to the sample repository via http
         repository.getConfig().setString("http", null, "receivepack", "true");
@@ -88,7 +100,7 @@ public class AutobumpJGitHelper {
     private static void createContent(File fileToWriteTo, String dependencyType) {
         if (MAVENTYPE.equals(dependencyType)) {
             try (BufferedWriter fw = Files.newBufferedWriter(fileToWriteTo.toPath()); BufferedReader bufferedReader =
-                         Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
+                    Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
                 copyFileContent(fw, bufferedReader);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
@@ -157,6 +169,13 @@ public class AutobumpJGitHelper {
         @Override
         public int compareTo(Version o) {
             return 1;
+        }
+    }
+
+    private static class GitTestServerException extends RuntimeException {
+        private static final long serialVersionUID = 7183617712122897493L;
+        GitTestServerException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 }

@@ -11,8 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.MAVENTYPE;
@@ -27,18 +29,19 @@ import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.stopServer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 class JGitGitClientTest {
 
     private JGitGitClient client;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() throws IOException {
         client = new JGitGitClient(TEST_USERNAME, TEST_PASSWORD);
         FileRepositoryBuilder.create(new File("src/test/resources/__files"));
     }
 
     @Test
-    void testClone() throws Exception {
+    void testClone() throws URISyntaxException, IOException, GitAPIException {
         startServer(MAVENTYPE);
         assertThat(client.clone(new URI(TESTREPO_URL))).isNotNull();
         stopServer();
@@ -51,7 +54,8 @@ class JGitGitClientTest {
     }
 
     @Test
-    void commitToNewBranch_CheckThatBranchIsAddedAndHasCorrectName() throws Exception {
+    void commitToNewBranch_CheckThatBranchIsAddedAndHasCorrectName()
+            throws GitAPIException, IOException, URISyntaxException {
         startServer(MAVENTYPE);
         Workspace workspace = client.clone(new URI(TESTREPO_URL));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
@@ -60,8 +64,7 @@ class JGitGitClientTest {
             assertThat(git.branchList().call()).hasSize(2);
             assertThat(String.format("refs/heads/autobump/%s/%s", bump.getGroup(),
                     bump.getUpdatedVersion().getVersionNumber()))
-                    .isEqualTo(git.branchList().call().get(0).getName())
-            ;
+                    .isEqualTo(git.branchList().call().get(0).getName());
         }
         stopServer();
     }
@@ -75,7 +78,7 @@ class JGitGitClientTest {
     }
 
     @Test
-    void commitToNewBranch_shouldThrowGitException() throws Exception {
+    void commitToNewBranch_shouldThrowGitException() throws URISyntaxException, IOException, GitAPIException {
 
         class JGitGitClientTester extends JGitGitClient {
             JGitGitClientTester(String username, String password) {
@@ -105,7 +108,7 @@ class JGitGitClientTest {
     }
 
     @Test
-    void commitToExistingBranch() throws Exception {
+    void commitToExistingBranch() throws GitAPIException, URISyntaxException, IOException {
         startServer(MAVENTYPE);
         Workspace workspace = client.clone(new URI(TESTREPO_URL));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
@@ -127,7 +130,7 @@ class JGitGitClientTest {
     }
 
     @Test
-    void commitToExistingBranch_shouldThrowGitException() throws Exception {
+    void commitToExistingBranch_shouldThrowGitException() throws URISyntaxException, IOException, GitAPIException {
 
         class JGitGitClientTester extends JGitGitClient {
             JGitGitClientTester(String username, String password) {
