@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
-public class JGitGitClientTestRebase {
+class JGitGitClientTestRebase {
 
     private JGitGitClient client;
     private Workspace workspace;

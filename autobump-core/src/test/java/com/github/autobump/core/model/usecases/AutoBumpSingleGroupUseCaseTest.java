@@ -8,6 +8,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -55,6 +57,7 @@ class AutoBumpSingleGroupUseCaseTest {
     private TestVersion tv;
     private PullRequest pullRequest;
     private List<Dependency> dependencyList;
+    private UseCaseConfiguration config;
 
 
     @BeforeEach
@@ -68,6 +71,15 @@ class AutoBumpSingleGroupUseCaseTest {
                 .build();
         uri = new URI(REPOSITORY_URL);
         dependencyList = createDependencies();
+        config = UseCaseConfiguration.builder()
+                .dependencyBumper(dependencyBumper)
+                .dependencyResolver(dependencyResolver)
+                .gitClient(gitClient)
+                .gitProvider(gitProvider)
+                .versionRepository(versionRepository)
+                .urlHelper(urlHelper)
+                .ignoreRepository(ignoreRepository)
+                .build();
     }
 
     private List<Dependency> createDependencies() {
@@ -90,7 +102,7 @@ class AutoBumpSingleGroupUseCaseTest {
     }
 
     private void setUpEmptyDependencyResolver(){
-        when(dependencyResolver2.resolve(workspace))
+        Mockito.lenient().when(dependencyResolver2.resolve(workspace))
                 .thenReturn(Collections.emptySet());
     }
 
@@ -99,15 +111,9 @@ class AutoBumpSingleGroupUseCaseTest {
         setUpdoAutoBumpMocks();
         setUpDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
-                .dependencyBumper(dependencyBumper)
-                .dependencyResolver(dependencyResolver)
-                .gitClient(gitClient)
-                .gitProvider(gitProvider)
-                .uri(uri)
-                .urlHelper(urlHelper)
-                .versionRepository(versionRepository)
-                .ignoreRepository(ignoreRepository)
+                .config(config)
                 .pullRequest(pullRequest)
+                .uri(uri)
                 .build()
                 .doSingleGroupAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -118,15 +124,9 @@ class AutoBumpSingleGroupUseCaseTest {
         setUpdoAutoBumpMocks();
         setUpEmptyDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
-                .dependencyBumper(dependencyBumper)
-                .dependencyResolver(dependencyResolver2)
-                .gitClient(gitClient)
-                .gitProvider(gitProvider)
-                .uri(uri)
-                .urlHelper(urlHelper)
-                .versionRepository(versionRepository)
-                .ignoreRepository(ignoreRepository)
+                .config(config)
                 .pullRequest(pullRequest)
+                .uri(uri)
                 .build()
                 .doSingleGroupAutoBump();
         verify(gitProvider, times(1)).closePullRequest(pullRequest);

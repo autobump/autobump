@@ -47,7 +47,7 @@ public class JGitGitClient implements GitClient {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             String branchName = createBranch(git, bump);
             String commitMessage = commitAndPushToBranch(git, bump);
-            git.checkout().setName("master").call();
+            git.checkout().setName(MASTER).call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -61,7 +61,7 @@ public class JGitGitClient implements GitClient {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
             git.checkout().setName(branchName).call();
             String commitMessage = commitAndPushToBranch(git, bump);
-            git.checkout().setName("master").call();
+            git.checkout().setName(MASTER).call();
             return new CommitResult(branchName, commitMessage);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -84,7 +84,7 @@ public class JGitGitClient implements GitClient {
     public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git)
             throws GitAPIException, IOException {
         checkoutBumpBranch(git, branchName);
-        git.rebase().setUpstream(R_HEADS + "master").call();
+        git.rebase().setUpstream(R_HEADS + MASTER).call();
         AutoBumpRebaseResult result = new AutoBumpRebaseResult(!git.status().call().getConflicting().isEmpty());
 
         if (result.isConflicted()) {

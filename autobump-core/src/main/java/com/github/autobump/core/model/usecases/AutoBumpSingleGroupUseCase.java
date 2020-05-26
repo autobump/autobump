@@ -3,14 +3,8 @@ package com.github.autobump.core.model.usecases;
 import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.DependencyBumper;
-import com.github.autobump.core.model.DependencyResolver;
-import com.github.autobump.core.model.GitClient;
-import com.github.autobump.core.model.GitProvider;
-import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
-import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 import lombok.Data;
@@ -21,60 +15,29 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
+@Builder
 public class AutoBumpSingleGroupUseCase{
+
     @NonNull
-    private final GitProvider gitProvider;
-    @NonNull
-    private final GitClient gitClient;
-    @NonNull
-    private final DependencyResolver dependencyResolver;
-    @NonNull
-    private final VersionRepository versionRepository;
-    @NonNull
-    private final DependencyBumper dependencyBumper;
-    @NonNull
-    private final UrlHelper urlHelper;
+    private final UseCaseConfiguration config;
     @NonNull
     private final URI uri;
     @NonNull
-    private final IgnoreRepository ignoreRepository;
-    @NonNull
     private final PullRequest pullRequest;
 
-    @Builder
-    public AutoBumpSingleGroupUseCase(GitProvider gitProvider,
-                                      GitClient gitClient,
-                                      DependencyResolver dependencyResolver,
-                                      VersionRepository versionRepository,
-                                      DependencyBumper dependencyBumper,
-                                      UrlHelper urlHelper,
-                                      IgnoreRepository ignoreRepository,
-                                      URI uri,
-                                      PullRequest pullRequest) {
-        this.gitProvider = gitProvider;
-        this.gitClient = gitClient;
-        this.dependencyResolver = dependencyResolver;
-        this.versionRepository = versionRepository;
-        this.dependencyBumper = dependencyBumper;
-        this.urlHelper = urlHelper;
-        this.ignoreRepository = ignoreRepository;
-        this.uri = uri;
-        this.pullRequest = pullRequest;
-    }
-
     public AutobumpResult doSingleGroupAutoBump() {
-        Workspace workspace = gitClient.clone(getUri());
-        Set<Dependency> dependencies = dependencyResolver.resolve(workspace)
+        Workspace workspace = config.getGitClient().clone(getUri());
+        Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace)
                 .stream().filter(d -> d.getGroup()
                         .equalsIgnoreCase(parseGroupName(pullRequest.getTitle())))
                 .collect(Collectors.toUnmodifiableSet());
         if(dependencies.isEmpty()){
-            gitProvider.closePullRequest(pullRequest);
+            config.getGitProvider().closePullRequest(pullRequest);
         }
         var combinedbumps = BumpResolverUseCase.builder()
                 .dependencies(dependencies)
-                .ignoreRepository(ignoreRepository)
-                .versionRepository(versionRepository)
+                .ignoreRepository(config.getIgnoreRepository())
+                .versionRepository(config.getVersionRepository())
                 .build()
                 .doResolve();
         makeBumpsAndPush(workspace, combinedbumps, pullRequest.getBranchName());
@@ -84,12 +47,12 @@ public class AutoBumpSingleGroupUseCase{
     private void makeBumpsAndPush(Workspace workspace, Set<Bump> bumps, String branchName) {
         for (Bump bump : bumps) {
             BumpUseCase.builder()
-                    .dependencyBumper(dependencyBumper)
+                    .dependencyBumper(config.getDependencyBumper())
                     .workspace(workspace)
                     .bump(bump)
                     .build()
                     .doBump();
-            PushUseCase.builder().gitClient(gitClient)
+            PushUseCase.builder().gitClient(config.getGitClient())
                     .build()
                     .doPush(workspace, bump, branchName);
         }

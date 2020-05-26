@@ -10,6 +10,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
@@ -57,12 +58,22 @@ class AutobumpUseCaseTest {
     private TestVersion tv;
     private TestVersion tv1;
     private List<Dependency> dependencyList;
+    private UseCaseConfiguration config;
 
 
     @BeforeEach
     void setUp() throws URISyntaxException {
         uri = new URI(REPOSITORY_URL);
         dependencyList = createDependencies();
+        config = UseCaseConfiguration.builder()
+                .ignoreRepository(ignoreRepository)
+                .urlHelper(urlHelper)
+                .versionRepository(versionRepository)
+                .gitProvider(gitProvider)
+                .dependencyResolver(dependencyResolver)
+                .dependencyBumper(dependencyBumper)
+                .gitClient(gitClient)
+                .build();
     }
 
     private List<Dependency> createDependencies() {
@@ -108,14 +119,8 @@ class AutobumpUseCaseTest {
     void doAutoBump() {
         setUpdoAutoBumpMocks_forTestSingleBump();
         var result = AutobumpUseCase.builder()
-                .dependencyBumper(dependencyBumper)
-                .dependencyResolver(dependencyResolver)
-                .gitClient(gitClient)
-                .gitProvider(gitProvider)
+                .config(config)
                 .uri(uri)
-                .urlHelper(urlHelper)
-                .versionRepository(versionRepository)
-                .ignoreRepository(ignoreRepository)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -125,14 +130,8 @@ class AutobumpUseCaseTest {
     void doAutoBump_combinedDependencies() {
         setUpdoAutoBump_combinedDependenciesMocks();
         var result = AutobumpUseCase.builder()
-                .dependencyBumper(dependencyBumper)
-                .dependencyResolver(dependencyResolver)
-                .gitClient(gitClient)
-                .gitProvider(gitProvider)
+                .config(config)
                 .uri(uri)
-                .urlHelper(urlHelper)
-                .versionRepository(versionRepository)
-                .ignoreRepository(ignoreRepository)
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(any());
@@ -144,14 +143,8 @@ class AutobumpUseCaseTest {
         setUpdoAutoBump_combinedDependenciesMocks();
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
         var result = AutobumpUseCase.builder()
-                .dependencyBumper(dependencyBumper)
-                .dependencyResolver(dependencyResolver)
-                .gitClient(gitClient)
-                .gitProvider(gitProvider)
+                .config(config)
                 .uri(uri)
-                .urlHelper(urlHelper)
-                .versionRepository(versionRepository)
-                .ignoreRepository(ignoreRepository)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);

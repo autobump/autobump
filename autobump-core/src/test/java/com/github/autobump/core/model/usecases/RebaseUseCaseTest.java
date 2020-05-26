@@ -8,6 +8,8 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.UseCaseConfiguration;
+import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.core.model.events.PushEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +60,9 @@ class RebaseUseCaseTest {
     @Mock
     UrlHelper urlHelper;
 
+    @Mock
+    VersionRepository versionRepository;
+
     @InjectMocks
     RebaseUseCase rebaseUseCaseWithoutConflict;
 
@@ -81,22 +86,35 @@ class RebaseUseCaseTest {
                 .thenReturn(prs);
     }
 
-    private void createRebaseUseCases() {
-        rebaseUseCaseWithoutConflict = RebaseUseCase.builder()
+    private void createRebaseUseCases() throws URISyntaxException {
+        UseCaseConfiguration configWithoutConflict = UseCaseConfiguration.builder()
                 .gitClient(gitClientWithoutConflict)
-                .gitProvider(gitProvider)
-                .urlHelper(urlHelper)
                 .dependencyBumper(dependencyBumper)
-                .ignoreRepository(ignoreRepository)
                 .dependencyResolver(dependencyResolver)
+                .gitProvider(gitProvider)
+                .ignoreRepository(ignoreRepository)
+                .urlHelper(urlHelper)
+                .versionRepository(versionRepository)
                 .build();
-        rebaseUseCaseWithConflict = RebaseUseCase.builder()
+
+        rebaseUseCaseWithoutConflict = RebaseUseCase.builder()
+                .config(configWithoutConflict)
+                .event(new PushEvent(new URI("")))
+                .build();
+
+        UseCaseConfiguration configWithConflict = UseCaseConfiguration.builder()
                 .gitClient(gitClientWithConflict)
-                .gitProvider(gitProvider)
-                .dependencyResolver(dependencyResolver)
                 .dependencyBumper(dependencyBumper)
+                .dependencyResolver(dependencyResolver)
+                .gitProvider(gitProvider)
                 .ignoreRepository(ignoreRepository)
                 .urlHelper(urlHelper)
+                .versionRepository(versionRepository)
+                .build();
+
+        rebaseUseCaseWithConflict = RebaseUseCase.builder()
+                .config(configWithConflict)
+                .event(new PushEvent(new URI("")))
                 .build();
     }
 
@@ -128,15 +146,14 @@ class RebaseUseCaseTest {
     @Test
     void handlePushEventWithoutConflicts() {
         assertThatCode(() -> rebaseUseCaseWithoutConflict
-                .handlePushEvent(new PushEvent(new URI(""))))
+                .handlePushEvent())
                 .doesNotThrowAnyException();
     }
 
     @Test
     void handlePushEventWithConflicts()  {
         assertThatCode(() -> rebaseUseCaseWithConflict
-                .handlePushEvent(new PushEvent(new URI(""))))
+                .handlePushEvent())
                 .doesNotThrowAnyException();
     }
-
 }
