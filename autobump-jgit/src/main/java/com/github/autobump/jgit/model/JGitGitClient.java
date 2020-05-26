@@ -7,13 +7,11 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
+import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.RebaseCommand;
-import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.internal.storage.file.FileRepository;
-import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
@@ -75,8 +73,7 @@ public class JGitGitClient implements GitClient {
     @Override
     public AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName) {
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            AutoBumpRebaseResult result = getAutoBumpRebaseResult(branchName, git);
-            return result;
+            return getAutoBumpRebaseResult(branchName, git);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         } catch (GitAPIException g) {
@@ -84,31 +81,33 @@ public class JGitGitClient implements GitClient {
         }
     }
 
-    public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git) throws GitAPIException, IOException {
+    public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git)
+            throws GitAPIException, IOException {
+        checkoutBumpBranch(git, branchName);
+        git.rebase().setUpstream(R_HEADS + "master").call();
+        AutoBumpRebaseResult result = new AutoBumpRebaseResult(!git.status().call().getConflicting().isEmpty());
+
+        if (result.isConflicted()) {
+            git.rebase().setOperation(RebaseCommand.Operation.ABORT).call();
+            git.merge().include(git.getRepository()
+                    .exactRef(R_HEADS + MASTER)).setStrategy(MergeStrategy.THEIRS).call();
+        }
+        return result;
+    }
+
+    private void checkoutBumpBranch(Git git, String branchName) throws GitAPIException {
         var checkout = git.checkout();
         if (!git.branchList().call().stream()
-                .map(b -> b.getName())
+                .map(Ref::getName)
                 .collect(Collectors.toUnmodifiableSet())
                 .contains(R_HEADS + branchName)) {
-            checkout.setCreateBranch(true);
+            checkout.setCreateBranch(true)
+                    .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).
+                    setStartPoint("origin/" + branchName);
         }
         checkout.
                 setName(branchName).
                 call();
-        git.pull()
-                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
-                .setRemoteBranchName(branchName).call();
-
-        git.rebase().setUpstream(R_HEADS + "master").call();
-        AutoBumpRebaseResult result = new AutoBumpRebaseResult(git.status().call().getConflicting() != null
-                && !git.status().call().getConflicting().isEmpty());
-
-        if (result.isConflicted()) {
-            git.rebase().setOperation(RebaseCommand.Operation.ABORT).call();
-            MergeResult mergeResult = git.merge().include(git.getRepository()
-                    .exactRef(R_HEADS + MASTER)).setStrategy(MergeStrategy.THEIRS).call();
-        }
-        return result;
     }
 
     public String createBranch(Git git, Bump bump) throws GitAPIException {

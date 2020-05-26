@@ -1,142 +1,61 @@
 package com.github.autobump.jgit.model;
 
-import com.github.autobump.core.model.AutoBumpRebaseResult;
 import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
-import lombok.SneakyThrows;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.CanceledException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.http.server.GitServlet;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
 
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.MAVENTYPE;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_LONG;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTREPO_URL;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_PASSWORD;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_USERNAME;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_VNUMBER;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.createBumpForTest;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.startServer;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.stopServer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class JGitGitClientTest {
-    static final String MAVENTYPE = "Maven";
-    static final String TESTBRANCHNAME = "refs/heads/autobump/test/2.0.0";
-    Server server;
-    JGitGitClient client;
 
-    private static Server configureAndStartHttpServer(GitServlet gs) throws Exception {
-        Server server = new Server(8090);
-        ServletHandler handler = new ServletHandler();
-        server.setHandler(handler);
-        ServletHolder holder = new ServletHolder(gs);
-        handler.addServletWithMapping(holder, "/*");
-        server.start();
-        return server;
-    }
-
-    private static void populateRepository(Repository repository,
-                                           String dependencyType)
-            throws GitAPIException {
-        // enable pushing to the sample repository via http
-        repository.getConfig().setString("http", null, "receivepack", "true");
-        try (Git git = new Git(repository)) {
-            if (MAVENTYPE.equals(dependencyType)) {
-                File myfile = new File(repository.getDirectory().getParent(), "pom.xml");
-                createContent(myfile, dependencyType);
-            } else {
-                new File(repository.getDirectory().getParent(), "dummy");
-            }
-            addAndCommit(git);
-        }
-    }
-
-    private static void addAndCommit(Git git) throws GitAPIException {
-        git.add().addFilepattern("pom.xml").call();
-        git.commit().setMessage("Test-Checkin").call();
-    }
-
-    private static void createContent(File fileToWriteTo, String dependencyType) {
-        if (MAVENTYPE.equals(dependencyType)) {
-            try (BufferedWriter fw = Files.newBufferedWriter(fileToWriteTo.toPath());
-                 BufferedReader bufferedReader =
-                         Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
-                copyFileContent(fw, bufferedReader);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-        }
-    }
-
-    private static void copyFileContent(BufferedWriter fw, BufferedReader bufferedReader) throws IOException {
-        String s = bufferedReader.readLine();
-
-        while (s != null) {
-            fw.write(s);
-            fw.flush();
-            s = bufferedReader.readLine();
-        }
-    }
-
-    private static Repository createNewRepository() throws IOException {
-        // prepare a new folder
-        File localPath = File.createTempFile("TestGitRepository", "");
-        if (!localPath.delete()) {
-            throw new IOException("Could not delete temporary file " + localPath);
-        }
-
-        if (!localPath.mkdirs()) {
-            throw new IOException("Could not create directory " + localPath);
-        }
-
-        // create the directory
-        Repository repository = FileRepositoryBuilder.create(new File(localPath, ".git"));
-        repository.create();
-
-        return repository;
-    }
+    private JGitGitClient client;
 
     @BeforeEach
     void setUp() throws Exception {
-        client = new JGitGitClient("test", "test");
+        client = new JGitGitClient(TEST_USERNAME, TEST_PASSWORD);
         FileRepositoryBuilder.create(new File("src/test/resources/__files"));
     }
 
     @Test
     void testClone() throws Exception {
         startServer(MAVENTYPE);
-        assertThat(client.clone(new URI("http://localhost:8090/TestRepo"))).isNotNull();
+        assertThat(client.clone(new URI(TESTREPO_URL))).isNotNull();
         stopServer();
     }
 
     @Test
     void testWrongUrl_ShouldThrowGitException() {
         assertThatExceptionOfType(GitException.class).isThrownBy(() ->
-                new JGitGitClient("test", "test").clone(new URI("wrong")));
+                new JGitGitClient(TEST_USERNAME, TEST_PASSWORD).clone(new URI("wrong")));
     }
 
     @Test
     void commitToNewBranch_CheckThatBranchIsAddedAndHasCorrectName() throws Exception {
         startServer(MAVENTYPE);
-        Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
+        Workspace workspace = client.clone(new URI(TESTREPO_URL));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            Bump bump = createBumpForTest("2.0.0");
+            Bump bump = createBumpForTest(TEST_VNUMBER);
             client.commitToNewBranch(workspace, bump);
             assertThat(git.branchList().call()).hasSize(2);
             assertThat(String.format("refs/heads/autobump/%s/%s", bump.getGroup(),
@@ -150,7 +69,7 @@ class JGitGitClientTest {
     @Test
     void commitNewBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
         Workspace invalidWorkspace = new Workspace("test/test/test");
-        Bump bump = createBumpForTest("2.0.0");
+        Bump bump = createBumpForTest(TEST_VNUMBER);
         assertThatExceptionOfType(UncheckedIOException.class)
                 .isThrownBy(() -> client.commitToNewBranch(invalidWorkspace, bump));
     }
@@ -177,9 +96,9 @@ class JGitGitClientTest {
         }
 
         startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
-        Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
-        Bump bump = createBumpForTest("2.0.0");
+        JGitGitClientTester testClient = new JGitGitClientTester(TEST_USERNAME, TEST_PASSWORD);
+        Workspace workspace = testClient.clone(new URI(TESTREPO_URL));
+        Bump bump = createBumpForTest(TEST_VNUMBER);
         assertThatExceptionOfType(GitException.class)
                 .isThrownBy(() -> testClient.commitToNewBranch(workspace, bump));
         stopServer();
@@ -188,12 +107,12 @@ class JGitGitClientTest {
     @Test
     void commitToExistingBranch() throws Exception {
         startServer(MAVENTYPE);
-        Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
+        Workspace workspace = client.clone(new URI(TESTREPO_URL));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            Bump bump = createBumpForTest("2.0.0");
+            Bump bump = createBumpForTest(TEST_VNUMBER);
             client.commitToNewBranch(workspace, bump);
-            client.commitToExistingBranch(workspace, bump, TESTBRANCHNAME);
-            assertThat(TESTBRANCHNAME)
+            client.commitToExistingBranch(workspace, bump, TESTBRANCHNAME_LONG);
+            assertThat(TESTBRANCHNAME_LONG)
                     .isEqualTo(git.branchList().call().get(0).getName());
         }
         stopServer();
@@ -202,9 +121,9 @@ class JGitGitClientTest {
     @Test
     void commitExistingBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
         Workspace invalidWorkspace = new Workspace("test/test/test");
-        Bump bump = createBumpForTest("2.0.0");
+        Bump bump = createBumpForTest(TEST_VNUMBER);
         assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> client.commitToExistingBranch(invalidWorkspace, bump, TESTBRANCHNAME));
+                .isThrownBy(() -> client.commitToExistingBranch(invalidWorkspace, bump, TESTBRANCHNAME_LONG));
     }
 
     @Test
@@ -228,127 +147,11 @@ class JGitGitClientTest {
         }
 
         startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
-        Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
-        Bump bump = createBumpForTest("2.0.0");
+        JGitGitClientTester testClient = new JGitGitClientTester(TEST_USERNAME, TEST_PASSWORD);
+        Workspace workspace = testClient.clone(new URI(TESTREPO_URL));
+        Bump bump = createBumpForTest(TEST_VNUMBER);
         assertThatExceptionOfType(GitException.class)
-                .isThrownBy(() -> testClient.commitToExistingBranch(workspace, bump, TESTBRANCHNAME));
+                .isThrownBy(() -> testClient.commitToExistingBranch(workspace, bump, TESTBRANCHNAME_LONG));
         stopServer();
-    }
-
-    @Test
-    void rebaseBranchFromMaster_HasConflicts() throws Exception {
-        startServer(MAVENTYPE);
-        Workspace workspace = client.clone(new URI("http://localhost:8090/TestRepo"));
-        try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            Bump bump = createBumpForTest("2.0.0");
-            makeChangesToPom(workspace, "2.0.0");
-            client.commitToNewBranch(workspace, bump);
-            git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider("test", "test"))
-                    .call();
-            Bump newerBump = createBumpForTest("3.0.0");
-            makeChangesToPom(workspace, "3.0.0");
-            client.commitToExistingBranch(workspace, newerBump, "master");
-            assertThat(client.rebaseBranchFromMaster(workspace, "autobump/test/2.0.0").isConflicted()).isTrue();
-        }
-        stopServer();
-    }
-
-    @Test
-    void rebaseBranchFromMaster_shouldThrowGitException() throws Exception {
-
-        class JGitGitClientTester extends JGitGitClient {
-            JGitGitClientTester(String username, String password) {
-                super(username, password);
-            }
-
-            @Override
-            public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git) throws GitAPIException, IOException {
-                throw new CanceledException("The call was cancelled");
-            }
-        }
-
-        startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
-        Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
-        assertThatExceptionOfType(GitException.class)
-                .isThrownBy(() -> testClient.rebaseBranchFromMaster(workspace, "autobump/test/2.0.0"));
-        stopServer();
-    }
-
-    @Test
-    void rebaseBranchFromMaster_shouldThrowUncheckedIOException() throws Exception {
-
-        class JGitGitClientTester extends JGitGitClient {
-            JGitGitClientTester(String username, String password) {
-                super(username, password);
-            }
-
-            @Override
-            public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git) throws GitAPIException, IOException {
-                throw new IOException();
-            }
-        }
-
-        startServer(MAVENTYPE);
-        JGitGitClientTester testClient = new JGitGitClientTester("test", "test");
-        Workspace workspace = testClient.clone(new URI("http://localhost:8090/TestRepo"));
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> testClient.rebaseBranchFromMaster(workspace, "autobump/test/2.0.0"));
-        stopServer();
-    }
-
-    private void makeChangesToPom(Workspace workspace, String text) throws IOException {
-        Path file = Paths.get(workspace.getProjectRoot() + File.separator + "pom.xml");
-        List<String> out = Files.readAllLines(file);
-        out.set(0, out.get(0).replace("10.15.2.0", text));
-        Files.write(file, out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-    }
-
-    private Bump createBumpForTest(String versionNumber) {
-        Version version = new TestVersion(versionNumber);
-        Dependency dep = Dependency.builder().group("test").name("test").version(version).build();
-        return new Bump(dep, version);
-    }
-
-    private void stopServer() throws Exception {
-        server.stop();
-    }
-
-    private void startServer(String dependencyType) throws Exception {
-        Repository repository = createNewRepository();
-        populateRepository(repository, dependencyType);
-        // Create the JGit Servlet which handles the Git protocol
-        GitServlet gs = new GitServlet();
-        gs.setRepositoryResolver((req, name) -> {
-            repository.incrementOpen();
-            return repository;
-        });
-        // start up the Servlet and start serving requests
-        server = configureAndStartHttpServer(gs);
-        // finally wait for the Server being stopped
-    }
-
-    class TestVersion implements Version {
-        private final String versionNumber;
-
-        TestVersion(String versionNumber) {
-            this.versionNumber = versionNumber;
-        }
-
-        @Override
-        public String getVersionNumber() {
-            return versionNumber;
-        }
-
-        @Override
-        public UpdateType getUpdateType(Version otherVersion) {
-            return null;
-        }
-
-        @Override
-        public int compareTo(Version o) {
-            return 1;
-        }
     }
 }
