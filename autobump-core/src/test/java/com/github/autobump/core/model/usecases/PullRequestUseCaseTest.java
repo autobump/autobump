@@ -94,7 +94,7 @@ class PullRequestUseCaseTest {
     }
 
     @Test
-    void doPullRequest() {
+    void doPullRequest_thatSupersedesOpenPullRequest() {
         assertThatCode(() ->
                 PullRequestUseCase.builder()
                         .bump(bump)
