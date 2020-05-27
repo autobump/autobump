@@ -4,11 +4,14 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 public class PullRequestUseCase {
@@ -42,10 +45,45 @@ public class PullRequestUseCase {
                 .repoName(urlHelper.getRepoName(uri.toString()))
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
-        makePullRequest(pullRequest);
+        PullRequest closedPullRequest = closeOpenPullRequest(pullRequest);
+        PullRequestResponse newPullRequest = makePullRequest(pullRequest);
+        if (closedPullRequest != null) {
+            addCommentToDeclinedPullRequest(newPullRequest.getLink(), closedPullRequest);
+        }
     }
 
-    private void makePullRequest(PullRequest pullRequest) {
-        gitProvider.makePullRequest(pullRequest);
+    private PullRequest closeOpenPullRequest(PullRequest newPullrequest) {
+        List<PullRequest> openPullrequests =
+                getOpenPullRequests(newPullrequest.getRepoName(), newPullrequest.getRepoOwner());
+        PullRequest pullRequest = null;
+        for (PullRequest pr : openPullrequests
+        ) {
+            if (parseGroupNameAndArtifactId(newPullrequest.getTitle())
+                    .equals(parseGroupNameAndArtifactId(pr.getTitle()))) {
+                gitProvider.closePullRequest(pr);
+                pullRequest = pr;
+            }
+        }
+        return pullRequest;
+    }
+
+    private void addCommentToDeclinedPullRequest(String link, PullRequest pr) {
+        gitProvider.commentPullRequest(pr, "This PR has been superseded by a new PR: " + link);
+    }
+
+    private String parseGroupNameAndArtifactId(String title) {
+        String[] elements = title.split(" ");
+        return elements[1];
+    }
+
+    private List<PullRequest> getOpenPullRequests(String repoOwner, String repoName) {
+        return gitProvider.getOpenPullRequests(repoOwner, repoName)
+                .stream()
+                .filter(p -> p.getTitle().startsWith("Bumped"))
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    private PullRequestResponse makePullRequest(PullRequest pullRequest) {
+        return gitProvider.makePullRequest(pullRequest);
     }
 }
