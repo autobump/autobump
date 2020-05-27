@@ -9,6 +9,10 @@ import java.util.List;
 public class PushDto {
     Data data;
 
+    public PushDto(String branchname) {
+        this.data = new Data(branchname);
+    }
+
     public String getBranchName(){
         return data.getBranchName();
     };
@@ -16,12 +20,20 @@ public class PushDto {
     public static class Data {
         Push push;
 
+        public Data(String branchname) {
+            this.push = new Push(branchname);
+        }
+
         public String getBranchName(){
             return push.getBranchName();
         }
         @lombok.Data
         public static class Push {
             List<Change> changes;
+
+            public Push(String branchname) {
+                this.changes = List.of(new Change(branchname));
+            }
 
             public String getBranchName() {
                 return changes.stream().map(Change::getBranchName).findAny().get();
@@ -32,6 +44,10 @@ public class PushDto {
                 @JsonProperty("new")
                 Event event;
 
+                public Change(String branchname) {
+                    this.event = new Event(branchname);
+                }
+
                 public String getBranchName() {
                     return event.name;
                 }
@@ -39,6 +55,10 @@ public class PushDto {
                 @lombok.Data
                 public static class Event {
                     String name;
+
+                    public Event(String branchname) {
+                        this.name = branchname;
+                    }
                 }
             }
         }
