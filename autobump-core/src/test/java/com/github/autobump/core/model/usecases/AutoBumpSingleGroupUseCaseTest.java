@@ -34,7 +34,6 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AutoBumpSingleGroupUseCaseTest {
     public static final String REPOSITORY_URL = "http://www.test.test";
-    public static final String TEST_NAME = "testName";
     @Mock
     private GitProvider gitProvider;
     @Mock
@@ -90,10 +89,6 @@ class AutoBumpSingleGroupUseCaseTest {
         return dependencies;
     }
 
-    private void setUpdoAutoBumpMocks() {
-        when(gitClient.clone(uri)).thenReturn(workspace);
-    }
-
     private void setUpDependencyResolver() {
         when(dependencyResolver.resolve(workspace))
                 .thenReturn(Set.of(dependencyList.get(0), dependencyList.get(1)));
@@ -108,12 +103,12 @@ class AutoBumpSingleGroupUseCaseTest {
 
     @Test
     void doSingleGroupAutoBump() {
-        setUpdoAutoBumpMocks();
         setUpDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
                 .config(config)
                 .pullRequest(pullRequest)
                 .uri(uri)
+                .workspace(workspace)
                 .build()
                 .doSingleGroupAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -121,12 +116,12 @@ class AutoBumpSingleGroupUseCaseTest {
 
     @Test
     void doSingleGroupAutoBump_WithoutDependenciesToUpdate() {
-        setUpdoAutoBumpMocks();
         setUpEmptyDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
                 .config(config)
                 .pullRequest(pullRequest)
                 .uri(uri)
+                .workspace(workspace)
                 .build()
                 .doSingleGroupAutoBump();
         verify(gitProvider, times(1)).closePullRequest(pullRequest);

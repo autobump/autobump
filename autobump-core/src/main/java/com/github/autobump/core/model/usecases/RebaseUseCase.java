@@ -26,6 +26,7 @@ public class RebaseUseCase {
                         .pullRequest(p)
                         .uri(event.getUri())
                         .config(config)
+                        .workspace(workspace)
                         .build()
                         .doSingleGroupAutoBump();
             }

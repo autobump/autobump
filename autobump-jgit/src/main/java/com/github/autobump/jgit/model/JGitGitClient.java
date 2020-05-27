@@ -3,6 +3,7 @@ package com.github.autobump.jgit.model;
 import com.github.autobump.core.model.AutoBumpRebaseResult;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.CommitResult;
+import com.github.autobump.core.model.DeleteBrancheResult;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
@@ -11,9 +12,11 @@ import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.merge.MergeStrategy;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import java.io.IOException;
@@ -78,6 +81,23 @@ public class JGitGitClient implements GitClient {
             throw new UncheckedIOException(e);
         } catch (GitAPIException g) {
             throw new GitException("Something went wrong while checking out the branch or rebasing to it", g);
+        }
+    }
+
+    @Override
+    public DeleteBrancheResult deleteBranche(Workspace workspace, String branchName) {
+        try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
+            RefSpec refSpec = new RefSpec()
+                    .setSource(null)
+                    .setDestination(R_HEADS + branchName);
+            git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+                    .setRefSpecs(refSpec).setRemote(Constants.DEFAULT_REMOTE_NAME)
+                    .call();
+            return new DeleteBrancheResult(branchName);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (GitAPIException g) {
+            throw new GitException("Something went wrong while deleting branch: " + R_HEADS + branchName, g);
         }
     }
 

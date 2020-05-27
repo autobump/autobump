@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
-public class AutoBumpSingleGroupUseCase{
+public class AutoBumpSingleGroupUseCase {
 
     @NonNull
     private final UseCaseConfiguration config;
@@ -24,27 +24,29 @@ public class AutoBumpSingleGroupUseCase{
     private final URI uri;
     @NonNull
     private final PullRequest pullRequest;
+    @NonNull
+    private final Workspace workspace;
 
     public AutobumpResult doSingleGroupAutoBump() {
-        Workspace workspace = config.getGitClient().clone(getUri());
         Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace)
                 .stream().filter(d -> d.getGroup()
                         .equalsIgnoreCase(parseGroupName(pullRequest.getTitle())))
                 .collect(Collectors.toUnmodifiableSet());
-        if(dependencies.isEmpty()){
-            config.getGitProvider().closePullRequest(pullRequest);
-        }
         var combinedbumps = BumpResolverUseCase.builder()
                 .dependencies(dependencies)
                 .ignoreRepository(config.getIgnoreRepository())
                 .versionRepository(config.getVersionRepository())
                 .build()
                 .doResolve();
-        makeBumpsAndPush(workspace, combinedbumps, pullRequest.getBranchName());
+        if (combinedbumps.isEmpty()) {
+            config.getGitProvider().closePullRequest(pullRequest);
+            config.getGitClient().deleteBranche(workspace, pullRequest.getBranchName());
+        }
+        makeBumpsAndPush(combinedbumps, pullRequest.getBranchName());
         return new AutobumpResult(combinedbumps.size());
     }
 
-    private void makeBumpsAndPush(Workspace workspace, Set<Bump> bumps, String branchName) {
+    private void makeBumpsAndPush(Set<Bump> bumps, String branchName) {
         for (Bump bump : bumps) {
             BumpUseCase.builder()
                     .dependencyBumper(config.getDependencyBumper())

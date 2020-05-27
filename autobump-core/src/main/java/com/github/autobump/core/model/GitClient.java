@@ -10,4 +10,6 @@ public interface GitClient {
     CommitResult commitToExistingBranch(Workspace workspace, Bump bump, String branchName);
 
     AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName);
+
+    DeleteBrancheResult deleteBranche(Workspace workspace, String branchName);
 }

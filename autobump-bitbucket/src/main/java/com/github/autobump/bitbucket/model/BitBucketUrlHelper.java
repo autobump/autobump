@@ -9,7 +9,7 @@ public class BitBucketUrlHelper implements UrlHelper {
     private static final Pattern OWNER_REPO_PATTERN =
             Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.git$");
     private static final Pattern PULL_REQUEST_PATTERN =
-            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\/(.*)\\/(.*)\\d$");
+            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\/(.*)\\/(.*)$");
 
     @Override
     public String getOwnerName(String repositoryUrl){

@@ -74,16 +74,29 @@ class RebaseUseCaseTest {
     @BeforeEach
     void setUp() throws URISyntaxException {
         createRebaseUseCases();
-        lenient().when(gitClientWithoutConflict.clone(any())).thenReturn(workspace);
-        lenient().when(gitClientWithoutConflict.rebaseBranchFromMaster(any(), any()))
-                .thenReturn(new AutoBumpRebaseResult(false));
-        lenient().when(gitClientWithConflict.rebaseBranchFromMaster(any(), any()))
-                .thenReturn(new AutoBumpRebaseResult(true));
-        when(urlHelper.getOwnerName(anyString())).thenReturn("test");
-        when(urlHelper.getRepoName(anyString())).thenReturn("test");
+        setupGitClientMocks();
+        setupUrlHelperMocks();
+        setupPullRequestMocks();
+    }
+
+    private void setupPullRequestMocks() {
         Set<PullRequest> prs = createDummyPullRequests();
         when(gitProvider.getOpenPullRequests("test", "test"))
                 .thenReturn(prs);
+    }
+
+    private void setupUrlHelperMocks() {
+        when(urlHelper.getOwnerName(anyString())).thenReturn("test");
+        when(urlHelper.getRepoName(anyString())).thenReturn("test");
+    }
+
+    private void setupGitClientMocks() {
+        lenient().when(gitClientWithoutConflict.clone(any())).thenReturn(workspace);
+        lenient().when(gitClientWithoutConflict.rebaseBranchFromMaster(any(), any()))
+                .thenReturn(new AutoBumpRebaseResult(false));
+        lenient().when(gitClientWithConflict.clone(any())).thenReturn(workspace);
+        lenient().when(gitClientWithConflict.rebaseBranchFromMaster(any(), any()))
+                .thenReturn(new AutoBumpRebaseResult(true));
     }
 
     private void createRebaseUseCases() throws URISyntaxException {
