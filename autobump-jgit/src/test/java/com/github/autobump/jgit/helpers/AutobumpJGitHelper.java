@@ -35,6 +35,7 @@ public class AutobumpJGitHelper {
     public static final String TEST_PASSWORD = "test";
     public static final String TEST_VNUMBER = "2.0.0";
     public static final String WORKSPACEROOT_INVALID = "test/test/test";
+    public static final String TEST_EXCEPTION_MESSAGE = "the test operation failed";
     public static Server server;
 
     public static void startServer(String dependencyType) throws IOException, GitAPIException {

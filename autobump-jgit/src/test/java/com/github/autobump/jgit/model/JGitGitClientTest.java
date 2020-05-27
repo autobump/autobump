@@ -1,7 +1,6 @@
 package com.github.autobump.jgit.model;
 
 import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.DeleteBranchResult;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import org.eclipse.jgit.api.Git;
@@ -24,6 +23,7 @@ import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.MAVENTYPE;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_LONG;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_SHORT;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTREPO_URL;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_EXCEPTION_MESSAGE;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_PASSWORD;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_USERNAME;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_VNUMBER;
@@ -63,8 +63,7 @@ class JGitGitClientTest {
         startServer(MAVENTYPE);
         Workspace workspace = client.clone(new URI(TESTREPO_URL));
         try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
-            Bump bump = createBumpForTest(TEST_VNUMBER);
-            client.commitToNewBranch(workspace, bump);
+            client.commitToNewBranch(workspace, createBumpForTest(TEST_VNUMBER));
             int numberOfBranches = git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().size();
             client.deleteBranch(workspace,TESTBRANCHNAME_SHORT);
             assertThat(git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().size())
@@ -83,7 +82,7 @@ class JGitGitClientTest {
 
             @Override
             public void pushDeleteChanges(Git git, RefSpec refSpec) throws GitAPIException {
-                throw new CanceledException("The call was cancelled");
+                throw new CanceledException(TEST_EXCEPTION_MESSAGE);
             }
         }
 
@@ -137,12 +136,12 @@ class JGitGitClientTest {
             @Override
             public String commitAndPushToBranch(Git git,
                                                 Bump bump) throws GitAPIException {
-                throw new CanceledException("The call was cancelled");
+                throw new CanceledException(TEST_EXCEPTION_MESSAGE);
             }
 
             @Override
             public String createBranch(Git git, Bump bump) throws GitAPIException {
-                throw new CanceledException("The call was cancelled");
+                throw new CanceledException(TEST_EXCEPTION_MESSAGE);
             }
 
         }
@@ -189,12 +188,12 @@ class JGitGitClientTest {
             @Override
             public String commitAndPushToBranch(Git git,
                                                 Bump bump) throws GitAPIException {
-                throw new CanceledException("The call was cancelled");
+                throw new CanceledException(TEST_EXCEPTION_MESSAGE);
             }
 
             @Override
             public String createBranch(Git git, Bump bump) throws GitAPIException {
-                throw new CanceledException("The call was cancelled");
+                throw new CanceledException(TEST_EXCEPTION_MESSAGE);
             }
         }
 

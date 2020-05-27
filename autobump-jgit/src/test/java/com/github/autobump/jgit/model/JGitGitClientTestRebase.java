@@ -23,6 +23,7 @@ import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.MAVENTYPE;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_LONG;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_SHORT;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTREPO_URL;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_EXCEPTION_MESSAGE;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_PASSWORD;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_USERNAME;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_VNUMBER;
@@ -91,7 +92,7 @@ class JGitGitClientTestRebase {
             @Override
             public AutoBumpRebaseResult getAutoBumpRebaseResult(String branchName, Git git)
                     throws GitAPIException, IOException {
-                throw new CanceledException("The call was cancelled");
+                throw new CanceledException(TEST_EXCEPTION_MESSAGE);
             }
         }
 
