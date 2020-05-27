@@ -9,6 +9,7 @@ import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
+import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.jgit.model.JGitGitClient;
@@ -57,15 +58,18 @@ public class Autobump implements Callable<AutobumpResult> {
     }
 
     public AutobumpUseCase getAutobumpUseCase() {
-        return AutobumpUseCase.builder()
+        UseCaseConfiguration config = UseCaseConfiguration.builder()
+                .gitClient(gitClient)
                 .dependencyBumper(dependencyBumper)
                 .dependencyResolver(dependencyResolver)
-                .gitClient(gitClient)
                 .gitProvider(gitProvider)
-                .urlHelper(new BitBucketUrlHelper())
-                .uri(properties.getUrl())
                 .versionRepository(versionRepository)
+                .urlHelper(new BitBucketUrlHelper())
                 .ignoreRepository(ignoreRepository)
+                .build();
+        return AutobumpUseCase.builder()
+                .config(config)
+                .uri(properties.getUrl())
                 .build();
     }
 }

@@ -46,9 +46,9 @@ class PullRequestUseCaseTest {
         bump = new Bump(Dependency.builder()
                 .group("testGroup")
                 .name("testName")
-                .version(new TestVersion("tetversion"))
+                .version(new TestVersion("testversion"))
                 .build(),
-                new TestVersion("heyehey"));
+                new TestVersion("heyhey"));
     }
 
     private void setUpMocks() {

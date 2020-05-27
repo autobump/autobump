@@ -6,4 +6,10 @@ public interface GitClient {
     Workspace clone(URI uri);
 
     CommitResult commitToNewBranch(Workspace workspace, Bump bump);
+
+    CommitResult commitToExistingBranch(Workspace workspace, Bump bump, String branchName);
+
+    AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName);
+
+    DeleteBranchResult deleteBranch(Workspace workspace, String branchName);
 }

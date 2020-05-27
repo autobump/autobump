@@ -7,6 +7,7 @@ import lombok.NonNull;
 @Data
 @Builder
 public class PullRequest {
+    int pullRequestId;
     @NonNull
     final String title;
     @NonNull
