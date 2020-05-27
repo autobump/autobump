@@ -19,20 +19,6 @@ public class PullRequestUseCase {
     private final URI uri;
     private final Bump bump;
 
-
-    public PullRequestUseCase(GitProvider gitProvider,
-                              GitClient gitClient,
-                              UrlHelper urlHelper,
-                              Workspace workspace,
-                              URI uri, Bump bump) {
-        this.gitProvider = gitProvider;
-        this.gitClient = gitClient;
-        this.urlHelper = urlHelper;
-        this.workspace = workspace;
-        this.uri = uri;
-        this.bump = bump;
-    }
-
     public void doPullRequest() {
         var commitResult =
                 gitClient.commitToNewBranch(workspace, bump);

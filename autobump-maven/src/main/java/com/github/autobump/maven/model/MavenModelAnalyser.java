@@ -9,7 +9,10 @@ import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
+import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,11 +53,25 @@ public class MavenModelAnalyser {
         Matcher matcher = VERSION_PROPERTY_PATTERN.matcher(pluginVersionData);
         if (!matcher.matches()) {
             returnVersion = pluginVersionData;
-        }else if (profile.getProperties().getProperty(matcher.group(1)) == null) {
+        } else if (profile.getProperties().getProperty(matcher.group(1)) == null) {
             returnVersion = model.getProperties().getProperty(matcher.group(1));
-        }else {
+        } else {
             returnVersion = profile.getProperties().getProperty(matcher.group(1));
         }
         return returnVersion;
+    }
+
+    public String getScmUrlFromPomFile(String pomFileUrl) {
+        MavenXpp3ReaderEx reader = new MavenXpp3ReaderEx();
+        InputSource inputSource = new InputSource();
+        inputSource.setLocation(pomFileUrl);
+        try (InputStream inputStream = new URL(pomFileUrl).openStream()) {
+            Model model = reader.read(inputStream, true, inputSource);
+
+            return model.getScm().getUrl();
+
+        } catch (IOException | XmlPullParserException e) {
+            throw new DependencyParserException("Could not parse file: " + pomFileUrl, e);
+        }
     }
 }

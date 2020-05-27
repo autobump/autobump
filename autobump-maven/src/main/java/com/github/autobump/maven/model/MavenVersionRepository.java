@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -53,6 +54,12 @@ public class MavenVersionRepository implements VersionRepository {
         }
 
         return Collections.emptySet();
+    }
+
+    @Override
+    public String getScmUrlForDependencyVersion(Dependency dependency, String versionNumber) {
+        String pomFileUrl = baseUrl + "/" + dependency.getGroup().replaceAll("\\.", "/") + "/"  + dependency.getName() + "/" + versionNumber + "/" + dependency.getName() + "-" + versionNumber + ".pom";
+        return new MavenModelAnalyser().getScmUrlFromPomFile(pomFileUrl);
     }
 
     private InputStream readMavenMetaDataForDependency(Dependency dependency) {

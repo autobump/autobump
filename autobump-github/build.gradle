@@ -1,0 +1,7 @@
+version '1.0-SNAPSHOT'
+
+dependencies {
+    implementation project(':autobump-core')
+    implementation group: 'io.github.openfeign', name: 'feign-core', version : '11.0'
+    implementation group: 'io.github.openfeign', name: 'feign-jackson', version : '11.0'
+}
