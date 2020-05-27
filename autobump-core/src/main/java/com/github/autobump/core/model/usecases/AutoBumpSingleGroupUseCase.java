@@ -40,7 +40,7 @@ public class AutoBumpSingleGroupUseCase {
                 .doResolve();
         if (combinedbumps.isEmpty()) {
             config.getGitProvider().closePullRequest(pullRequest);
-            config.getGitClient().deleteBranche(workspace, pullRequest.getBranchName());
+            config.getGitClient().deleteBranch(workspace, pullRequest.getBranchName());
         }
         makeBumpsAndPush(combinedbumps, pullRequest.getBranchName());
         return new AutobumpResult(combinedbumps.size());

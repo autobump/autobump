@@ -1,12 +1,15 @@
 package com.github.autobump.jgit.model;
 
 import com.github.autobump.core.model.Bump;
+import com.github.autobump.core.model.DeleteBranchResult;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.CanceledException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.RefSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +22,12 @@ import java.nio.file.Path;
 
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.MAVENTYPE;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_LONG;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTBRANCHNAME_SHORT;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TESTREPO_URL;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_PASSWORD;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_USERNAME;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.TEST_VNUMBER;
+import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.WORKSPACEROOT_INVALID;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.createBumpForTest;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.startServer;
 import static com.github.autobump.jgit.helpers.AutobumpJGitHelper.stopServer;
@@ -54,6 +59,50 @@ class JGitGitClientTest {
     }
 
     @Test
+    void deleteBranch_shouldDeleteOneBranch() throws GitAPIException, URISyntaxException, IOException {
+        startServer(MAVENTYPE);
+        Workspace workspace = client.clone(new URI(TESTREPO_URL));
+        try (Git git = Git.open(Path.of(workspace.getProjectRoot()).toFile())) {
+            Bump bump = createBumpForTest(TEST_VNUMBER);
+            client.commitToNewBranch(workspace, bump);
+            int numberOfBranches = git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().size();
+            client.deleteBranch(workspace,TESTBRANCHNAME_SHORT);
+            assertThat(git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call().size())
+                    .isEqualTo(numberOfBranches - 1);
+        }
+        stopServer();
+    }
+
+    @Test
+    void deleteBranch_shouldThrowGitException() throws URISyntaxException, IOException, GitAPIException {
+
+        class JGitGitClientTester extends JGitGitClient {
+            JGitGitClientTester(String username, String password) {
+                super(username, password);
+            }
+
+            @Override
+            public void pushDeleteChanges(Git git, RefSpec refSpec) throws GitAPIException {
+                throw new CanceledException("The call was cancelled");
+            }
+        }
+
+        startServer(MAVENTYPE);
+        JGitGitClientTester testClient = new JGitGitClientTester(TEST_USERNAME, TEST_PASSWORD);
+        Workspace workspace = testClient.clone(new URI(TESTREPO_URL));
+        assertThatExceptionOfType(GitException.class)
+                .isThrownBy(() -> testClient.deleteBranch(workspace, TESTBRANCHNAME_SHORT));
+        stopServer();
+    }
+
+    @Test
+    void deleteBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
+        Workspace invalidWorkspace = new Workspace(WORKSPACEROOT_INVALID);
+        assertThatExceptionOfType(UncheckedIOException.class)
+                .isThrownBy(() -> client.deleteBranch(invalidWorkspace, TESTBRANCHNAME_LONG));
+    }
+
+    @Test
     void commitToNewBranch_CheckThatBranchIsAddedAndHasCorrectName()
             throws GitAPIException, IOException, URISyntaxException {
         startServer(MAVENTYPE);
@@ -71,7 +120,7 @@ class JGitGitClientTest {
 
     @Test
     void commitNewBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
-        Workspace invalidWorkspace = new Workspace("test/test/test");
+        Workspace invalidWorkspace = new Workspace(WORKSPACEROOT_INVALID);
         Bump bump = createBumpForTest(TEST_VNUMBER);
         assertThatExceptionOfType(UncheckedIOException.class)
                 .isThrownBy(() -> client.commitToNewBranch(invalidWorkspace, bump));
@@ -123,7 +172,7 @@ class JGitGitClientTest {
 
     @Test
     void commitExistingBranchForInvalidWorkspace_shouldThrowUncheckedIOException() {
-        Workspace invalidWorkspace = new Workspace("test/test/test");
+        Workspace invalidWorkspace = new Workspace(WORKSPACEROOT_INVALID);
         Bump bump = createBumpForTest(TEST_VNUMBER);
         assertThatExceptionOfType(UncheckedIOException.class)
                 .isThrownBy(() -> client.commitToExistingBranch(invalidWorkspace, bump, TESTBRANCHNAME_LONG));

@@ -11,5 +11,5 @@ public interface GitClient {
 
     AutoBumpRebaseResult rebaseBranchFromMaster(Workspace workspace, String branchName);
 
-    DeleteBrancheResult deleteBranche(Workspace workspace, String branchName);
+    DeleteBranchResult deleteBranch(Workspace workspace, String branchName);
 }
