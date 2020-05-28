@@ -5,8 +5,8 @@ import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ class PullRequestUseCaseTest {
     @Mock
     private GitClient gitClient;
     @Mock
-    private UrlHelper urlHelper;
+    private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
     private Workspace workspace;
     private URI uri;
@@ -52,16 +52,16 @@ class PullRequestUseCaseTest {
     }
 
     private void setUpMocks() {
-        when(urlHelper.getOwnerName("http://www.test.test")).thenReturn("testName");
-        when(urlHelper.getRepoName("http://www.test.test")).thenReturn("testName");
+        when(gitProviderUrlHelper.getOwnerName("http://www.test.test")).thenReturn("testName");
+        when(gitProviderUrlHelper.getRepoName("http://www.test.test")).thenReturn("testName");
         CommitResult commitResult = new CommitResult("testName", "testMessage");
         when(gitClient.commitToNewBranch(workspace, bump))
                 .thenReturn(commitResult);
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
                 .build();
         lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
     }
@@ -72,7 +72,7 @@ class PullRequestUseCaseTest {
                 PullRequestUseCase.builder()
                         .bump(bump)
                         .workspace(workspace)
-                        .urlHelper(urlHelper)
+                        .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProvider)
                         .uri(uri)

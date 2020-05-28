@@ -5,9 +5,9 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
@@ -58,7 +58,7 @@ class RebaseUseCaseTest {
     DependencyBumper dependencyBumper;
 
     @Mock
-    UrlHelper urlHelper;
+    GitProviderUrlHelper gitProviderUrlHelper;
 
     @Mock
     VersionRepository versionRepository;
@@ -86,8 +86,8 @@ class RebaseUseCaseTest {
     }
 
     private void setupUrlHelperMocks() {
-        when(urlHelper.getOwnerName(anyString())).thenReturn("test");
-        when(urlHelper.getRepoName(anyString())).thenReturn("test");
+        when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
+        when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
     }
 
     private void setupGitClientMocks() {
@@ -106,7 +106,7 @@ class RebaseUseCaseTest {
                 .dependencyResolver(dependencyResolver)
                 .gitProvider(gitProvider)
                 .ignoreRepository(ignoreRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .versionRepository(versionRepository)
                 .build();
 
@@ -121,7 +121,7 @@ class RebaseUseCaseTest {
                 .dependencyResolver(dependencyResolver)
                 .gitProvider(gitProvider)
                 .ignoreRepository(ignoreRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .versionRepository(versionRepository)
                 .build();
 

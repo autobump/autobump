@@ -1,11 +1,11 @@
 package com.github.autobump.bitbucket.model;
 
-import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BitBucketUrlHelper implements UrlHelper {
+public class BitBucketGitProviderUrlHelper implements GitProviderUrlHelper {
     private static final Pattern OWNER_REPO_PATTERN =
             Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.git$");
     private static final Pattern PULL_REQUEST_PATTERN =

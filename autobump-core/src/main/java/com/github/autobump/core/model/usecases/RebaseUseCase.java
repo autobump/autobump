@@ -17,8 +17,8 @@ public class RebaseUseCase {
 
     public void handlePushEvent() {
         List<PullRequest> pullRequests = getOpenPullRequests(
-                config.getUrlHelper().getOwnerName(event.getUri().toString()),
-                config.getUrlHelper().getRepoName(event.getUri().toString()));
+                config.getGitProviderUrlHelper().getOwnerName(event.getUri().toString()),
+                config.getGitProviderUrlHelper().getRepoName(event.getUri().toString()));
         Workspace workspace = config.getGitClient().clone(event.getUri());
         for (PullRequest p : pullRequests) {
             if (config.getGitClient().rebaseBranchFromMaster(workspace, p.getBranchName()).isConflicted()) {

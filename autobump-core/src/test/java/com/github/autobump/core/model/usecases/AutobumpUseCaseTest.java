@@ -7,9 +7,9 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -48,7 +48,7 @@ class AutobumpUseCaseTest {
     @Mock
     private DependencyBumper dependencyBumper;
     @Mock
-    private UrlHelper urlHelper;
+    private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
     private PullRequest pullRequest;
     @Mock
@@ -67,7 +67,7 @@ class AutobumpUseCaseTest {
         dependencyList = createDependencies();
         config = UseCaseConfiguration.builder()
                 .ignoreRepository(ignoreRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .versionRepository(versionRepository)
                 .gitProvider(gitProvider)
                 .dependencyResolver(dependencyResolver)
@@ -109,8 +109,8 @@ class AutobumpUseCaseTest {
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString())).build();
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString())).build();
         Mockito.lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(false);
     }
@@ -163,8 +163,8 @@ class AutobumpUseCaseTest {
     }
 
     private void setupUrlHelper() {
-        when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
-        when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        when(gitProviderUrlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        when(gitProviderUrlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
     }
 
     private void setUpGitClassesMocks_forTestCombinedBumps() {
@@ -178,8 +178,8 @@ class AutobumpUseCaseTest {
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
                 .build();
         Mockito.lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
     }

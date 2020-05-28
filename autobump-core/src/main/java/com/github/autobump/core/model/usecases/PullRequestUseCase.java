@@ -3,8 +3,8 @@ package com.github.autobump.core.model.usecases;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 
@@ -14,7 +14,7 @@ import java.net.URI;
 public class PullRequestUseCase {
     private final GitProvider gitProvider;
     private final GitClient gitClient;
-    private final UrlHelper urlHelper;
+    private final GitProviderUrlHelper gitProviderUrlHelper;
     private final Workspace workspace;
     private final URI uri;
     private final Bump bump;
@@ -25,8 +25,8 @@ public class PullRequestUseCase {
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(bump.getTitle())
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
                 .build();
         makePullRequest(pullRequest);
     }

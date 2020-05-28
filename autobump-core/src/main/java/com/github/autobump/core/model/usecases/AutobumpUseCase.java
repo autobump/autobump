@@ -46,7 +46,7 @@ public class AutobumpUseCase {
                     .uri(uri)
                     .gitProvider(config.getGitProvider())
                     .gitClient(config.getGitClient())
-                    .urlHelper(config.getUrlHelper())
+                    .gitProviderUrlHelper(config.getGitProviderUrlHelper())
                     .workspace(workspace)
                     .bump(bump)
                     .build()

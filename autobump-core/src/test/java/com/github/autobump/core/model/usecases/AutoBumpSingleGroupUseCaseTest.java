@@ -5,9 +5,9 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -47,7 +47,7 @@ class AutoBumpSingleGroupUseCaseTest {
     @Mock
     private DependencyBumper dependencyBumper;
     @Mock
-    private UrlHelper urlHelper;
+    private GitProviderUrlHelper gitProviderUrlHelper;
 
     @Mock
     private IgnoreRepository ignoreRepository;
@@ -76,7 +76,7 @@ class AutoBumpSingleGroupUseCaseTest {
                 .gitClient(gitClient)
                 .gitProvider(gitProvider)
                 .versionRepository(versionRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .ignoreRepository(ignoreRepository)
                 .build();
     }

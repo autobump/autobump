@@ -3,9 +3,9 @@ package com.github.autobump.bitbucket.model;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
-import com.github.autobump.core.model.UrlHelper;
 import feign.Feign;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class BitBucketGitProvider implements GitProvider {
     private final String apiUrl;
     private final BitBucketApi client;
-    private final UrlHelper bitBucketUrlHelper;
+    private final GitProviderUrlHelper bitBucketGitProviderUrlHelper;
 
     public BitBucketGitProvider(BitBucketAccount user, String apiUrl) {
         this.apiUrl = apiUrl;
@@ -29,7 +29,7 @@ public class BitBucketGitProvider implements GitProvider {
                 .requestInterceptor(new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()))
                 .errorDecoder(new BitBucketErrorDecoder())
                 .target(BitBucketApi.class, apiUrl);
-        bitBucketUrlHelper = new BitBucketUrlHelper();
+        bitBucketGitProviderUrlHelper = new BitBucketGitProviderUrlHelper();
     }
 
     @Override
@@ -53,12 +53,12 @@ public class BitBucketGitProvider implements GitProvider {
         return client.getOpenPullRequests(repoOwner, repoName)
                 .getValues()
                 .stream().map(d -> PullRequest.builder()
-                .pullRequestId(bitBucketUrlHelper.getPullRequestId(d.getLink()))
-                .repoName(repoName)
-                .repoOwner(repoOwner)
-                .title(d.getTitle())
-                .branchName(parseBranchName(d))
-                .build())
+                        .pullRequestId(bitBucketGitProviderUrlHelper.getPullRequestId(d.getLink()))
+                        .repoName(repoName)
+                        .repoOwner(repoOwner)
+                        .title(d.getTitle())
+                        .branchName(parseBranchName(d))
+                        .build())
                 .collect(Collectors.toUnmodifiableSet());
     }
 

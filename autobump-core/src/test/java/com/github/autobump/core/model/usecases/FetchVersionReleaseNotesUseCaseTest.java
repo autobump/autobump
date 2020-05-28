@@ -2,6 +2,7 @@ package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,15 +11,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 class FetchVersionReleaseNotesUseCaseTest {
 
     @Mock
     private VersionRepository versionRepository;
+
+    @Mock
+    private ReleaseNotesSource releaseNotesSource;
 
     private Bump bump;
 
@@ -35,22 +40,42 @@ class FetchVersionReleaseNotesUseCaseTest {
                 new FetchVersionReleaseNotesUseCaseTest.TestVersion("2.2.4.RELEASE"));
     }
 
-    private void setupVersionRepositoryMock() {
-        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
-                .thenReturn("https://repo1.maven.org/maven2/org/springframework/boot/spring-boot-dependencies" +
-                        "/2.2.4.RELEASE/spring-boot-dependencies-2.2.4.RELEASE.pom");
-    }
-
     @Test
-    void fetchVersionReleaseNotes() {
+    void fetchVersionReleaseNotes_supportedReleaseNotesSource_github() {
         initializeTestBump();
         setupVersionRepositoryMock();
         String result = FetchVersionReleaseNotesUseCase.builder()
                 .bump(bump)
                 .versionRepository(versionRepository)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .fetchVersionReleaseNotes();
-        System.out.println(result);
+        assertThat(result).isEqualTo("RELEASE NOTES\nRelease not sample text\n");
+    }
+
+    @Test
+    void fetchVersionReleaseNotes_unsupportedReleaseNotesSource_gitlab() {
+        initializeTestBump();
+        setupNoResultVersionRepositoryMock();
+        String result = FetchVersionReleaseNotesUseCase.builder()
+                .bump(bump)
+                .versionRepository(versionRepository)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .fetchVersionReleaseNotes();
+        assertThat(result).isEqualTo("");
+    }
+
+    private void setupVersionRepositoryMock() {
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn("https://github.com/spring-projects/spring-boot");
+        when(releaseNotesSource.getReleaseNotes(any(),any()))
+                .thenReturn("RELEASE NOTES\nRelease not sample text");
+    }
+
+    private void setupNoResultVersionRepositoryMock() {
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn("https://gitlab.com/spring-projects/spring-boot");
     }
 
     private static class TestVersion implements Version {

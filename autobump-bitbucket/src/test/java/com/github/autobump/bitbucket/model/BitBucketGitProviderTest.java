@@ -1,8 +1,8 @@
 package com.github.autobump.bitbucket.model;
 
-import com.github.autobump.bitbucket.exceptions.BranchNotFoundException;
-import com.github.autobump.bitbucket.exceptions.RemoteNotFoundException;
-import com.github.autobump.bitbucket.exceptions.UnauthorizedException;
+import com.github.autobump.bitbucket.exceptions.BitbucketBadRequestException;
+import com.github.autobump.bitbucket.exceptions.BitbucketNotFoundException;
+import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -98,7 +98,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThatExceptionOfType(RemoteNotFoundException.class)
+        assertThatExceptionOfType(BitbucketNotFoundException.class)
                 .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
@@ -110,7 +110,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThatExceptionOfType(BranchNotFoundException.class)
+        assertThatExceptionOfType(BitbucketBadRequestException.class)
                 .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
@@ -122,7 +122,7 @@ class BitBucketGitProviderTest {
                 .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
-        assertThatExceptionOfType(UnauthorizedException.class)
+        assertThatExceptionOfType(BitbucketUnauthorizedException.class)
                 .isThrownBy(() -> bitBucketGitProvider.makePullRequest(pullRequest));
     }
 
