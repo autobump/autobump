@@ -61,6 +61,7 @@ public class PullRequestUseCase {
             if (parseGroupNameAndArtifactId(newPullrequest.getTitle())
                     .equals(parseGroupNameAndArtifactId(pr.getTitle()))) {
                 gitProvider.closePullRequest(pr);
+                gitClient.deleteBranch(workspace, pr.getBranchName());
                 pullRequest = pr;
             }
         }
