@@ -35,7 +35,7 @@ class FetchVersionReleaseNotesUseCaseTest {
         bump = new Bump(Dependency.builder()
                 .group("org.springframework.boot")
                 .name("spring-boot-dependencies")
-                .version(new FetchVersionReleaseNotesUseCaseTest.TestVersion("oldVersionNumber"))
+                .version(new FetchVersionReleaseNotesUseCaseTest.TestVersion("1.0.0"))
                 .build(),
                 new FetchVersionReleaseNotesUseCaseTest.TestVersion("2.2.4.RELEASE"));
     }
@@ -50,7 +50,9 @@ class FetchVersionReleaseNotesUseCaseTest {
                 .releaseNotesSource(releaseNotesSource)
                 .build()
                 .fetchVersionReleaseNotes();
-        assertThat(result).isEqualTo("RELEASE NOTES\nRelease not sample text\n");
+        assertThat(result).isEqualTo("# :pencil: Autobump found release notes for" +
+                " org.springframework.boot:spring-boot-dependencies 2.2.4.RELEASE\n\n" +
+                "> RELEASE NOTES\n> Release notes sample text\n");
     }
 
     @Test
@@ -70,7 +72,7 @@ class FetchVersionReleaseNotesUseCaseTest {
         when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
                 .thenReturn("https://github.com/spring-projects/spring-boot");
         when(releaseNotesSource.getReleaseNotes(any(),any()))
-                .thenReturn("RELEASE NOTES\nRelease not sample text");
+                .thenReturn("RELEASE NOTES\nRelease notes sample text");
     }
 
     private void setupNoResultVersionRepositoryMock() {

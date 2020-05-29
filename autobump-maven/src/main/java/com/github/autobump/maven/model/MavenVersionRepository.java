@@ -57,7 +57,14 @@ public class MavenVersionRepository implements VersionRepository {
 
     @Override
     public String getScmUrlForDependencyVersion(Dependency dependency, String versionNumber) {
-        String pomFileUrl = baseUrl + "/" + dependency.getGroup().replaceAll("\\.", "/") + "/"  + dependency.getName() + "/" + versionNumber + "/" + dependency.getName() + "-" + versionNumber + ".pom";
+        String pomFileUrl = String.format("%s/%s/%s/%s/%s-%s.pom",
+                baseUrl,
+                dependency.getGroup().replaceAll("\\.", "/"),
+                dependency.getName(),
+                versionNumber,
+                dependency.getName(),
+                versionNumber
+        );
         return new MavenModelAnalyser().getScmUrlFromPomFile(pomFileUrl);
     }
 

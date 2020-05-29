@@ -20,11 +20,22 @@ public class FetchVersionReleaseNotesUseCase {
             String scmUrl = versionRepository
                     .getScmUrlForDependencyVersion(dependency, bump.getUpdatedVersion().getVersionNumber());
             if (scmUrl.toLowerCase(Locale.ROOT).startsWith("https://github.com/")) {
-                versionReleasenotes
-                        .append(releaseNotesSource.getReleaseNotes(scmUrl, bump.getUpdatedVersion().getVersionNumber()))
-                        .append('\n');
+                appendVersionReleaseNotes(versionReleasenotes, dependency, scmUrl);
             }
         }
         return versionReleasenotes.toString();
+    }
+
+    private void appendVersionReleaseNotes(StringBuilder versionReleasenotes, Dependency dependency, String scmUrl) {
+        versionReleasenotes.append("# :pencil: Autobump found release notes for ")
+                .append(dependency.getGroup())
+                .append(':')
+                .append(dependency.getName())
+                .append(' ')
+                .append(bump.getUpdatedVersion().getVersionNumber())
+                .append("\n\n> ")
+                .append(releaseNotesSource.getReleaseNotes(scmUrl, bump.getUpdatedVersion().getVersionNumber())
+                        .replace("\n", "\n> "))
+                .append('\n');
     }
 }
