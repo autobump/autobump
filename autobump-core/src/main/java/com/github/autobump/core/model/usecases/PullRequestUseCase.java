@@ -45,23 +45,25 @@ public class PullRequestUseCase {
                 .repoName(urlHelper.getRepoName(uri.toString()))
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
-        PullRequest closedPullRequest = closeOpenPullRequest(pullRequest);
         PullRequestResponse newPullRequest = makePullRequest(pullRequest);
-        if (closedPullRequest != null) {
-            addCommentToDeclinedPullRequest(newPullRequest.getLink(), closedPullRequest);
+        PullRequest pr = pullRequestThatShouldBeClosed(pullRequest);
+        if (pr != null) {
+            addCommentToDeclinedPullRequest(newPullRequest.getLink(), pr);
+            gitClient.deleteBranch(workspace, pr.getBranchName());
+            gitProvider.closePullRequest(pr);
         }
     }
 
-    private PullRequest closeOpenPullRequest(PullRequest newPullrequest) {
-        List<PullRequest> openPullrequests =
-                getOpenPullRequests(newPullrequest.getRepoName(), newPullrequest.getRepoOwner());
+    private PullRequest pullRequestThatShouldBeClosed(PullRequest newPullRequest){
         PullRequest pullRequest = null;
-        for (PullRequest pr : openPullrequests
+        for (PullRequest pr : getOpenPullRequests(newPullRequest.getRepoOwner(), newPullRequest.getRepoName())
         ) {
-            if (parseGroupNameAndArtifactId(newPullrequest.getTitle())
-                    .equals(parseGroupNameAndArtifactId(pr.getTitle()))) {
-                gitProvider.closePullRequest(pr);
-                gitClient.deleteBranch(workspace, pr.getBranchName());
+            var el1 = parseGroupAndArtifactId(newPullRequest.getTitle());
+            var el2 = parseGroupAndArtifactId(pr.getTitle());
+            var el3 = parseVersionNumber(newPullRequest.getTitle());
+            var el4 = parseVersionNumber(pr.getTitle());
+            if (el1.equals(el2)
+                    && !el3.equals(el4)){
                 pullRequest = pr;
             }
         }
@@ -69,12 +71,17 @@ public class PullRequestUseCase {
     }
 
     private void addCommentToDeclinedPullRequest(String link, PullRequest pr) {
-        gitProvider.commentPullRequest(pr, "This PR has been superseded by a new PR: " + link);
+        gitProvider.commentPullRequest(pr, "Autobump has superseded this PR by a new one: " + link);
     }
 
-    private String parseGroupNameAndArtifactId(String title) {
+    private String parseGroupAndArtifactId(String title) {
         String[] elements = title.split(" ");
         return elements[1];
+    }
+
+    private String parseVersionNumber(String title) {
+        String[] elements = title.split(" ");
+        return elements[elements.length-1];
     }
 
     private List<PullRequest> getOpenPullRequests(String repoOwner, String repoName) {

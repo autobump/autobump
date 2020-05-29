@@ -4,5 +4,12 @@ import lombok.Value;
 
 @Value
 public class CommentDto {
-    String comment;
+    Content content;
+
+    @Value
+    public static class Content{
+        String raw;
+    }
+
+
 }
