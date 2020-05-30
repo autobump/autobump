@@ -10,9 +10,4 @@ interface GithubApi {
     @RequestLine("GET /repos/{repoOwner}/{repoName}/releases")
     Set<VersionInformationDto> getAllReleaseNotes(@Param("repoOwner") String repoOwner,
                                                   @Param("repoName") String repoName);
-
-    @RequestLine("GET /repos/{repoOwner}/{repoName}/releases/tags/{versionTag}")
-    VersionInformationDto getReleaseNotes(@Param("repoOwner") String repoOwner,
-                                          @Param("repoName") String repoName,
-                                          @Param("versionTag") String versionTag);
 }

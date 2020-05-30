@@ -12,14 +12,20 @@ public class GithubUrlHelper implements ReleaseNotesUrlHelper {
     @Override
     public String getOwnerName(String repositoryUrl) {
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
-        matcher.matches();
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException(
+                    String.format("Unable to extract owner name from %s", repositoryUrl));
+        }
         return matcher.group(2);
     }
 
     @Override
     public String getRepoName(String repositoryUrl) {
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
-        matcher.matches();
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException(
+                    String.format("Unable to extract repository name from %s", repositoryUrl));
+        }
         return matcher.group(3);
     }
 }

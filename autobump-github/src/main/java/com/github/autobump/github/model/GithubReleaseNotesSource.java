@@ -2,7 +2,7 @@ package com.github.autobump.github.model;
 
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.ReleaseNotesUrlHelper;
-import com.github.autobump.github.model.dtos.VersionInformationDto;
+import com.github.autobump.core.model.usecases.ReleaseNotes;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import lombok.extern.slf4j.Slf4j;
@@ -25,16 +25,16 @@ public class GithubReleaseNotesSource implements ReleaseNotesSource {
     }
 
     @Override
-    public String getReleaseNotes(String projectUrl, String versionNumber) {
-        StringBuilder releaseNotes = new StringBuilder();
+    public ReleaseNotes getReleaseNotes(String projectUrl, String versionNumber) {
         String ownerName = releaseNotesUrlHelper.getOwnerName(projectUrl);
         String repoName = releaseNotesUrlHelper.getRepoName(projectUrl);
-        githubApi.getAllReleaseNotes(ownerName, repoName).stream()
+        return githubApi.getAllReleaseNotes(ownerName, repoName).stream()
                 .filter(versionInformationDto -> versionInformationDto.getTagName().endsWith(versionNumber))
-                .map(VersionInformationDto::getTagName)
+                .map(versionInformationDto ->
+                        new ReleaseNotes(versionInformationDto.getHtmlUrl(),
+                                versionInformationDto.getTagName(),
+                                versionInformationDto.getBody()))
                 .findFirst()
-                .ifPresent(versionTag ->
-                        releaseNotes.append(githubApi.getReleaseNotes(ownerName, repoName, versionTag).getBody()));
-        return releaseNotes.toString();
+                .orElse(null);
     }
 }
