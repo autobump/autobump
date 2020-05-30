@@ -1,6 +1,6 @@
 package com.github.autobump.bitbucket.model;
 
-import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,47 +8,47 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BitBucketUrlHelperTest {
-    private String url;
-    private String nonMatchingUrl;
-    private String prUrl;
-    private UrlHelper urlHelper;
+    private static final String TEST_URL = "https://SchroGlenn@bitbucket.org/grietvermeesch/testmavenproject.git";
+    private static final String TEST_NONMATCHING_URL = "https://this_is_a_non-matching_url.com";
+    private static final String TEST_PR_URL
+            = "https://bitbucket.org/grietvermeesch/simplemultimoduletestproject/pull-requests/21";
+    private GitProviderUrlHelper gitProviderUrlHelper;
 
     @BeforeEach
     void setUp() {
-        url = "https://SchroGlenn@bitbucket.org/grietvermeesch/testmavenproject.git";
-        nonMatchingUrl = "https://this_is_a_non-matching_url.com";
-        prUrl = "https://bitbucket.org/grietvermeesch/simplemultimoduletestproject/pull-requests/21";
-        urlHelper = new BitBucketUrlHelper();
+        gitProviderUrlHelper = new BitBucketGitProviderUrlHelper();
     }
 
     @Test
     void getOwnerName() {
-        assertThat(urlHelper.getOwnerName(url)).isEqualTo("grietvermeesch");
+        assertThat(gitProviderUrlHelper.getOwnerName(TEST_URL)).isEqualTo("grietvermeesch");
     }
 
     @Test
     void GetOwnerName_shouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> urlHelper.getOwnerName(nonMatchingUrl)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() ->
+                gitProviderUrlHelper.getOwnerName(TEST_NONMATCHING_URL)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void getRepoName() {
-        assertThat(urlHelper.getRepoName(url)).isEqualTo("testmavenproject");
+        assertThat(gitProviderUrlHelper.getRepoName(TEST_URL)).isEqualTo("testmavenproject");
     }
 
     @Test
     void GetRepoName_shouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> urlHelper.getRepoName(nonMatchingUrl)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() ->
+                gitProviderUrlHelper.getRepoName(TEST_NONMATCHING_URL)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void GetPullrequestId() {
-        assertThat(urlHelper.getPullRequestId(prUrl)).isEqualTo(21);
+        assertThat(gitProviderUrlHelper.getPullRequestId(TEST_PR_URL)).isEqualTo(21);
     }
 
     @Test
     void GetPullRequestIdWithNonMatchingUrl_shouldThrowIllegalArgumentException() {
-        assertThatThrownBy(() -> urlHelper.getPullRequestId(nonMatchingUrl))
+        assertThatThrownBy(() -> gitProviderUrlHelper.getPullRequestId(TEST_NONMATCHING_URL))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
