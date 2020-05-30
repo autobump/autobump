@@ -9,9 +9,11 @@ import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
+import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
+import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
@@ -31,6 +33,7 @@ public class Autobump implements Callable<AutobumpResult> {
     AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
+    private final ReleaseNotesSource releaseNotesSource = new GithubReleaseNotesSource();
     private VersionRepository versionRepository;
     private GitClient gitClient;
     private GitProvider gitProvider;
@@ -70,6 +73,7 @@ public class Autobump implements Callable<AutobumpResult> {
         return AutobumpUseCase.builder()
                 .config(config)
                 .uri(properties.getUrl())
+                .releaseNotesSource(releaseNotesSource)
                 .build();
     }
 }

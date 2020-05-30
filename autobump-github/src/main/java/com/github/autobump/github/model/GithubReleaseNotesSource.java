@@ -2,9 +2,12 @@ package com.github.autobump.github.model;
 
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.ReleaseNotesUrlHelper;
+import com.github.autobump.github.model.dtos.VersionInformationDto;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class GithubReleaseNotesSource implements ReleaseNotesSource {
     private final GithubApi githubApi;
     private final ReleaseNotesUrlHelper releaseNotesUrlHelper;
@@ -23,9 +26,15 @@ public class GithubReleaseNotesSource implements ReleaseNotesSource {
 
     @Override
     public String getReleaseNotes(String projectUrl, String versionNumber) {
-        return githubApi.getReleaseNotes(releaseNotesUrlHelper.getOwnerName(projectUrl),
-                releaseNotesUrlHelper.getRepoName(projectUrl),
-                versionNumber)
-                .getBody();
+        StringBuilder releaseNotes = new StringBuilder();
+        String ownerName = releaseNotesUrlHelper.getOwnerName(projectUrl);
+        String repoName = releaseNotesUrlHelper.getRepoName(projectUrl);
+        githubApi.getAllReleaseNotes(ownerName, repoName).stream()
+                .filter(versionInformationDto -> versionInformationDto.getTagName().endsWith(versionNumber))
+                .map(VersionInformationDto::getTagName)
+                .findFirst()
+                .ifPresent(versionTag ->
+                        releaseNotes.append(githubApi.getReleaseNotes(ownerName, repoName, versionTag).getBody()));
+        return releaseNotes.toString();
     }
 }

@@ -11,6 +11,7 @@ import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -54,6 +55,8 @@ class AutobumpUseCaseTest {
     private PullRequest pullRequest;
     @Mock
     private IgnoreRepository ignoreRepository;
+    @Mock
+    private ReleaseNotesSource releaseNotesSource;
     private URI uri;
     private final Workspace workspace = new Workspace("");
     private TestVersion tv;
@@ -123,6 +126,7 @@ class AutobumpUseCaseTest {
         var result = AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -134,6 +138,7 @@ class AutobumpUseCaseTest {
         var result = AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(any());
@@ -147,6 +152,7 @@ class AutobumpUseCaseTest {
         var result = AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);

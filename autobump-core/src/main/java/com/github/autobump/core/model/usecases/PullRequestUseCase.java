@@ -22,7 +22,7 @@ public class PullRequestUseCase {
     private final URI uri;
     private final Bump bump;
 
-    public void doPullRequest() {
+    public PullRequestResponse doPullRequest() {
         var commitResult =
                 gitClient.commitToNewBranch(workspace, bump);
         PullRequest pullRequest = PullRequest.builder()
@@ -38,6 +38,7 @@ public class PullRequestUseCase {
             gitClient.deleteBranch(workspace, pr.getBranchName());
             gitProvider.closePullRequest(pr);
         }
+        return response;
     }
 
     private PullRequest getPullRequestThatShouldBeSuperSeded(PullRequest newPullRequest, int newPullrequestId){
