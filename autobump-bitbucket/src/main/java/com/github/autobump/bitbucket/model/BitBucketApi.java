@@ -1,5 +1,6 @@
 package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestListDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
@@ -22,5 +23,13 @@ interface BitBucketApi {
     void closePullRequest(@Param("repoOwner") String repoOwner,
                           @Param("repoName") String repoName,
                           @Param("pullRequestId") String pullRequestId);
+
+    @SuppressWarnings({"checkstyle:parameternumber"})
+    @RequestLine("POST /repositories/{repoOwner}/{repoName}/pullrequests/{pullRequestId}/comments")
+    @Headers("Content-Type: application/json")
+    void commentPullRequest(@Param("repoOwner") String repoOwner,
+                            @Param("repoName") String repoName,
+                            @Param("pullRequestId") String pullRequestId,
+                            CommentDto commentDto);
 }
 

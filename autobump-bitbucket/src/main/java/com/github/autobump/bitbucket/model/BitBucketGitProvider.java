@@ -1,5 +1,6 @@
 package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import com.github.autobump.core.model.GitProvider;
@@ -52,7 +53,8 @@ public class BitBucketGitProvider implements GitProvider {
     public Set<PullRequest> getOpenPullRequests(String repoOwner, String repoName) {
         return client.getOpenPullRequests(repoOwner, repoName)
                 .getValues()
-                .stream().map(d -> PullRequest.builder()
+                .stream().filter(p -> p.getTitle().startsWith("Bumped"))
+                .map(d -> PullRequest.builder()
                 .pullRequestId(bitBucketUrlHelper.getPullRequestId(d.getLink()))
                 .repoName(repoName)
                 .repoOwner(repoOwner)
@@ -74,5 +76,14 @@ public class BitBucketGitProvider implements GitProvider {
         client.closePullRequest(pullRequest.getRepoOwner(),
                 pullRequest.getRepoName(),
                 String.valueOf(pullRequest.getPullRequestId()));
+    }
+
+    @Override
+    public void commentPullRequest(PullRequest pr, String comment) {
+        CommentDto dto = new CommentDto(new CommentDto.Content(comment));
+        client.commentPullRequest(pr.getRepoOwner(),
+                pr.getRepoName(),
+                String.valueOf(pr.getPullRequestId()),
+                dto);
     }
 }
