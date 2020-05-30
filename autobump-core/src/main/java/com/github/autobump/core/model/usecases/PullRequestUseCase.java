@@ -45,33 +45,33 @@ public class PullRequestUseCase {
                 .repoName(urlHelper.getRepoName(uri.toString()))
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
-        PullRequest closedPullRequest = closeOpenPullRequest(pullRequest);
-        PullRequestResponse newPullRequest = makePullRequest(pullRequest);
-        if (closedPullRequest != null) {
-            addCommentToDeclinedPullRequest(newPullRequest.getLink(), closedPullRequest);
+        PullRequestResponse response = pushPullRequest(pullRequest);
+        PullRequest pr = getPullRequestThatShouldBeSuperSeded(pullRequest, response.getId());
+        if (pr != null) {
+            addCommentToDeclinedPullRequest(response.getLink(), pr);
+            gitClient.deleteBranch(workspace, pr.getBranchName());
+            gitProvider.closePullRequest(pr);
         }
     }
 
-    private PullRequest closeOpenPullRequest(PullRequest newPullrequest) {
-        List<PullRequest> openPullrequests =
-                getOpenPullRequests(newPullrequest.getRepoName(), newPullrequest.getRepoOwner());
-        PullRequest pullRequest = null;
-        for (PullRequest pr : openPullrequests
-        ) {
-            if (parseGroupNameAndArtifactId(newPullrequest.getTitle())
-                    .equals(parseGroupNameAndArtifactId(pr.getTitle()))) {
-                gitProvider.closePullRequest(pr);
-                pullRequest = pr;
-            }
-        }
-        return pullRequest;
+    private PullRequest getPullRequestThatShouldBeSuperSeded(PullRequest newPullRequest, int newPullrequestId){
+        return getOpenPullRequests(newPullRequest.getRepoOwner(), newPullRequest.getRepoName())
+                .stream()
+                .filter(p -> p.getPullRequestId() != newPullrequestId
+                        && shouldSupersede(newPullRequest, p))
+                .findFirst()
+                .orElse(null);
     }
 
-    private void addCommentToDeclinedPullRequest(String link, PullRequest pr) {
-        gitProvider.commentPullRequest(pr, "This PR has been superseded by a new PR: " + link);
+    private boolean shouldSupersede(PullRequest newPullRequest, PullRequest pr) {
+        return parseGroupAndArtifactId(newPullRequest.getTitle()).equals(parseGroupAndArtifactId(pr.getTitle()));
     }
 
-    private String parseGroupNameAndArtifactId(String title) {
+    private void addCommentToDeclinedPullRequest(String newPrLink, PullRequest pr) {
+        gitProvider.commentPullRequest(pr, "Autobump has superseded this pull request by a new one: " + newPrLink);
+    }
+
+    private String parseGroupAndArtifactId(String title) {
         String[] elements = title.split(" ");
         return elements[1];
     }
@@ -83,7 +83,7 @@ public class PullRequestUseCase {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    private PullRequestResponse makePullRequest(PullRequest pullRequest) {
+    private PullRequestResponse pushPullRequest(PullRequest pullRequest) {
         return gitProvider.makePullRequest(pullRequest);
     }
 }

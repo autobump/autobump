@@ -42,11 +42,17 @@ class PullRequestUseCaseTest {
     @Mock
     private GitProvider gitProviderThatReturnsEmptySetOfOpenPRs;
     @Mock
+    private GitProvider gitProviderWithPrAlreadyInListOpenPullRequests;
+    @Mock
+    private GitProvider gitProviderThatReturnsNoPullRequestsToBeSuperseded;
+    @Mock
     private UrlHelper urlHelper;
     @Mock
     private Workspace workspace;
     private URI uri;
     private Bump bump;
+
+
 
     @BeforeEach
     void setUp() throws URISyntaxException {
@@ -70,16 +76,57 @@ class PullRequestUseCaseTest {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
         when(gitClient.commitToNewBranch(workspace, bump))
                 .thenReturn(commitResult);
-        lenient().when(gitProvider.getOpenPullRequests(any(), any())).thenReturn(createDummyPullRequests());
-        lenient().when(gitProviderThatReturnsEmptySetOfOpenPRs.getOpenPullRequests(any(), any()))
-                .thenReturn(Collections.emptySet());
         PullRequest pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title(commitResult.getCommitMessage())
                 .repoName(urlHelper.getRepoName(uri.toString()))
                 .repoOwner(urlHelper.getOwnerName(uri.toString()))
                 .build();
-        lenient().when(gitProvider.makePullRequest(any())).thenReturn(createPullRequestResponse(pullRequest));
+        setUpGitProviders(pullRequest);
+    }
+
+    private void setUpGitProviders(PullRequest pullRequest) {
+        lenient().when(gitProvider.getOpenPullRequests(any(), any()))
+                .thenReturn(createDummyPullRequests());
+        lenient().when(gitProviderThatReturnsEmptySetOfOpenPRs.getOpenPullRequests(any(), any()))
+                .thenReturn(Collections.emptySet());
+        lenient().when(gitProviderWithPrAlreadyInListOpenPullRequests
+                .getOpenPullRequests(any(), any()))
+                .thenReturn(createDummyPullRequestsWithNewPr());
+        lenient().when(gitProviderThatReturnsNoPullRequestsToBeSuperseded
+                .getOpenPullRequests(any(), any()))
+                .thenReturn(createDummyPullRequestNotToBeSupersededWithSameIdAsNewPullrequest());
+        lenient().when(gitProvider.makePullRequest(any()))
+                .thenReturn(createPullRequestResponse(pullRequest));
+        lenient().when(gitProviderWithPrAlreadyInListOpenPullRequests.makePullRequest(any()))
+                .thenReturn(createPullRequestResponse(pullRequest));
+        lenient().when(gitProviderThatReturnsEmptySetOfOpenPRs.makePullRequest(any()))
+                .thenReturn(createPullRequestResponse(pullRequest));
+        lenient().when(gitProviderThatReturnsNoPullRequestsToBeSuperseded.makePullRequest(any()))
+                .thenReturn(createPullRequestResponse(pullRequest));
+    }
+
+    private Set<PullRequest> createDummyPullRequestNotToBeSupersededWithSameIdAsNewPullrequest() {
+        PullRequest pr = PullRequest.builder()
+                .branchName("com.h2database:h2")
+                .title(PULL_REQUEST_TITLE_1)
+                .repoName("test")
+                .repoOwner("test")
+                .pullRequestId(5)
+                .build();
+        return Set.of(pr);
+    }
+
+    private Set<PullRequest> createDummyPullRequestsWithNewPr() {
+        Set<PullRequest> prs = createDummyPullRequests();
+        prs.add(PullRequest.builder()
+                .branchName("com.h2database:h2")
+                .title(PULL_REQUEST_TITLE_1)
+                .repoName("test")
+                .repoOwner("test")
+                .pullRequestId(5)
+                .build());
+        return prs;
     }
 
     private PullRequestResponse createPullRequestResponse(PullRequest pullRequest) {
@@ -109,6 +156,21 @@ class PullRequestUseCaseTest {
     }
 
     @Test
+    void doPullRequest_thatIsAlreadyPresentInOpenPullRequests(){
+        assertThatCode(() ->
+                PullRequestUseCase.builder()
+                        .bump(bump)
+                        .workspace(workspace)
+                        .urlHelper(urlHelper)
+                        .gitClient(gitClient)
+                        .gitProvider(gitProviderWithPrAlreadyInListOpenPullRequests)
+                        .uri(uri)
+                        .build()
+                        .doPullRequest()
+        ).doesNotThrowAnyException();
+    }
+
+    @Test
     void doPullrequest_withoutOpenPullRequests (){
         assertThatCode(() ->
                 PullRequestUseCase.builder()
@@ -117,6 +179,21 @@ class PullRequestUseCaseTest {
                         .urlHelper(urlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProviderThatReturnsEmptySetOfOpenPRs)
+                        .uri(uri)
+                        .build()
+                        .doPullRequest()
+        ).doesNotThrowAnyException();
+    }
+
+    @Test
+    void doPullrequest_withOpenPullRequestsThatDoesNotSupersede (){
+        assertThatCode(() ->
+                PullRequestUseCase.builder()
+                        .bump(bump)
+                        .workspace(workspace)
+                        .urlHelper(urlHelper)
+                        .gitClient(gitClient)
+                        .gitProvider(gitProviderThatReturnsNoPullRequestsToBeSuperseded)
                         .uri(uri)
                         .build()
                         .doPullRequest()
@@ -145,7 +222,11 @@ class PullRequestUseCaseTest {
                 .repoOwner("test")
                 .pullRequestId(3)
                 .build();
-        return Set.of(pr1, pr2, pr3);
+        Set<PullRequest> pullRequests = new java.util.HashSet<>();
+        pullRequests.add(pr1);
+        pullRequests.add(pr2);
+        pullRequests.add(pr3);
+        return pullRequests;
     }
 
     private static class TestVersion implements Version {
