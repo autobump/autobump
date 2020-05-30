@@ -25,6 +25,8 @@ public class PostCommentOnPullRequestUseCase {
         if (!commentContent.isBlank()) {
             gitProvider.commentPullRequest(PullRequest.builder()
                             .pullRequestId(pullrequestId)
+                            .title("")
+                            .branchName("")
                             .repoOwner(urlHelper.getOwnerName(uri.toString()))
                             .repoName(urlHelper.getRepoName(uri.toString()))
                             .build(),
