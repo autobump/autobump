@@ -10,6 +10,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -29,6 +29,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -108,10 +109,11 @@ class AutobumpUseCaseTest {
         when(gitClient.commitToNewBranch(any(), any())).thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
-                .title(commitResult.getCommitMessage())
+                .title("Bumped heyhey:test to version: test")
                 .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
                 .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString())).build();
-        Mockito.lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
+        lenient().when(gitProvider.makePullRequest(pullRequest))
+                .thenReturn(createPullRequestResponse(pullRequest));
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(false);
     }
 
@@ -139,7 +141,7 @@ class AutobumpUseCaseTest {
     }
 
     @Test
-    void doAutoBump_ignoreDependencyShouldnotBump() {
+    void doAutoBump_ignoreDependencyShouldNotBump() {
         setUpdoAutoBump_combinedDependenciesMocks();
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
         var result = AutobumpUseCase.builder()
@@ -171,17 +173,30 @@ class AutobumpUseCaseTest {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
         when(gitClient.commitToNewBranch(workspace,
                 new Bump(dependencyList.get(3), tv))).thenReturn(commitResult);
-        Mockito.lenient().when(gitClient.commitToNewBranch(workspace, new Bump(
+        lenient().when(gitClient.commitToNewBranch(workspace, new Bump(
                 dependencyList.get(3),
                 dependencyList.get(3).getVersion())))
                 .thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
-                .title(commitResult.getCommitMessage())
+                .title("Bumped same:testo and same:bla to version: test")
                 .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
                 .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
                 .build();
-        Mockito.lenient().when(gitProvider.makePullRequest(pullRequest)).thenReturn(null);
+        PullRequestResponse response = createPullRequestResponse(pullRequest);
+        lenient().when(gitProvider.makePullRequest(any()))
+                .thenReturn(response);
+    }
+
+    private PullRequestResponse createPullRequestResponse(PullRequest pullRequest) {
+        return PullRequestResponse.builder()
+                .type("PullRequest")
+                .description("description")
+                .link("a dummyLink")
+                .title(pullRequest.getTitle())
+                .id(5)
+                .state("OPEN")
+                .build();
     }
 
     private static class TestVersion implements Version {

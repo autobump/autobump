@@ -14,21 +14,30 @@ public class BitBucketGitProviderUrlHelper implements GitProviderUrlHelper {
     @Override
     public String getOwnerName(String repositoryUrl){
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
-        matcher.matches();
+        if (!matcher.matches()){
+            throw new IllegalArgumentException(
+                    String.format("Unable to extract owner name from %s", repositoryUrl));
+        }
         return matcher.group(2);
     }
 
     @Override
     public String getRepoName(String repositoryUrl){
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
-        matcher.matches();
+        if (!matcher.matches()){
+            throw new IllegalArgumentException(
+                    String.format("Unable to extract repository name from %s", repositoryUrl));
+        }
         return matcher.group(3);
     }
 
     @Override
     public int getPullRequestId(String pullRequestUrl){
         Matcher matcher = PULL_REQUEST_PATTERN.matcher(pullRequestUrl);
-        matcher.matches();
+        if (!matcher.matches()){
+            throw new IllegalArgumentException(
+                    String.format("Unable to extract the pullrequest-id from %s", pullRequestUrl));
+        }
         return Integer.parseInt(matcher.group(5));
     }
 }

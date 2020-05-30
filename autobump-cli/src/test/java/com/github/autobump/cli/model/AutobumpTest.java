@@ -125,10 +125,11 @@ class AutobumpTest {
     }
 
     private void setupStub() {
-        wireMockServer.stubFor(get(urlEqualTo("/repourl/org/apache/derby/derby/maven-metadata.xml"))
-                .willReturn(aResponse().withHeader("Content-Type", "text/xml")
+        wireMockServer.stubFor(get(
+                urlEqualTo(String.format("%s/repositories/%s/%s/pullrequests", API_URL, TEST_OWNER, TEST_REPO_NAME)))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
-                        .withBodyFile("metadata/maven-metadata.xml")));
+                        .withBodyFile("getAllOpenPullRequests.json")));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format("/apiurl/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
                 .withRequestBody(equalToJson(

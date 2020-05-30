@@ -68,6 +68,9 @@ class BitBucketGitProviderTest {
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format("/repositories/%s/%s/pullrequests/1/decline", TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(post(
+                urlEqualTo(String.format("/repositories/%s/%s/pullrequests/1/comments", TEST_OWNER, TEST_REPO_NAME)))
+                .willReturn(aResponse().withStatus(200)));
     }
 
     @Test
@@ -156,5 +159,18 @@ class BitBucketGitProviderTest {
                 .build();
         assertThatCode(() -> bitBucketGitProvider
                 .closePullRequest(pullRequest)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void commentPullRequest(){
+        PullRequest pullRequest = PullRequest.builder()
+                .repoOwner(TEST_OWNER)
+                .repoName(TEST_REPO_NAME)
+                .title("Bumped org.hibernate:hibernate-core to version: 6.0.0.Alpha5")
+                .branchName("autobump/org.hibernate/6.0.0.Alpha5")
+                .pullRequestId(1)
+                .build();
+        assertThatCode(() -> bitBucketGitProvider
+                .commentPullRequest(pullRequest, "a comment")).doesNotThrowAnyException();
     }
 }
