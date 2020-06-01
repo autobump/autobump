@@ -30,6 +30,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,6 +41,8 @@ import static org.mockito.Mockito.when;
 class AutobumpUseCaseTest {
     public static final String REPOSITORY_URL = "http://www.test.test";
     public static final String TEST_NAME = "testName";
+    private static final String TEST_PROJ_URL = "https://github.com/testprojecturl";
+    private final Workspace workspace = new Workspace("");
     @Mock
     private GitProvider gitProvider;
     @Mock
@@ -58,7 +62,6 @@ class AutobumpUseCaseTest {
     @Mock
     private ReleaseNotesSource releaseNotesSource;
     private URI uri;
-    private final Workspace workspace = new Workspace("");
     private TestVersion tv;
     private TestVersion tv1;
     private List<Dependency> dependencyList;
@@ -156,6 +159,56 @@ class AutobumpUseCaseTest {
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
+    }
+
+    @Test
+    void postCommentOnPullRequest_validCommentCreatesValidPostCommentOnPullRequestUseCase() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
+                        , "1.0", "release notes content"));
+        AutobumpUseCase.builder()
+                .config(config)
+                .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .doAutoBump();
+        verify(gitProvider, times(1)).commentPullRequest(any(), contains("release notes content"));
+    }
+
+    @Test
+    void postCommentOnPullRequest_blankCommentNoPostCommentOnPullRequestUseCase() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
+                        , "1.0", ""));
+        AutobumpUseCase.builder()
+                .config(config)
+                .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
+    }
+
+    @Test
+    void postCommentOnPullRequest_nullReleaseNotesNoPostCommentOnPullRequestUseCase() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(null);
+        AutobumpUseCase.builder()
+                .config(config)
+                .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
     }
 
     private void setUpdoAutoBump_combinedDependenciesMocks() {

@@ -48,35 +48,37 @@ public class AutobumpUseCase {
     }
 
     private void postCommentOnPullRequest(PullRequestResponse pullRequestResponse, String commentContent) {
-        PostCommentOnPullRequestUseCase.builder()
-                .gitProvider(config.getGitProvider())
-                .urlHelper(config.getGitProviderUrlHelper())
-                .uri(getUri())
-                .pullrequestId(pullRequestResponse.getId())
-                .commentContent(commentContent)
-                .build()
-                .postCommentOnPullRequest();
+        if (!commentContent.isBlank()) {
+            PostCommentOnPullRequestUseCase.builder()
+                    .gitProvider(config.getGitProvider())
+                    .urlHelper(config.getGitProviderUrlHelper())
+                    .uri(getUri())
+                    .pullrequestId(pullRequestResponse.getId())
+                    .commentContent(commentContent)
+                    .build()
+                    .postCommentOnPullRequest();
+        }
     }
 
     private String fetchVersionReleaseNotes(Bump bump) {
         return FetchVersionReleaseNotesUseCase.builder()
-                        .bump(bump)
-                        .releaseNotesSource(releaseNotesSource)
-                        .versionRepository(config.getVersionRepository())
-                        .build()
-                        .fetchVersionReleaseNotes();
+                .bump(bump)
+                .releaseNotesSource(releaseNotesSource)
+                .versionRepository(config.getVersionRepository())
+                .build()
+                .fetchVersionReleaseNotes();
     }
 
     private PullRequestResponse doPullRequest(Workspace workspace, Bump bump) {
         return PullRequestUseCase.builder()
-        .uri(uri)
-        .gitProvider(config.getGitProvider())
-        .gitClient(config.getGitClient())
-        .gitProviderUrlHelper(config.getGitProviderUrlHelper())
-        .workspace(workspace)
-        .bump(bump)
-        .build()
-        .doPullRequest();
+                .uri(uri)
+                .gitProvider(config.getGitProvider())
+                .gitClient(config.getGitClient())
+                .gitProviderUrlHelper(config.getGitProviderUrlHelper())
+                .workspace(workspace)
+                .bump(bump)
+                .build()
+                .doPullRequest();
     }
 
     private void doBump(Workspace workspace, Bump bump) {

@@ -22,7 +22,7 @@ public class FetchVersionReleaseNotesUseCase {
             if (scmUrl != null && scmUrl.toLowerCase(Locale.ROOT).startsWith("https://github.com/")) {
                 ReleaseNotes releaseNotes
                         = releaseNotesSource.getReleaseNotes(scmUrl, bump.getUpdatedVersion().getVersionNumber());
-                if (releaseNotes != null) {
+                if (releaseNotes != null && !releaseNotes.getBody().isBlank()) {
                     comment.append(formatReleaseNotes(dependency, releaseNotes));
                 }
             }

@@ -4,6 +4,7 @@ import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -26,14 +27,23 @@ public class MavenVersionRepository implements VersionRepository {
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(5);
 
+    @NonNull
+    private final String baseUrl;
+    @NonNull
+    private final MavenModelAnalyser mavenModelAnalyser;
+
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(CONNECT_TIMEOUT)
             .build();
 
-    private final String baseUrl;
-
     public MavenVersionRepository(String baseUrl) {
         this.baseUrl = baseUrl;
+        this.mavenModelAnalyser = new MavenModelAnalyser();
+    }
+
+    public MavenVersionRepository(String baseUrl, MavenModelAnalyser mavenModelAnalyser) {
+        this.baseUrl = baseUrl;
+        this.mavenModelAnalyser = mavenModelAnalyser;
     }
 
     @Override
@@ -65,7 +75,7 @@ public class MavenVersionRepository implements VersionRepository {
                 dependency.getName(),
                 versionNumber
         );
-        return new MavenModelAnalyser().getScmUrlFromPomFile(pomFileUrl);
+        return mavenModelAnalyser.getScmUrlFromPomFile(pomFileUrl);
     }
 
     private InputStream readMavenMetaDataForDependency(Dependency dependency) {

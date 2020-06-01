@@ -22,16 +22,14 @@ public class PostCommentOnPullRequestUseCase {
     private final String commentContent;
 
     public void postCommentOnPullRequest() {
-        if (!commentContent.isBlank()) {
-            gitProvider.commentPullRequest(PullRequest.builder()
-                            .pullRequestId(pullrequestId)
-                            .title("")
-                            .branchName("")
-                            .repoOwner(urlHelper.getOwnerName(uri.toString()))
-                            .repoName(urlHelper.getRepoName(uri.toString()))
-                            .build(),
-                    commentContent
-            );
-        }
+        gitProvider.commentPullRequest(PullRequest.builder()
+                        .pullRequestId(pullrequestId)
+                        .title("")
+                        .branchName("")
+                        .repoOwner(urlHelper.getOwnerName(uri.toString()))
+                        .repoName(urlHelper.getRepoName(uri.toString()))
+                        .build(),
+                commentContent
+        );
     }
 }
