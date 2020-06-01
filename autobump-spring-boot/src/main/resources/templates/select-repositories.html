@@ -9,7 +9,7 @@
     <title>Autobump select repositories</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -18,8 +18,7 @@
     <h1>Welcome to AutoBump!</h1>
 
     <h5>Please select the repositories you want automatic bumps for</h5>
-    <!--/*@thymesVar id="#repositoryListDto" type="RepositoryListDto"*/-->
-    <form th:action="@{/repositories}" th:object="${#repositoryListDto}" method="post">
+    <form th:action="@{/repositories}" th:object="${repositoryListDto}" method="post">
         <div class="form-row">
             <div class="form-group col-md-6">
                 <td>Name</td>
@@ -28,17 +27,17 @@
                 <td>Select</td>
             </div>
         </div>
-        <div class="form-row" th:each="repository: ${repositories}">
+        <div class="form-row" th:each="repo : ${repositoryListDto.repositories}">
             <div class="form-group col-md-6">
-                <td th:text="${repository.getName()}">Name</td>
+                <label th:text="${repo.name}"></label>
             </div>
             <div class="form-group col-md-6">
-                <td><input type="checkbox" value="submit"></td>
+                <input type="checkbox" th:field="*{repositories}" th:value="${repo.id}">
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-6">
-                <input type="submit" value="submit">
+                <input type="submit" value="save">
             </div>
         </div>
     </form>

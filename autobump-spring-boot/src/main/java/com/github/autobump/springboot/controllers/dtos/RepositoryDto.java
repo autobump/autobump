@@ -1,10 +1,13 @@
 package com.github.autobump.springboot.controllers.dtos;
 
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@Value
+@Data @AllArgsConstructor
 public class RepositoryDto {
+    private Boolean selected;
     String name;
     int id;
     // to add: link?
+
 }
