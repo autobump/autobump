@@ -11,10 +11,3 @@ autobump.bitbucket.base-url: https://50a9302a.ngrok.io # cmd: 'ngrok http 8080' 
 
 atlassian.connect.allow-reinstall-missing-host: true
 
-#View-templates
-  spring.thymeleaf.enabled=true
-  spring.thymeleaf.cache=false
-  spring.thymeleaf.encoding=UTF-8
-  spring.thymeleaf.mode=HTML
-  spring.thymeleaf.prefix=classpath:/templates/
-  spring.thymeleaf.suffix=.html

@@ -4,15 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico"/>
 
     <title>Autobump</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../static/css/bootstrap.css" rel="stylesheet" th:href="@{/css/bootstrap.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 
@@ -33,7 +29,7 @@
 
         <h5>You can choose to install Autobump for either all your repositories or a selection.</h5>
         <!--/*@thymesVar id="#selectionDto" type="com.github.autobump.springboot.controllers.dtos.SelectionDto"*/-->
-        <form th:action="/selection" th:object="${#selectionDto}" method="post">
+        <form th:action="@{/selection}" th:object="${#selectionDto}" method="post">
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="selection">Please select one option</label>
@@ -45,7 +41,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
-                    <input type="button" value="submit">
+                    <input type="submit" value="submit">
                 </div>
             </div>
         </form>

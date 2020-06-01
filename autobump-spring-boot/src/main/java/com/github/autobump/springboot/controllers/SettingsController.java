@@ -1,10 +1,11 @@
 package com.github.autobump.springboot.controllers;
 
+import com.atlassian.connect.spring.IgnoreJwt;
 import com.github.autobump.springboot.controllers.dtos.RepositorySettingsDto;
 import com.github.autobump.springboot.controllers.dtos.SelectionDto;
 import com.github.autobump.springboot.services.SettingsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,28 +15,32 @@ import java.util.List;
 
 @Controller
 public class SettingsController {
+    @Autowired
     SettingsService settingsService;
 
-    @GetMapping("/")
+    @IgnoreJwt
+    @GetMapping("/select")
     public ModelAndView index (ModelAndView mav){
         mav.setViewName("index");
         return mav;
     }
 
+    @IgnoreJwt
     @PostMapping("/selection")
     public ModelAndView selection(ModelAndView mav, SelectionDto dto){
+        var repos = settingsService.getAllRepositoriesFromWorkspace();
         if (dto.isAll()){
             mav.setViewName("repositories");
-            var repos = settingsService.getAllRepositoriesFromWorkspace();
             mav.addObject("repositories", repos);
         }
         else {
             mav.setViewName("select-repositories");
-            mav.addObject("repositories", settingsService.getAllRepositoriesFromWorkspace());
+            mav.addObject("repositories", repos);
         }
         return mav;
     }
 
+    @IgnoreJwt
     @PostMapping("/repositories")
     public ModelAndView repositories(ModelAndView mav, @RequestParam(value="repos", required = false) String[] repos){
         mav.setViewName("repositories");
@@ -43,6 +48,7 @@ public class SettingsController {
         return mav;
     }
 
+    @IgnoreJwt
     @PostMapping("/settings")
     public ModelAndView addSettingsToRepositories(ModelAndView mav, List<RepositorySettingsDto> settings){
         // save all settings to settingsrepository
