@@ -12,10 +12,6 @@ public class GithubReleaseNotesSource implements ReleaseNotesSource {
     private final GithubApi githubApi;
     private final ReleaseNotesUrlHelper releaseNotesUrlHelper;
 
-    public GithubReleaseNotesSource() {
-        this("https://api.github.com");
-    }
-
     public GithubReleaseNotesSource(String apiUrl) {
         this.githubApi = Feign.builder()
                 .decoder(new JacksonDecoder())

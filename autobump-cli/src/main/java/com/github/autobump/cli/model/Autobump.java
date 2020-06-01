@@ -33,7 +33,7 @@ public class Autobump implements Callable<AutobumpResult> {
     AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
-    private final ReleaseNotesSource releaseNotesSource = new GithubReleaseNotesSource();
+    private ReleaseNotesSource releaseNotesSource;
     private VersionRepository versionRepository;
     private GitClient gitClient;
     private GitProvider gitProvider;
@@ -56,7 +56,8 @@ public class Autobump implements Callable<AutobumpResult> {
         versionRepository = new MavenVersionRepository(properties.getRepositoryUrl());
         gitClient = new JGitGitClient(properties.getUsername(), properties.getPassword());
         BitBucketAccount bitBucketAccount = new BitBucketAccount(properties.getUsername(), properties.getPassword());
-        gitProvider = new BitBucketGitProvider(bitBucketAccount, properties.getApiUrl());
+        gitProvider = new BitBucketGitProvider(bitBucketAccount, properties.getBbApiUrl());
+        releaseNotesSource = new GithubReleaseNotesSource(properties.getGhApiUrl());
         ignoreRepository = new MavenIgnoreRepository(properties.getIgnoreDependencies());
     }
 

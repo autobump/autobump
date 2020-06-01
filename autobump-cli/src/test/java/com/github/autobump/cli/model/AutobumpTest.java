@@ -183,7 +183,7 @@ class AutobumpTest {
 
     @Test
     void main_integrationTest() {
-        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -a %s",
+        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -b %s",
                 GIT_URL, REPO_URL, API_URL).split(" ");
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }
@@ -192,7 +192,7 @@ class AutobumpTest {
     void main_integrationTestWithIgnores() {
         String[] args =
                 String.format("-u glenn.schrooyen@student.kdg.be " +
-                                "-p AutoBump2209 -l %s -r %s -a %s -i derby=all",
+                                "-p AutoBump2209 -l %s -r %s -b %s -i derby=all",
                     GIT_URL, REPO_URL, API_URL).split(" ");
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }

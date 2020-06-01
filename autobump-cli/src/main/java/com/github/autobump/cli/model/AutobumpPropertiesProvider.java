@@ -18,11 +18,15 @@ public final class AutobumpPropertiesProvider {
     private URI url;
     @Option(names = {"-p", "--password"}, description = "Password for your remote repository", required = true)
     private String password;
-    @Option(names = {"-r", "--repourl"}, description = "Public repositoryUrl for dependency version information",
+    @Option(names = {"-r", "--repourl"}, description = "Public repository url for dependency version information",
             defaultValue = "https://repo1.maven.org/maven2")
     private String repositoryUrl;
-    @Option(names = {"-a", "--apiurl"}, description = "apiUrl", defaultValue = "https://api.bitbucket.org/2.0")
-    private String apiUrl;
+    @Option(names = {"-b", "--bbapiurl"}, description = "Bitbucket Api url",
+            defaultValue = "https://api.bitbucket.org/2.0")
+    private String bbApiUrl;
+    @Option(names = {"-g", "--ghapiurl"}, description = "Github Api url",
+            defaultValue = "https://api.github.com")
+    private String ghApiUrl;
     @Option(names = {"-i", "--ignored"}, description = "Dependencies to ignore for updates including update" +
             " type separated by comma", split = ",")
     private Map<String, String> ignoreDependencies;
