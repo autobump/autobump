@@ -49,35 +49,35 @@ public class Autobumpconfig {
                 .build();
     }
 
-    private DependencyBumper getMavenDependencyBumper() {
+    public DependencyBumper getMavenDependencyBumper() {
         return new MavenDependencyBumper();
     }
 
-    private DependencyResolver getDependencyResolver() {
+    public DependencyResolver getDependencyResolver() {
         return new MavenDependencyResolver();
     }
 
-    private GitClient getGitClient() {
+    public GitClient getGitClient() {
         return new JGitGitClient("x-token-auth", getAccesToken());
     }
 
-    private GitProvider getGitProvider() {
+    public GitProvider getGitProvider() {
         return new BitBucketGitProvider(new JwtInterceptor(getJwt()));
     }
 
-    private IgnoreRepository getIgnoreRepo() {
+    public IgnoreRepository getIgnoreRepo() {
         return new MavenIgnoreRepository(null);
     }
 
-    private UrlHelper getUrlHelper() {
+    public UrlHelper getUrlHelper() {
         return new BitBucketUrlHelper();
     }
 
-    private VersionRepository getVersionRepository() {
+    public VersionRepository getVersionRepository() {
         return new MavenVersionRepository();
     }
 
-    private String getAccesToken() {
+    public String getAccesToken() {
         var jwt = getJwt();
         var headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "JWT " + jwt);
@@ -88,12 +88,14 @@ public class Autobumpconfig {
         return restTemplateBuilder.build().postForObject("https://bitbucket.org/site/oauth2/access_token", entity, AccessTokenDto.class).getToken();
     }
 
-    private String getJwt(){
+    public String getJwt(){
         AtlassianHost host = null;
         for (AtlassianHost atlassianHost : repository.findAll()) {
             host = atlassianHost;
             break;
         }
+
+
 
         return new JwtBuilder()
                 .subject(host.getClientKey()) // = client key (retrieved on /install)

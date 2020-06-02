@@ -19,7 +19,7 @@ import java.util.Locale;
 public class WebhookService {
     private final SettingsRepository settingsRepository;
     private final Autobumpconfig autobumpconfig;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public WebhookService(SettingsRepository settingsRepository, Autobumpconfig config) {
         this.settingsRepository = settingsRepository;
@@ -56,7 +56,7 @@ public class WebhookService {
         }
     }
 
-    public void handlePush(String branchname, URI gitUri, String uuid) {
+    public void handlePush(String branchname, URI gitUri) {
         if ("master".equalsIgnoreCase(branchname)) {
             try {
                 var config = autobumpconfig.setupConfig();

@@ -34,7 +34,7 @@ public class WebhooksController {
     @PostMapping("push")
     public void push(@RequestBody PushDto pushDto) throws URISyntaxException {
         if (pushDto.getBranchName() != null){
-            webhookService.handlePush(pushDto.getBranchName(), new URI(pushDto.geturl()), pushDto.getUuid());
+            webhookService.handlePush(pushDto.getBranchName(), new URI(pushDto.geturl()));
         }
     }
 }

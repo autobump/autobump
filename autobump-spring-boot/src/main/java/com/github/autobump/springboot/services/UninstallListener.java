@@ -14,6 +14,5 @@ public class UninstallListener implements ApplicationListener<AddonUninstalledEv
     @Override
     public void onApplicationEvent(AddonUninstalledEvent event) {
         repository.delete(event.getHost());
-        System.out.println("event = " + event);
     }
 }
