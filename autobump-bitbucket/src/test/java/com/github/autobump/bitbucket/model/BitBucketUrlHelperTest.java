@@ -1,7 +1,6 @@
 package com.github.autobump.bitbucket.model;
 
 import com.github.autobump.core.model.GitProviderUrlHelper;
-import com.github.autobump.core.model.UrlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -51,10 +50,5 @@ class BitBucketUrlHelperTest {
     void GetPullRequestIdWithNonMatchingUrl_shouldThrowIllegalArgumentException() {
         assertThatThrownBy(() -> gitProviderUrlHelper.getPullRequestId(TEST_NONMATCHING_URL))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void gitProviderUrlHelper_isUrlHelper(){
-        assertThat(gitProviderUrlHelper).isInstanceOf(UrlHelper.class);
     }
 }

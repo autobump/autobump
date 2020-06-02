@@ -1,7 +1,6 @@
 package com.github.autobump.github.model;
 
 import com.github.autobump.core.model.ReleaseNotesUrlHelper;
-import com.github.autobump.core.model.UrlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,10 +37,5 @@ class GithubUrlHelperTest {
     void GetRepoName_shouldThrowIllegalArgumentException() {
         assertThatThrownBy(() ->
                 releaseNotesUrlHelper.getRepoName(TEST_NONMATCHING_URL)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void releaseNotesUrlHelper_isUrlHelper(){
-        assertThat(releaseNotesUrlHelper).isInstanceOf(UrlHelper.class);
     }
 }
