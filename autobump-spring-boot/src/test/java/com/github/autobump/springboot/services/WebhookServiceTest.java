@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class})
 class WebhookServiceTest {
 
     @Mock
@@ -52,6 +52,7 @@ class WebhookServiceTest {
                 .dependencyResolver(Mockito.mock(DependencyResolver.class))
                 .dependencyBumper(Mockito.mock(DependencyBumper.class))
                 .build());
+
     }
 
     @Test
@@ -64,6 +65,15 @@ class WebhookServiceTest {
     }
 
     @Test
+    void handleCommentNoAutoBumpPr() {
+        webhookService.handleComment(
+                "developmenttest",
+                "Ignore this minor",
+                "simplemultimoduletestproject");
+        verify(settingsRepository, times(0)).saveSetting(any());
+    }
+
+    @Test
     void handleReject() {
         webhookService.handleReject(
                 "Bumped org.projectlombok:lombok:1.18.10 to version: 1.18.12",
@@ -72,10 +82,33 @@ class WebhookServiceTest {
     }
 
     @Test
-    void handlePush() {
+    void handleRejectNoAutoBumpPr() {
+        webhookService.handleReject(
+                "developmenttest",
+                "simplemultimoduletestproject");
+        verify(settingsRepository, times(0)).saveAllSettings(any());
+    }
 
+    @Test
+    void handlePush() {
         assertThatCode(() -> webhookService.handlePush("master",
                 URI.create("https://bitbucket.org/grietvermeesch/simplemultimoduletestproject/pull-requests/53")))
                 .doesNotThrowAnyException();
     }
+
+    @Test
+    void handlePushNotOnMaster() {
+        assertThatCode(() -> webhookService.handlePush("testy",
+                URI.create("https://bitbucket.org/grietvermeesch/simplemultimoduletestproject/pull-requests/53")))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void handlePushIlligalArg() {
+        Mockito.lenient().when(autobumpconfig.setupConfig()).thenThrow(new IllegalArgumentException());
+        assertThatCode(() -> webhookService.handlePush("master",
+                URI.create("https://bitbucket.org/grietvermeesch/simplemultimoduletestproject/pull-requests/53")))
+                .doesNotThrowAnyException();
+    }
+
 }

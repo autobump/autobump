@@ -21,6 +21,7 @@ import com.github.autobump.maven.model.MavenVersionRepository;
 import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
@@ -35,6 +36,8 @@ public class Autobumpconfig {
     private RestTemplateBuilder restTemplateBuilder;
     @Autowired
     private AtlassianHostRepository repository;
+    @Value("${autobump.bitbucket.oAuthUrl}")
+    private String oAuthUrl;
 
 
     public UseCaseConfiguration setupConfig() {
@@ -85,7 +88,10 @@ public class Autobumpconfig {
         var map = new LinkedMultiValueMap<String, String>();
         map.add("grant_type", "urn:bitbucket:oauth2:jwt");
         var entity = new HttpEntity<>(map, headers);
-        return restTemplateBuilder.build().postForObject("https://bitbucket.org/site/oauth2/access_token", entity, AccessTokenDto.class).getToken();
+        return restTemplateBuilder.build().postForObject(oAuthUrl,
+                entity,
+                AccessTokenDto.class)
+                .getToken();
     }
 
     public String getJwt(){

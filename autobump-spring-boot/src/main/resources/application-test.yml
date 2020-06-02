@@ -14,3 +14,7 @@ autobump.bitbucket.base-url: https://ad1372b3.ngrok.io # cmd: 'ngrok http 8080' 
 atlassian.connect.allow-reinstall-missing-host: true
 server:
     port: 0
+
+autobump:
+    bitbucket:
+        oAuthUrl: http://localhost:8009/site/oauth2/access_token
