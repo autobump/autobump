@@ -1,12 +1,17 @@
 package com.github.autobump.springboot.controllers.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data @AllArgsConstructor
+import java.util.List;
+
+@Data
 public class RepositoryDto {
-    private Boolean selected;
+    private boolean selected;
     String name;
+    List<DependencyDto> dependencies;
+    boolean cronJob;
+    String reviewer;
+    List<String> targetBranchNames;
     int id;
     // to add: link?
 

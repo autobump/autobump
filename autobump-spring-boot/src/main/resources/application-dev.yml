@@ -1,6 +1,7 @@
 spring.datasource.url: jdbc:mariadb://localhost:3306/autobumpdb
 spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
 
+#TODO - remove this setting?
 spring.liquibase.enabled: false
 
 spring.datasource.username: sa

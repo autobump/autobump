@@ -1,10 +1,8 @@
 package com.github.autobump.springboot.controllers;
 
 import com.atlassian.connect.spring.IgnoreJwt;
-import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.controllers.dtos.RepositorySettingsDto;
-import com.github.autobump.springboot.controllers.dtos.SelectionDto;
 import com.github.autobump.springboot.services.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,40 +19,26 @@ public class SettingsController {
     SettingsService settingsService;
 
     @IgnoreJwt
-    @GetMapping("/select")
-    public ModelAndView index (ModelAndView mav){
-        mav.setViewName("index");
-        mav.addObject("selectionDto", new SelectionDto(true));
-        return mav;
-    }
-
-    @IgnoreJwt
-    @PostMapping("/selection")
-    public ModelAndView selection(ModelAndView mav, @ModelAttribute SelectionDto selectionDto){
+    @GetMapping("/settings")
+    public ModelAndView settings(ModelAndView mav){
         var repos = settingsService.getAllRepositoriesFromWorkspace();
-        if (selectionDto.isAll()){
-            mav.setViewName("repositories");
-            mav.addObject("repositories", repos);
-        }
-        else {
-            mav.setViewName("select-repositories");
-            mav.addObject("repositories", repos);
-            RepositoryListDto repositoryListDto = new RepositoryListDto();
-            repositoryListDto.setRepositories(repos);
-            mav.addObject("repositoryListDto", repositoryListDto);
-        }
+        mav.setViewName("settings");
+        mav.addObject("repositories", repos);
+        RepositoryListDto repositoryListDto = new RepositoryListDto();
+        repositoryListDto.setRepositories(repos);
+        mav.addObject("repositoryListDto", repositoryListDto);
         return mav;
     }
 
     @IgnoreJwt
-    @PostMapping("/repositories")
-    public ModelAndView repositories(ModelAndView mav, @ModelAttribute RepositoryListDto dto){
-        mav.setViewName("repositories");
-        for (RepositoryDto repo: dto.getRepositories()
+    @PostMapping("/saveSettings")
+    public ModelAndView saveSettings(ModelAndView mav, @ModelAttribute RepositoryListDto dto){
+        mav.setViewName("settings-saved");
+        /*for (RepositoryDto repo: dto.getRepositories()
              ) {
             settingsService.setRepositoryToAutobump(repo);
         }
-        mav.addObject("repositories", dto);
+        mav.addObject("repositories", dto);*/
         return mav;
     }
 
