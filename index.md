@@ -3,9 +3,6 @@ layout: page
 title: Table of Contents
 ---
 
-Table of Contents
-=================
-
  - [first topic](#first-topic)
  - [second topic](#second-topic)
  - [third topic](#third-topic)
