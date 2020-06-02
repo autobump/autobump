@@ -1,7 +1,10 @@
 ---
 layout: page
-title: Table of Contents
+title: Autobump Documentation
 ---
+
+Table of Contents
+=================
 
  - [first topic](#first-topic)
  - [second topic](#second-topic)
