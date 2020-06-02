@@ -1,12 +1,19 @@
 plugins {
+    id 'war'
     id 'org.springframework.boot' version '2.2.7.RELEASE'
 }
 
 version '1.0-SNAPSHOT'
 
+repositories {
+    maven {
+        url "https://packages.atlassian.com/maven-public/"
+    }
+}
 
 dependencies {
     implementation 'com.atlassian.connect:atlassian-connect-spring-boot-jpa-starter:2.0.6'
+    implementation 'com.atlassian.connect:atlassian-connect-spring-boot-core:2.0.6'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
@@ -14,14 +21,19 @@ dependencies {
     implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation project(':autobump-core')
+    implementation project(':autobump-maven')
+    implementation project(':autobump-jgit')
+    implementation project(':autobump-bitbucket')
     implementation platform('org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE')
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'
+    providedCompile group: 'com.atlassian.jwt', name: 'jwt-api', version: '3.1.0'
+    implementation group: 'io.github.openfeign', name: 'feign-core', version : '11.0'
 
 }
 
 configurations {
-    all*.exclude module : 'spring-boot-starter-logging'
+
 }
 
 bootJar {

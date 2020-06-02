@@ -32,6 +32,10 @@ public class MavenVersionRepository implements VersionRepository {
 
     private final String baseUrl;
 
+    public MavenVersionRepository(){
+        this("https://repo1.maven.org/maven2");
+    }
+
     public MavenVersionRepository(String baseUrl) {
         this.baseUrl = baseUrl;
     }

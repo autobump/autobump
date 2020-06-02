@@ -12,14 +12,10 @@
     },
     "lifecycle": {
         "installed": "/installed",
-        "uninstalled": "/uninstalled"
+        "uninstalled": "/uninstalled",
+        "enabled": "/enabled",
+        "disabled": "/disabled"
     },
-    "scopes": [
-        "repository",
-        "project",
-        "account",
-        "webhook"
-    ],
     "modules": {
         "webhooks": [
             {

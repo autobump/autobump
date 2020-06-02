@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class BitBucketUrlHelper implements UrlHelper {
     private static final Pattern OWNER_REPO_PATTERN =
-            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.git$");
+            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.?g?i?t?$");
     private static final Pattern PULL_REQUEST_PATTERN =
             Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\/(.*)\\/(.*)$");
 
@@ -22,7 +22,7 @@ public class BitBucketUrlHelper implements UrlHelper {
     public String getRepoName(String repositoryUrl){
         Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
         matcher.matches();
-        return matcher.group(3);
+        return matcher.group(3).replace(".git", "");
     }
 
     @Override
