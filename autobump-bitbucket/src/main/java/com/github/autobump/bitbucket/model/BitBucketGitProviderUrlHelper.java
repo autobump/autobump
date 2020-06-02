@@ -5,31 +5,9 @@ import com.github.autobump.core.model.GitProviderUrlHelper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BitBucketGitProviderUrlHelper implements GitProviderUrlHelper {
-    private static final Pattern OWNER_REPO_PATTERN =
-            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.?g?i?t?$");
+public class BitBucketGitProviderUrlHelper extends GitProviderUrlHelper {
     private static final Pattern PULL_REQUEST_PATTERN =
             Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\/(.*)\\/(.*)$");
-
-    @Override
-    public String getOwnerName(String repositoryUrl){
-        Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
-        if (!matcher.matches()){
-            throw new IllegalArgumentException(
-                    String.format("Unable to extract owner name from %s", repositoryUrl));
-        }
-        return matcher.group(2);
-    }
-
-    @Override
-    public String getRepoName(String repositoryUrl){
-        Matcher matcher = OWNER_REPO_PATTERN.matcher(repositoryUrl);
-        if (!matcher.matches()){
-            throw new IllegalArgumentException(
-                    String.format("Unable to extract repository name from %s", repositoryUrl));
-        }
-        return matcher.group(3).replace(".git","");
-    }
 
     @Override
     public int getPullRequestId(String pullRequestUrl){

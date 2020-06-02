@@ -1,5 +1,5 @@
 package com.github.autobump.core.model;
 
-public interface GitProviderUrlHelper extends UrlHelper {
-    int getPullRequestId(String pullRequestUrl);
+public abstract class GitProviderUrlHelper extends UrlHelper{
+    public abstract int getPullRequestId(String pullRequestUrl);
 }
