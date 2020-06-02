@@ -1,4 +1,5 @@
 ---
+layout: home
 title: Table of Contents
 ---
 
