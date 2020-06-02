@@ -101,11 +101,13 @@ public class Autobumpconfig {
         }
 
 
-
-        return new JwtBuilder()
-                .subject(host.getClientKey()) // = client key (retrieved on /install)
-                .issuer("autobump.kdg.xplore.dev02") // = app key
-                .signature(host.getSharedSecret()) // = shared secret (retrieved on /install)
-                .build();
+        if (host != null) {
+            return new JwtBuilder()
+                    .subject(host.getClientKey()) // = client key (retrieved on /install)
+                    .issuer("autobump.kdg.xplore.dev02") // = app key
+                    .signature(host.getSharedSecret()) // = shared secret (retrieved on /install)
+                    .build();
+        }
+        return null;
     }
 }
