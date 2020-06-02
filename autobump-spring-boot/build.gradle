@@ -24,6 +24,7 @@ dependencies {
     implementation project(':autobump-maven')
     implementation project(':autobump-jgit')
     implementation project(':autobump-bitbucket')
+    implementation project(':autobump-github')
     implementation platform('org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE')
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'

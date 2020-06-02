@@ -18,7 +18,7 @@ public class UseCaseConfiguration {
     @NonNull
     DependencyBumper dependencyBumper;
     @NonNull
-    UrlHelper urlHelper;
+    GitProviderUrlHelper gitProviderUrlHelper;
     @NonNull
     IgnoreRepository ignoreRepository;
 }

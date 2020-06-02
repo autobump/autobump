@@ -44,7 +44,7 @@ class WebhookServiceTest {
         Mockito.lenient().when(urlHelper.getOwnerName(any())).thenReturn("test");
         Mockito.lenient().when(urlHelper.getRepoName(any())).thenReturn("test");
         Mockito.lenient().when(autobumpconfig.setupConfig()).thenReturn(UseCaseConfiguration.builder()
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(urlHelper)
                 .gitProvider(Mockito.mock(GitProvider.class))
                 .versionRepository(Mockito.mock(VersionRepository.class))
                 .ignoreRepository(Mockito.mock(IgnoreRepository.class))

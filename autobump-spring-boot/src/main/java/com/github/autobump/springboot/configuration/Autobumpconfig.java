@@ -9,8 +9,8 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.jgit.model.JGitGitClient;
@@ -47,7 +47,7 @@ public class Autobumpconfig {
                 .gitClient(getGitClient())
                 .gitProvider(getGitProvider())
                 .ignoreRepository(getIgnoreRepo())
-                .urlHelper(getUrlHelper())
+                .gitProviderUrlHelper(getUrlHelper())
                 .versionRepository(getVersionRepository())
                 .build();
     }
@@ -72,7 +72,7 @@ public class Autobumpconfig {
         return new MavenIgnoreRepository(null);
     }
 
-    public UrlHelper getUrlHelper() {
+    public GitProviderUrlHelper getUrlHelper() {
         return new BitBucketUrlHelper();
     }
 

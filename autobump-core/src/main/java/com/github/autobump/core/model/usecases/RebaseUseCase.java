@@ -17,8 +17,8 @@ public class RebaseUseCase {
 
     public void handlePushEvent() {
         List<PullRequest> pullRequests = getOpenPullRequests(
-                config.getUrlHelper().getOwnerName(event.getGitUri().toString()),
-                config.getUrlHelper().getRepoName(event.getGitUri().toString()));
+                config.getGitProviderUrlHelper().getOwnerName(event.getGitUri().toString()),
+                config.getGitProviderUrlHelper().getRepoName(event.getGitUri().toString()));
         if (!pullRequests.isEmpty()) {
             Workspace workspace = config.getGitClient().clone(event.getGitUri());
             for (PullRequest p : pullRequests) {
