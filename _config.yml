@@ -1,4 +1,4 @@
-theme: jekyll-theme-minimal
+theme: minima
 title: Autobump Documentation
 description: Autobump is a tool that automatically creates a pull-request for every outdated dependency in your repository
 minima:
