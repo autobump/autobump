@@ -1,7 +1,9 @@
 theme: minima
 title: Autobump Documentation
 description: Autobump is a tool that automatically creates a pull-request for every outdated dependency in your repository
-projectpage: https://github.com/autobump/autobump
+author:
+  name: Source code:
+  email: https://github.com/autobump/autobump
 minima:
   social_links:
     github: autobump
