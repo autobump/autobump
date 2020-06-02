@@ -98,7 +98,6 @@ public class Autobumpconfig {
         AtlassianHost host = null;
         for (AtlassianHost atlassianHost : repository.findAll()) {
             host = atlassianHost;
-            break;
         }
 
 

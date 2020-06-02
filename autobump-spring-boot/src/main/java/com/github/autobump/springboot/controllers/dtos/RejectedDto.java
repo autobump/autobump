@@ -24,7 +24,7 @@ public class RejectedDto {
         PullRequest pullrequest;
         Repository repository;
 
-        public Data(String prTitle, String reponame){
+        Data(String prTitle, String reponame){
             this.pullrequest = new PullRequest();
             pullrequest.setTitle(prTitle);
             this.repository = new Repository();

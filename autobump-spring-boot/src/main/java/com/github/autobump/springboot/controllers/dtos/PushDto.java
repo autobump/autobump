@@ -34,7 +34,7 @@ public class PushDto {
         Repository repository;
         Actor actor;
 
-        public Data(Push.Change.Event event, String link, String uuid) {
+        Data(Push.Change.Event event, String link, String uuid) {
             this.push = new Push(event);
             this.repository = new Repository(link);
             this.actor = new Actor(uuid);
@@ -57,15 +57,16 @@ public class PushDto {
         public static class Push {
             List<Change> changes;
 
-            public Push(Change.Event event) {
+            Push(Change.Event event) {
                 this.changes = List.of(new Change(event));
             }
 
             public String getBranchName() {
+                String name = null;
                 for (Change change : changes) {
-                    return change.getBranchName();
+                    name = change.getBranchName();
                 }
-                return null;
+                return name;
             }
 
             @lombok.Data
@@ -74,7 +75,7 @@ public class PushDto {
                 @JsonProperty("new")
                 Event event;
 
-                public Change(Event event) {
+                Change(Event event) {
                     this.event = event;
                 }
 
@@ -115,7 +116,7 @@ public class PushDto {
             static class Links {
                 Link html;
 
-                public Links(String url) {
+                Links(String url) {
                     this.html = new Link(url);
                 }
 
@@ -128,7 +129,7 @@ public class PushDto {
                 static class Link {
                     String href;
 
-                    public Link(String url) {
+                    Link(String url) {
                         this.href = url;
                     }
                 }
@@ -140,7 +141,7 @@ public class PushDto {
         static class Actor{
             String uuid;
 
-            public Actor(String uuid) {
+            Actor(String uuid) {
                 this.uuid = uuid;
             }
         }

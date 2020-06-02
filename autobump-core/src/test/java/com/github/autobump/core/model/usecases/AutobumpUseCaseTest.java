@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -126,7 +125,7 @@ class AutobumpUseCaseTest {
 
     @Test
     void doAutoBump() {
-        Mockito.when(gitProvider.makePullRequest(any())).thenReturn(PullRequestResponse.builder().id(5).build());
+        when(gitProvider.makePullRequest(any())).thenReturn(PullRequestResponse.builder().id(5).build());
         setUpdoAutoBumpMocks_forTestSingleBump();
         var result = AutobumpUseCase.builder()
                 .config(config)

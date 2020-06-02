@@ -32,7 +32,7 @@ class AutobumpconfigTest {
     AtlassianHostRepository repository;
 
     @Mock
-    private AtlassianHostRepository hostRepository;
+    AtlassianHostRepository hostRepository;
 
     WireMockServer wireMockServer;
 

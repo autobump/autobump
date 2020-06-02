@@ -67,7 +67,9 @@ public class WebhookService {
                         .build()
                         .handlePushEvent();
             } catch (IllegalArgumentException e) {
-                logger.warn(e.getMessage() + " no rebase executed");
+                if (logger.isWarnEnabled()) {
+                    logger.warn(e.getMessage() + " no rebase executed");
+                }
             }
         }
     }

@@ -26,7 +26,7 @@ public class CommentDto {
         Comment comment;
         Repository repository;
 
-        public Data(String comment, String reponame, String prTitle) {
+        Data(String comment, String reponame, String prTitle) {
             this.comment = new Comment(comment, prTitle);
             this.repository = new Repository(reponame);
         }
@@ -47,7 +47,7 @@ public class CommentDto {
             Content content;
             PullRequest pullrequest;
 
-            public Comment(String comment, String prTitle) {
+            Comment(String comment, String prTitle) {
                 this.content = new Content(comment);
                 this.pullrequest = new PullRequest(prTitle);
             }
@@ -64,7 +64,7 @@ public class CommentDto {
             static class Content {
                 String raw;
 
-                public Content(String comment) {
+                Content(String comment) {
                     this.raw = comment;
                 }
             }
@@ -73,7 +73,7 @@ public class CommentDto {
             static class PullRequest {
                 String title;
 
-                public PullRequest(String prTitle) {
+                PullRequest(String prTitle) {
                     this.title = prTitle;
                 }
             }
@@ -83,7 +83,7 @@ public class CommentDto {
         static class Repository{
             String name;
 
-            public Repository(String reponame) {
+            Repository(String reponame) {
                 this.name = reponame;
             }
         }

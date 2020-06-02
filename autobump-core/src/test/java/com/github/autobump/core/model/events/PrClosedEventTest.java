@@ -37,9 +37,9 @@ class PrClosedEventTest {
     }
 
     static class TestVersion implements Version {
-        private String versionNumber;
+        private final String versionNumber;
 
-        public TestVersion(String versionNumber) {
+        TestVersion(String versionNumber) {
             this.versionNumber = versionNumber;
         }
 
