@@ -50,10 +50,11 @@ class FetchVersionReleaseNotesUseCaseTest {
                 .releaseNotesSource(releaseNotesSource)
                 .build()
                 .fetchVersionReleaseNotes();
-        assertThat(result).isEqualTo("# :pencil: Autobump found release notes for" +
-                " org.springframework.boot:spring-boot-dependencies 2.2.4.RELEASE\n\n" +
-                "> RELEASE NOTES\n> Release notes sample text\n\n" +
-                "Source: http://test.com\n");
+        assertThat(result).contains("Autobump found release notes for" +
+                " org.springframework.boot:spring-boot-dependencies 2.2.4.RELEASE");
+        assertThat(result).contains("RELEASE NOTES");
+        assertThat(result).contains("Release notes sample text");
+        assertThat(result).contains("Source: http://test.com\n");
     }
 
     @Test

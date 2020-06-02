@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class BitBucketGitProviderUrlHelper implements GitProviderUrlHelper {
     private static final Pattern OWNER_REPO_PATTERN =
-            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.git$");
+            Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\.?g?i?t?$");
     private static final Pattern PULL_REQUEST_PATTERN =
             Pattern.compile("^https?:\\/\\/(.*@)?.+\\/(.*)\\/(.*)\\/(.*)\\/(.*)$");
 
@@ -28,7 +28,7 @@ public class BitBucketGitProviderUrlHelper implements GitProviderUrlHelper {
             throw new IllegalArgumentException(
                     String.format("Unable to extract repository name from %s", repositoryUrl));
         }
-        return matcher.group(3);
+        return matcher.group(3).replace(".git","");
     }
 
     @Override

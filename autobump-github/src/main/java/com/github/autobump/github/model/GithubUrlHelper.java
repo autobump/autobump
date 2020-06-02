@@ -26,6 +26,6 @@ public class GithubUrlHelper implements ReleaseNotesUrlHelper {
             throw new IllegalArgumentException(
                     String.format("Unable to extract repository name from %s", repositoryUrl));
         }
-        return matcher.group(3);
+        return matcher.group(3).replace(".git","");
     }
 }
