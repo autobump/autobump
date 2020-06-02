@@ -4,6 +4,7 @@ description: Autobump is a tool that automatically creates a pull-request for ev
 author:
   name: Source code
   email: https://github.com/autobump/autobump
+show_excerpts: false
 minima:
   social_links:
     github: autobump
