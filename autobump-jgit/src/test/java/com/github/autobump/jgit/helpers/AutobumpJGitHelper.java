@@ -56,6 +56,7 @@ public class AutobumpJGitHelper {
     public static void stopServer() {
         try {
             server.stop();
+            server = null;
         } catch (Exception e) {
             throw new GitTestServerException("Error stopping Git Test Server", e);
         }

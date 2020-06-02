@@ -1,8 +1,9 @@
 package com.github.autobump.bitbucket.model;
 
-import com.github.autobump.bitbucket.exceptions.BranchNotFoundException;
-import com.github.autobump.bitbucket.exceptions.RemoteNotFoundException;
-import com.github.autobump.bitbucket.exceptions.UnauthorizedException;
+import com.github.autobump.bitbucket.exceptions.BitbucketApiException;
+import com.github.autobump.bitbucket.exceptions.BitbucketBadRequestException;
+import com.github.autobump.bitbucket.exceptions.BitbucketNotFoundException;
+import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 
@@ -12,16 +13,20 @@ public class BitBucketErrorDecoder implements ErrorDecoder {
         Exception exception;
         switch (response.status()) {
             case 400:
-                exception = new BranchNotFoundException("Branch not found");
+                exception =
+                        new BitbucketBadRequestException("Bad request: " + response.reason());
                 break;
             case 401:
-                exception = new UnauthorizedException("Could not authenticate");
+                exception =
+                        new BitbucketUnauthorizedException("Could not authenticate: " + response.reason());
                 break;
             case 404:
-                exception = new RemoteNotFoundException("Remote not found");
+                exception =
+                        new BitbucketNotFoundException("Resource not found: " + response.reason());
                 break;
             default:
-                exception = new RuntimeException(response.reason());
+                exception =
+                        new BitbucketApiException("Bitbucket Api error: " + response.reason());
                 break;
         }
         return exception;
