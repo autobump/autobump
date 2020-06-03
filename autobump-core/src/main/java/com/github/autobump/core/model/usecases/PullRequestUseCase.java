@@ -22,7 +22,6 @@ public class PullRequestUseCase {
     private final URI uri;
     private final Bump bump;
 
-
     public PullRequestUseCase(GitProvider gitProvider,
                               GitClient gitClient,
                               UrlHelper urlHelper,

@@ -4,19 +4,22 @@ import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.springboot.controllers.dtos.BranchDto;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 public class SettingsService {
     SettingsRepository settingsRepository;
 
     // Needed: an object
     public List<RepositoryDto> getAllRepositoriesFromWorkspace(){
         // rest call to bitbucket
+        // check api response ...
         // check whether all repos still valid -> separate usecase?
+        // branchlist refresh (add yes, delete no)
+        // dependencies, check whether in settingsRepository
         // get settings for each repo from own database
         return createRepos();
     }
