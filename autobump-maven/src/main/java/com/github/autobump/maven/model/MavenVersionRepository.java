@@ -36,6 +36,11 @@ public class MavenVersionRepository implements VersionRepository {
             .connectTimeout(CONNECT_TIMEOUT)
             .build();
 
+
+    public MavenVersionRepository(){
+        this("https://repo1.maven.org/maven2");
+    }
+
     public MavenVersionRepository(String baseUrl) {
         this.baseUrl = baseUrl;
         this.mavenModelAnalyser = new MavenModelAnalyser();

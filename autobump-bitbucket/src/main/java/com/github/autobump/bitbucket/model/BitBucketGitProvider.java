@@ -8,6 +8,7 @@ import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import feign.Feign;
+import feign.RequestInterceptor;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -22,12 +23,23 @@ public class BitBucketGitProvider implements GitProvider {
     private final BitBucketApi client;
     private final GitProviderUrlHelper bitBucketGitProviderUrlHelper;
 
+    public BitBucketGitProvider(BitBucketAccount user){
+        this(user, "https://api.bitbucket.org/2.0");
+    }
+    public BitBucketGitProvider(RequestInterceptor interceptor){
+        this("https://api.bitbucket.org/2.0", interceptor);
+    }
+
     public BitBucketGitProvider(BitBucketAccount user, String apiUrl) {
+        this(apiUrl, new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()));
+    }
+
+    public BitBucketGitProvider(String apiUrl, RequestInterceptor interceptor){
         this.apiUrl = apiUrl;
         client = Feign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
-                .requestInterceptor(new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()))
+                .requestInterceptor(interceptor)
                 .errorDecoder(new BitBucketErrorDecoder())
                 .target(BitBucketApi.class, apiUrl);
         bitBucketGitProviderUrlHelper = new BitBucketGitProviderUrlHelper();

@@ -38,6 +38,7 @@ public class JGitGitClient implements GitClient {
     public Workspace clone(URI uri) {
         try (Repository repo = Git.cloneRepository().setURI(uri.toString())
                 .setDirectory(Files.createTempDirectory("cloned_repos").toFile())
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
                 .call().getRepository()) {
             return new Workspace(repo.getDirectory().getPath().replace(".git", ""));
         } catch (GitAPIException | IOException e) {

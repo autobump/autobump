@@ -17,18 +17,20 @@ public class RebaseUseCase {
 
     public void handlePushEvent() {
         List<PullRequest> pullRequests = getOpenPullRequests(
-                config.getGitProviderUrlHelper().getOwnerName(event.getUri().toString()),
-                config.getGitProviderUrlHelper().getRepoName(event.getUri().toString()));
-        Workspace workspace = config.getGitClient().clone(event.getUri());
-        for (PullRequest p : pullRequests) {
-            if (config.getGitClient().rebaseBranchFromMaster(workspace, p.getBranchName()).isConflicted()) {
-                AutoBumpSingleGroupUseCase.builder()
-                        .pullRequest(p)
-                        .uri(event.getUri())
-                        .config(config)
-                        .workspace(workspace)
-                        .build()
-                        .doSingleGroupAutoBump();
+                config.getGitProviderUrlHelper().getOwnerName(event.getGitUri().toString()),
+                config.getGitProviderUrlHelper().getRepoName(event.getGitUri().toString()));
+        if (!pullRequests.isEmpty()) {
+            Workspace workspace = config.getGitClient().clone(event.getGitUri());
+            for (PullRequest p : pullRequests) {
+                if (config.getGitClient().rebaseBranchFromMaster(workspace, p.getBranchName()).isConflicted()) {
+                    AutoBumpSingleGroupUseCase.builder()
+                            .pullRequest(p)
+                            .uri(event.getGitUri())
+                            .config(config)
+                            .workspace(workspace)
+                            .build()
+                            .doSingleGroupAutoBump();
+                }
             }
         }
     }

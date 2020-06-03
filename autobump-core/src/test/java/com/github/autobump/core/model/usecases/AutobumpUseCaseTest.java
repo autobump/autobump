@@ -125,6 +125,7 @@ class AutobumpUseCaseTest {
 
     @Test
     void doAutoBump() {
+        when(gitProvider.makePullRequest(any())).thenReturn(PullRequestResponse.builder().id(5).build());
         setUpdoAutoBumpMocks_forTestSingleBump();
         var result = AutobumpUseCase.builder()
                 .config(config)

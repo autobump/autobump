@@ -1,19 +1,35 @@
 {
-  "key": "${autobump.bitbucket.key}",
-  "baseUrl": "${autobump.bitbucket.base-url}",
-  "name": "Autobump BitBucket Cloud-App",
-  "description": "Autobump automatically updates your repository dependencies",
-  "authentication": {
-    "type": "jwt"
-  },
-  "lifecycle": {
-    "installed": "/installed",
-    "uninstalled": "/uninstalled"
-  },
-    "scopes": [
-        "repository",
-        "project",
-        "account",
-        "webhook "
-    ]
+    "key": "${autobump.bitbucket.key}",
+    "baseUrl": "${autobump.bitbucket.base-url}",
+    "name": "Autobump BitBucket Cloud-App",
+    "description": "Autobump automatically updates your repository dependencies",
+    "vendor": {
+        "name": "AutoBump",
+        "url": "https://github.com/autobump/autobump"
+    },
+    "authentication": {
+        "type": "jwt"
+    },
+    "lifecycle": {
+        "installed": "/installed",
+        "uninstalled": "/uninstalled",
+        "enabled": "/enabled",
+        "disabled": "/disabled"
+    },
+    "modules": {
+        "webhooks": [
+            {
+                "event": "pullrequest:comment_created",
+                "url": "/webhooks/comment_created"
+            },
+            {
+                "event": "pullrequest:rejected",
+                "url": "/webhooks/pr_rejected"
+            },
+            {
+                "event": "repo:push",
+                "url": "/webhooks/push"
+            }
+        ]
+    }
 }

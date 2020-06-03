@@ -5,9 +5,8 @@ import com.github.autobump.core.model.ReleaseNotesUrlHelper;
 import com.github.autobump.core.model.usecases.ReleaseNotes;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
 public class GithubReleaseNotesSource implements ReleaseNotesSource {
     private final GithubApi githubApi;
     private final ReleaseNotesUrlHelper releaseNotesUrlHelper;
