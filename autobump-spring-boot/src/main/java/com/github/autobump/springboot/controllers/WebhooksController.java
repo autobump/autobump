@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/webhooks")
@@ -32,9 +31,9 @@ public class WebhooksController {
     }
 
     @PostMapping("push")
-    public void push(@RequestBody PushDto pushDto) throws URISyntaxException {
+    public void push(@RequestBody PushDto pushDto) {
         if (pushDto.getBranchName() != null){
-            webhookService.handlePush(pushDto.getBranchName(), new URI(pushDto.geturl()));
+            webhookService.handlePush(pushDto.getBranchName(), URI.create(pushDto.geturl()));
         }
     }
 }
