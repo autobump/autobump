@@ -38,9 +38,9 @@ public class SettingsService {
         repo2.setSelected(false);
 
         List<BranchDto> branches2 = new ArrayList<>();
-        branches2.add(new BranchDto(4, "master"));
-        branches2.add(new BranchDto(5, "development"));
-        branches2.add(new BranchDto(6, "yetAnotherBranch"));
+        branches2.add(new BranchDto(4, "master", false));
+        branches2.add(new BranchDto(5, "development", false));
+        branches2.add(new BranchDto(6, "yetAnotherBranch", false));
 
         repo2.setBranches(branches2);
 
@@ -66,12 +66,12 @@ public class SettingsService {
 
     public BranchDto[] getAllBranchesFromRepo(){
         List<BranchDto> branches = new ArrayList<>();
-        branches.add(new BranchDto(1, "master"));
-        branches.add(new BranchDto(2, "development"));
-        branches.add(new BranchDto(3, "anotherBranch"));
-        branches.add(new BranchDto(4, "master"));
-        branches.add(new BranchDto(5, "development"));
-        branches.add(new BranchDto(6, "yetAnotherBranch"));
+        branches.add(new BranchDto(1, "master", true));
+        branches.add(new BranchDto(2, "development", false));
+        branches.add(new BranchDto(3, "anotherBranch", false));
+        branches.add(new BranchDto(4, "master", true));
+        branches.add(new BranchDto(5, "development", false));
+        branches.add(new BranchDto(6, "yetAnotherBranch", false));
         BranchDto[] arrayList = new BranchDto[branches.size()];
         return branches.toArray(arrayList);
     }
@@ -87,9 +87,9 @@ public class SettingsService {
         repo1.setSelected(false);
 
         List<BranchDto> branches1 = new ArrayList<>();
-        branches1.add(new BranchDto(1, "master"));
-        branches1.add(new BranchDto(2, "development"));
-        branches1.add(new BranchDto(3, "anotherBranch"));
+        branches1.add(new BranchDto(1, "master", true));
+        branches1.add(new BranchDto(2, "development", false));
+        branches1.add(new BranchDto(3, "anotherBranch", false));
 
         repo1.setBranches(branches1);
 

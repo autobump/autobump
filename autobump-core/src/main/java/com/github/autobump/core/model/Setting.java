@@ -11,10 +11,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Table;
 
 @Data
 @EqualsAndHashCode(of = "key")
 @Entity
+@Table(name="Settings")
 @IdClass(SettingId.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public final class Setting {

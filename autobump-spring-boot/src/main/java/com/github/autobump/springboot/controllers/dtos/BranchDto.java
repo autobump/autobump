@@ -6,4 +6,5 @@ import lombok.Value;
 public class BranchDto {
     int id;
     String name;
+    boolean isTarget;
 }
