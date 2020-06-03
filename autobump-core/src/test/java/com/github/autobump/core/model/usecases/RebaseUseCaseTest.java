@@ -164,7 +164,7 @@ class RebaseUseCaseTest {
     }
 
     @Test
-    void handlePushEventWithConflicts()  {
+    void handlePushEventWithConflicts() {
         assertThatCode(() -> rebaseUseCaseWithConflict
                 .handlePushEvent())
                 .doesNotThrowAnyException();
@@ -186,10 +186,11 @@ class RebaseUseCaseTest {
         Mockito.when(provider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
         //Mockito.when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
         //Mockito.when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
-        RebaseUseCase.builder()
+        assertThatCode(() -> RebaseUseCase.builder()
                 .config(config)
                 .event(new PushEvent(URI.create("")))
                 .build()
-                .handlePushEvent();
+                .handlePushEvent())
+                .doesNotThrowAnyException();
     }
 }
