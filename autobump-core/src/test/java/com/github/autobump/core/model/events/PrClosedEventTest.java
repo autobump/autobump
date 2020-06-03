@@ -36,6 +36,15 @@ class PrClosedEventTest {
         assertThatCode(() -> prClosedEvent.getBump()).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    void testDependencyVersion(){
+        Version version = new PrClosedEvent.DependencyVersion("tst");
+        Version v2 = new PrClosedEvent.DependencyVersion("test");
+        assertThat(version.getUpdateType(version)).isNull();
+        assertThat(version.getUpdateType(v2)).isNull();
+        assertThat(version.compareTo(v2)).isEqualTo(0);
+    }
+
     static class TestVersion implements Version {
         private final String versionNumber;
 
@@ -58,4 +67,5 @@ class PrClosedEventTest {
             return 0;
         }
     }
+
 }
