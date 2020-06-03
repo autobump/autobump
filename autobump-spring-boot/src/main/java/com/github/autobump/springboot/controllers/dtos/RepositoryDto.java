@@ -11,8 +11,7 @@ public class RepositoryDto {
     List<DependencyDto> dependencies;
     boolean cronJob;
     String reviewer;
-    List<String> targetBranchNames;
+    List<BranchDto> branches;
     int id;
-    // to add: link?
-
+    boolean ignore;
 }

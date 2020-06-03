@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Dependencies</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <h1>Welcome to AutoBump!</h1>
+
+
+    <div class="jumbotron">
+        <p>Define which dependencies Autobump should ignore</p>
+    </div>
+
+    <!--/*@thymesVar id="repositoryDto" type="RepositoryDto"*/-->
+    <form th:action="@{/saveIgnoredDependencies}" th:object="${repositoryDto}" method="post">
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <th>Id</th>
+            </div>
+            <div class="form-group col-md-2">
+                <th>Group</th>
+            </div>
+            <div class="form-group col-md-2">
+                <th>Name</th>
+            </div>
+            <div class="form-group col-md-2">
+                <th>Version</th>
+            </div>
+            <div class="form-group col-md-2">
+                <th>Ignore major</th>
+            </div>
+            <div class="form-group col-md-2">
+                <th>Ignore minor</th>
+            </div>
+        </div>
+        <div class="form-row" th:each="dep, stat : ${repositoryDto.dependencies}">
+            <div class="form-group col-md-2">
+                <td><input hidden
+                           th:field="*{dependencies[__${stat.index}__].id}"
+                           th:value="*{dependencies[__${stat.index}__].getId()}"
+                           th:text="${dep.id}"/></td>
+            </div>
+            <div class="form-group col-md-2">
+                <td><input hidden
+                           th:field="*{dependencies[__${stat.index}__].groupName}"
+                           th:value="*{dependencies[__${stat.index}__].getGroupName()}"
+                           th:text="${dep.groupName}"/></td>
+            </div>
+            <div class="form-group col-md-2">
+                <td><input hidden
+                           th:field="*{dependencies[__${stat.index}__].artifactId}"
+                           th:value="*{dependencies[__${stat.index}__].getArtifactId()}"
+                           th:text="${dep.artifactId}"/></td>
+            </div>
+            <div class="form-group col-md-2">
+                <td><input hidden
+                           th:field="*{dependencies[__${stat.index}__].versionNumber}"
+                           th:value="*{dependencies[__${stat.index}__].getVersionNumber()}"
+                           th:text="${dep.versionNumber}"/></td>
+            </div>
+            <div class="form-group col-md-2">
+                <td>
+                    <input type="checkbox"
+                           th:name="|repositories(${stat.index})|"
+                           th:field="*{dependencies[__${stat.index}__].ignoreMajor}"
+                           th:value="*{dependencies[__${stat.index}__].isIgnoreMajor()}"
+                           th:checked="*{dependencies[__${stat.index}__].isIgnoreMajor()}">
+                </td>
+            </div>
+            <div class="form-group col-md-2">
+                <td>
+                    <input type="checkbox"
+                           th:name="|repositories(${stat.index})|"
+                           th:field="*{dependencies[__${stat.index}__].ignoreMinor}"
+                           th:value="*{dependencies[__${stat.index}__].isIgnoreMinor()}"
+                           th:checked="*{dependencies[__${stat.index}__].isIgnoreMinor()}">
+                </td>
+            </div>
+            <div class="form-group col-md-1" style="display: none">
+                <td><input hidden
+                           th:field="*{id}"
+                           th:value="*{id}"></td>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-1">
+                <input type="submit" value="save">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

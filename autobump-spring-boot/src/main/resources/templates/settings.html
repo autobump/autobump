@@ -20,44 +20,69 @@
     <div class="jumbotron">
         <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
             It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
-            It then creates a pull-request for every outdated dependency.</p>
-        <br>
-        <p>You can use this website to configure the settings of Autobump for your workspace.
-            Select the repositories for Autobump, configure a cron job, assign reviewers
-            and select the dependencies you wish not to be bumped.</p>
+            It then creates a pull-request for every outdated dependency</p>
+        <p>You can use this website to configure the settings of Autobump for your workspace:
+        <ul>
+            <li>Select the repositories for which Autobump must be configured</li>
+            <li>Select Autobump as a cron job</li>
+            <li>Assign a reviewer</li>
+            <li>Select the branches that need to be kept up to date</li>
+            <li>Select whether any dependencies need to be ignored</li>
+        </ul>
+        <p>In the follow-up screen, you may define which dependencies Autobump should ignore for each repository</p>
     </div>
 
-    <p>Please select the repositories you want automatic bumps for, and configure the settings for each repository</p>
-    <form th:action="@{/saveSettings}" th:object="${repositoryListDto}" method="post">
+    <form th:action="@{/selectRepositories}" th:object="${repositoryListDto}" method="post">
         <div class="form-row">
-            <div class="form-group col-md-2">
-                <td>Repository name</td>
+            <div class="form-group col-md-1" style="display: none">
+                <th>Id</th>
+            </div>
+            <div class="form-group col-md-3" style="text-align: left">
+                <th>Repository name</th>
+            </div>
+            <div class="form-group col-md-1">
+                <th>Setup Autobump</th>
+            </div>
+            <div class="form-group col-md-1">
+                <th>Cronjob</th>
             </div>
             <div class="form-group col-md-2">
-                <td>Autobump</td>
+                <th>Reviewer</th>
             </div>
             <div class="form-group col-md-2">
-                <td>Cronjob</td>
+                <th>TargetBranches</th>
             </div>
-            <div class="form-group col-md-2">
-                <td>Reviewer</td>
+            <div class="form-group col-md-1">
+                <th>Ignore dependencies</th>
             </div>
-            <div class="form-group col-md-2">
-                <td>Target branches</td>
-            </div>
-            <div class="form-group col-md-2">
-                <td>Dependencies</td>
+            <div class="form-group col-md-1" style="display: none">
+                <th>Dependencies</th>
             </div>
         </div>
         <!--<div class="form-row" th:each="repo, stat : ${repositoryListDto.repositories}">-->
         <div class="form-row" th:each="repo, stat : ${repositoryListDto.repositories}">
-            <div class="form-group col-md-2">
-                <td><label th:text="${repo.name}"></label></td>
+            <div class="form-group col-md-1" style="display: none">
+                <td><input hidden
+                           th:field="*{repositories[__${stat.index}__].id}"
+                           th:value="*{repositories[__${stat.index}__].getId()}"
+                           th:text="${repo.id}"/></td>
             </div>
-            <div class="form-group col-md-2">
-                <td><input type="checkbox" th:field="*{repositories}" th:value="${repo.id}" th:checked=false/></td>
+            <div class="form-group col-md-3" style="text-align: left; font-weight: normal" >
+                <td><input hidden
+                           th:field="*{repositories[__${stat.index}__].name}"
+                           th:value="*{repositories[__${stat.index}__].getName()}"
+                           th:text="${repo.name}"/></td>
             </div>
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-1">
+                <td>
+                    <input type="checkbox"
+                           th:name="|repositories(${stat.index})|"
+                           th:field="*{repositories[__${stat.index}__].selected}"
+                           th:value="*{repositories[__${stat.index}__].isSelected()}"
+                           th:checked="*{repositories[__${stat.index}__].isSelected()}">
+                </td>
+            </div>
+            <div class="form-group col-md-1">
                 <td><input type="checkbox"
                            th:name="|repositories(${stat.index})|"
                            th:value="${repo.getId()}"
@@ -71,24 +96,35 @@
             </div>
             <div class="form-group col-md-2">
                 <td>
-                    <select class="form-control"
-                            th:name="|repositories(${stat.index})|"
-                            th:value="${repo.getTargetBranchNames()}"
-                            th:field="*{repositories[__${stat.index}__].targetBranchNames}"
-                            multiple="multiple"
-                    >
-                        <option th:each="branch : ${repo.getTargetBranchNames()}"
-                                th:selected="${}"
-                        ></option>
+                    <select th:field="*{repositories[__${stat.index}__].branches}" multiple="multiple">
+                        <option th:each="branch : *{repositories[__${stat.index}__].branches}"
+                                th:value="${{branch.id}}"
+                                th:text="${branch.name}">
+                        </option>
                     </select>
                 </td>
             </div>
-            <div class="form-group col-md-2">
-                <td>Dependencies</td>
+            <div class="form-group col-md-1">
+                <td><input type="checkbox"
+                           th:name="|repositories(${stat.index})|"
+                           th:value="${repo.isIgnore()}"
+                           th:checked="${repo.ignore}"
+                           th:field="*{repositories[__${stat.index}__].ignore}"></td>
+            </div>
+            <div class="form-group col-md-1" style="display: none">
+                <td>
+                    <select class="form-control" th:field="*{repositories[__${stat.index}__].dependencies}"
+                            multiple="multiple">
+                        <option th:each="dependency : *{repositories[__${stat.index}__].dependencies}"
+                                th:value="${{dependency.id}}"
+                                th:text="${dependency.toString()}">
+                        </option>
+                    </select>
+                </td>
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-1">
                 <input type="submit" value="save">
             </div>
         </div>

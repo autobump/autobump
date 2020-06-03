@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Select repository</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <h1>Welcome to AutoBump!</h1>
+
+    <div class="jumbotron">
+        <p>For which repository do you wish to configure the dependencies?</p>
+    </div>
+
+    <form th:action="@{/ignoreDependencies}">
+        <select th:name="repoName">
+            <option th:each="repo, stat : ${repositories}"
+                    th:text="${repo.name}"
+                    th:value="${repositories[__${stat.index}__].getName()}"></option>
+        </select>
+        <div class="form-row">
+            <div class="form-group col-md-1">
+                <input type="submit" value="save">
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>

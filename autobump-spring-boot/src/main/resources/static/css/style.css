@@ -1,11 +1,28 @@
 h1 {
+    margin-top: 3rem;
     color: #4c2e05;
     text-align: center;
+}
+
+.form-group, td {
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.form-group, th {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
 }
 
 #title {
     text-align: center;
     color: #4c2e05;
+}
+
+.jumbotron {
+    padding: 1rem 1rem;
 }
 
 #results_list {
@@ -40,7 +57,7 @@ h1 {
 }
 
 html, body {
-    background-color: #AEBD93;
+    background-color: #FFFFFF;
     height: 100%;
     margin: 0;
     padding: 0;
@@ -54,4 +71,8 @@ html, body {
 nav {
     padding-top: 12px;
     padding-bottom: 12px;
+}
+
+th {
+    font-weight: bold;
 }

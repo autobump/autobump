@@ -1,4 +1,4 @@
-package com.github.autobump.springboot.controllers;
+package com.github.autobump.springboot.controllers.converters;
 
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.services.SettingsService;
