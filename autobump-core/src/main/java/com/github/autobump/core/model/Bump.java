@@ -44,7 +44,7 @@ public class Bump {
                         dependency.getVersion().getVersionNumber()));
             }
         }
-        titleBuilder.append(String.format(" to version: %s", updatedVersion .getVersionNumber()));
+        titleBuilder.append(String.format(" to version: %s", updatedVersion.getVersionNumber()));
         return titleBuilder.toString();
     }
 

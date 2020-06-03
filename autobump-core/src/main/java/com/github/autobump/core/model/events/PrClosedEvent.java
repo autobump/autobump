@@ -21,11 +21,11 @@ public class PrClosedEvent {
 
     public Bump getBump() {
         Matcher matcher = BUMP_TITLE_PATTERN.matcher(prName);
-        if (matcher.matches()) {
-            var dependencies = parseDependencies(matcher.group(1));
-            return new Bump(dependencies, new DependencyVersion(matcher.group(2)));
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException(prName);
         }
-        throw new IllegalArgumentException(prName);
+        var dependencies = parseDependencies(matcher.group(1));
+        return new Bump(dependencies, new DependencyVersion(matcher.group(2)));
     }
 
     private Set<Dependency> parseDependencies(String dependencies) {

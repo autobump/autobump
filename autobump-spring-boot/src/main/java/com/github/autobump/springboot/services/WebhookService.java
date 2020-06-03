@@ -38,7 +38,6 @@ public class WebhookService {
                     .event(event)
                     .build()
                     .doHandle();
-
         }
     }
 

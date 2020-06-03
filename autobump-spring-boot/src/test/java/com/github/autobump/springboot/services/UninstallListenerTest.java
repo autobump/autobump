@@ -17,10 +17,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UninstallListenerTest {
 
     @Autowired
-    AtlassianHostRepository repository;
+    private AtlassianHostRepository repository;
 
     @Autowired
-    UninstallListener listener;
+    private UninstallListener listener;
 
 
     @BeforeEach

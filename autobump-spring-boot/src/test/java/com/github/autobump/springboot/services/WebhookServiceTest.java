@@ -30,13 +30,13 @@ import static org.mockito.Mockito.verify;
 class WebhookServiceTest {
 
     @Mock
-    Autobumpconfig autobumpconfig;
+    private Autobumpconfig autobumpconfig;
 
     @Mock
-    SettingsRepository settingsRepository;
+    private SettingsRepository settingsRepository;
 
     @InjectMocks
-    WebhookService webhookService;
+    private WebhookService webhookService;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +53,6 @@ class WebhookServiceTest {
                 .dependencyResolver(Mockito.mock(DependencyResolver.class))
                 .dependencyBumper(Mockito.mock(DependencyBumper.class))
                 .build());
-
     }
 
     @Test

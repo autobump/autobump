@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class JwtInterceptorTest {
 
-    JwtInterceptor interceptor;
+    private JwtInterceptor interceptor;
 
     @BeforeEach
     void setUp() {

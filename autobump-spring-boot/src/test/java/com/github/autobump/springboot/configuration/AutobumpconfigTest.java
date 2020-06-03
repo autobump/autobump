@@ -24,9 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AutobumpconfigTest {
 
     @Autowired
-    AtlassianHostRepository repository;
+    private AtlassianHostRepository repository;
 
-    WireMockServer wireMockServer;
+    private WireMockServer wireMockServer;
 
     @Autowired
     private Autobumpconfig autobumpconfig;

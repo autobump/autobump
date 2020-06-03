@@ -16,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 @ExtendWith(MockitoExtension.class)
 class WebhooksControllerTest {
     @Mock
-    WebhookService webhookService;
+    private WebhookService webhookService;
     @InjectMocks
-    WebhooksController webhooksController;
+    private WebhooksController webhooksController;
 
     @BeforeEach
     void setUp() {

@@ -184,8 +184,6 @@ class RebaseUseCaseTest {
                 .versionRepository(Mockito.mock(VersionRepository.class))
                 .build();
         Mockito.when(provider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
-        //Mockito.when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
-        //Mockito.when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
         assertThatCode(() -> RebaseUseCase.builder()
                 .config(config)
                 .event(new PushEvent(URI.create("")))
