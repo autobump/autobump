@@ -134,7 +134,7 @@ class AutobumpTest {
                 urlEqualTo(String.format("/apiurl/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
                 .withRequestBody(equalToJson(
                         "{\"title\": " +
-                                "\"Bumped org.apache.derby:derby to version: 10.15.2.0\", " +
+                                "\"Bumped org.apache.derby:derby:10.15.1.3 to version: 10.15.2.0\", " +
                                 "\"source\": " +
                                 "{ \"branch\": " +
                                 "{ \"name\": " +
@@ -183,7 +183,7 @@ class AutobumpTest {
 
     @Test
     void main_integrationTest() {
-        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -a %s",
+        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -b %s",
                 GIT_URL, REPO_URL, API_URL).split(" ");
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }
@@ -192,7 +192,7 @@ class AutobumpTest {
     void main_integrationTestWithIgnores() {
         String[] args =
                 String.format("-u glenn.schrooyen@student.kdg.be " +
-                                "-p AutoBump2209 -l %s -r %s -a %s -i derby=all",
+                                "-p AutoBump2209 -l %s -r %s -b %s -i derby=all",
                     GIT_URL, REPO_URL, API_URL).split(" ");
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }

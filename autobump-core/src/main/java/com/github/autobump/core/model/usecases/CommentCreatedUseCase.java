@@ -8,15 +8,16 @@ import lombok.Builder;
 @Builder
 public class CommentCreatedUseCase {
     SettingsRepository settingsRepository;
+    CommentCreatedEvent event;
 
-    public Setting handleComment(CommentCreatedEvent commentEvent){
-        String comment = commentEvent.getComment();
+    public Setting doHandle(){
+        String comment = event.getComment();
         Setting setting = null;
         if ("Ignore this major".equalsIgnoreCase(comment)){
-            setting = ignoreMajor(commentEvent);
+            setting = ignoreMajor(event);
         }
         else if ("Ignore this minor".equalsIgnoreCase(comment)){
-            setting = ignoreMinor(commentEvent);
+            setting = ignoreMinor(event);
         }
         return setting;
     }

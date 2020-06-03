@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 dependencies {
     implementation project(':autobump-bitbucket')
+    implementation project(':autobump-github')
     implementation project(':autobump-core')
     implementation project(':autobump-jgit')
     implementation project(':autobump-maven')

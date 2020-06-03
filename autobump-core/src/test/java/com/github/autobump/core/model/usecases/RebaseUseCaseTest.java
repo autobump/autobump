@@ -5,9 +5,9 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UrlHelper;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -27,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RebaseUseCaseTest {
@@ -58,7 +58,7 @@ class RebaseUseCaseTest {
     DependencyBumper dependencyBumper;
 
     @Mock
-    UrlHelper urlHelper;
+    GitProviderUrlHelper gitProviderUrlHelper;
 
     @Mock
     VersionRepository versionRepository;
@@ -81,13 +81,13 @@ class RebaseUseCaseTest {
 
     private void setupPullRequestMocks() {
         Set<PullRequest> prs = createDummyPullRequests();
-        when(gitProvider.getOpenPullRequests("test", "test"))
+        lenient().when(gitProvider.getOpenPullRequests("test", "test"))
                 .thenReturn(prs);
     }
 
     private void setupUrlHelperMocks() {
-        when(urlHelper.getOwnerName(anyString())).thenReturn("test");
-        when(urlHelper.getRepoName(anyString())).thenReturn("test");
+        lenient().when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
+        lenient().when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
     }
 
     private void setupGitClientMocks() {
@@ -106,7 +106,7 @@ class RebaseUseCaseTest {
                 .dependencyResolver(dependencyResolver)
                 .gitProvider(gitProvider)
                 .ignoreRepository(ignoreRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .versionRepository(versionRepository)
                 .build();
 
@@ -121,7 +121,7 @@ class RebaseUseCaseTest {
                 .dependencyResolver(dependencyResolver)
                 .gitProvider(gitProvider)
                 .ignoreRepository(ignoreRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .versionRepository(versionRepository)
                 .build();
 
@@ -164,8 +164,30 @@ class RebaseUseCaseTest {
     }
 
     @Test
-    void handlePushEventWithConflicts()  {
+    void handlePushEventWithConflicts() {
         assertThatCode(() -> rebaseUseCaseWithConflict
+                .handlePushEvent())
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void testPrEmpty() {
+        var provider = Mockito.mock(GitProvider.class);
+        var providerUrlHelper = Mockito.mock(GitProviderUrlHelper.class);
+        var config = UseCaseConfiguration.builder()
+                .dependencyBumper(Mockito.mock(DependencyBumper.class))
+                .dependencyResolver(Mockito.mock(DependencyResolver.class))
+                .gitClient(Mockito.mock(GitClient.class))
+                .ignoreRepository(Mockito.mock(IgnoreRepository.class))
+                .gitProvider(provider)
+                .gitProviderUrlHelper(providerUrlHelper)
+                .versionRepository(Mockito.mock(VersionRepository.class))
+                .build();
+        Mockito.when(provider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
+        assertThatCode(() -> RebaseUseCase.builder()
+                .config(config)
+                .event(new PushEvent(URI.create("")))
+                .build()
                 .handlePushEvent())
                 .doesNotThrowAnyException();
     }

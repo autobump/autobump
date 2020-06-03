@@ -4,10 +4,11 @@ import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
-import com.github.autobump.core.model.UrlHelper;
 import feign.Feign;
+import feign.RequestInterceptor;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -20,17 +21,28 @@ import java.util.stream.Collectors;
 public class BitBucketGitProvider implements GitProvider {
     private final String apiUrl;
     private final BitBucketApi client;
-    private final UrlHelper bitBucketUrlHelper;
+    private final GitProviderUrlHelper bitBucketGitProviderUrlHelper;
+
+    public BitBucketGitProvider(BitBucketAccount user){
+        this(user, "https://api.bitbucket.org/2.0");
+    }
+    public BitBucketGitProvider(RequestInterceptor interceptor){
+        this("https://api.bitbucket.org/2.0", interceptor);
+    }
 
     public BitBucketGitProvider(BitBucketAccount user, String apiUrl) {
+        this(apiUrl, new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()));
+    }
+
+    public BitBucketGitProvider(String apiUrl, RequestInterceptor interceptor){
         this.apiUrl = apiUrl;
         client = Feign.builder()
                 .encoder(new JacksonEncoder())
                 .decoder(new JacksonDecoder())
-                .requestInterceptor(new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()))
+                .requestInterceptor(interceptor)
                 .errorDecoder(new BitBucketErrorDecoder())
                 .target(BitBucketApi.class, apiUrl);
-        bitBucketUrlHelper = new BitBucketUrlHelper();
+        bitBucketGitProviderUrlHelper = new BitBucketGitProviderUrlHelper();
     }
 
     @Override
@@ -55,7 +67,7 @@ public class BitBucketGitProvider implements GitProvider {
                 .getValues()
                 .stream().filter(p -> p.getTitle().startsWith("Bumped"))
                 .map(d -> PullRequest.builder()
-                .pullRequestId(bitBucketUrlHelper.getPullRequestId(d.getLink()))
+                .pullRequestId(bitBucketGitProviderUrlHelper.getPullRequestId(d.getLink()))
                 .repoName(repoName)
                 .repoOwner(repoOwner)
                 .title(d.getTitle())

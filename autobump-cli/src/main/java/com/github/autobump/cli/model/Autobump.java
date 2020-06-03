@@ -2,16 +2,18 @@ package com.github.autobump.cli.model;
 
 import com.github.autobump.bitbucket.model.BitBucketAccount;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
-import com.github.autobump.bitbucket.model.BitBucketUrlHelper;
+import com.github.autobump.bitbucket.model.BitBucketGitProviderUrlHelper;
 import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.IgnoreRepository;
+import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
+import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
@@ -31,6 +33,7 @@ public class Autobump implements Callable<AutobumpResult> {
     AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
+    private ReleaseNotesSource releaseNotesSource;
     private VersionRepository versionRepository;
     private GitClient gitClient;
     private GitProvider gitProvider;
@@ -53,7 +56,8 @@ public class Autobump implements Callable<AutobumpResult> {
         versionRepository = new MavenVersionRepository(properties.getRepositoryUrl());
         gitClient = new JGitGitClient(properties.getUsername(), properties.getPassword());
         BitBucketAccount bitBucketAccount = new BitBucketAccount(properties.getUsername(), properties.getPassword());
-        gitProvider = new BitBucketGitProvider(bitBucketAccount, properties.getApiUrl());
+        gitProvider = new BitBucketGitProvider(bitBucketAccount, properties.getBbApiUrl());
+        releaseNotesSource = new GithubReleaseNotesSource(properties.getGhApiUrl());
         ignoreRepository = new MavenIgnoreRepository(properties.getIgnoreDependencies());
     }
 
@@ -64,12 +68,13 @@ public class Autobump implements Callable<AutobumpResult> {
                 .dependencyResolver(dependencyResolver)
                 .gitProvider(gitProvider)
                 .versionRepository(versionRepository)
-                .urlHelper(new BitBucketUrlHelper())
+                .gitProviderUrlHelper(new BitBucketGitProviderUrlHelper())
                 .ignoreRepository(ignoreRepository)
                 .build();
         return AutobumpUseCase.builder()
                 .config(config)
                 .uri(properties.getUrl())
+                .releaseNotesSource(releaseNotesSource)
                 .build();
     }
 }

@@ -7,10 +7,11 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
-import com.github.autobump.core.model.UrlHelper;
+import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -29,6 +30,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,6 +41,8 @@ import static org.mockito.Mockito.when;
 class AutobumpUseCaseTest {
     public static final String REPOSITORY_URL = "http://www.test.test";
     public static final String TEST_NAME = "testName";
+    private static final String TEST_PROJ_URL = "https://github.com/testprojecturl";
+    private final Workspace workspace = new Workspace("");
     @Mock
     private GitProvider gitProvider;
     @Mock
@@ -49,13 +54,14 @@ class AutobumpUseCaseTest {
     @Mock
     private DependencyBumper dependencyBumper;
     @Mock
-    private UrlHelper urlHelper;
+    private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
     private PullRequest pullRequest;
     @Mock
     private IgnoreRepository ignoreRepository;
+    @Mock
+    private ReleaseNotesSource releaseNotesSource;
     private URI uri;
-    private final Workspace workspace = new Workspace("");
     private TestVersion tv;
     private TestVersion tv1;
     private List<Dependency> dependencyList;
@@ -68,7 +74,7 @@ class AutobumpUseCaseTest {
         dependencyList = createDependencies();
         config = UseCaseConfiguration.builder()
                 .ignoreRepository(ignoreRepository)
-                .urlHelper(urlHelper)
+                .gitProviderUrlHelper(gitProviderUrlHelper)
                 .versionRepository(versionRepository)
                 .gitProvider(gitProvider)
                 .dependencyResolver(dependencyResolver)
@@ -110,8 +116,8 @@ class AutobumpUseCaseTest {
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title("Bumped heyhey:test to version: test")
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString())).build();
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString())).build();
         lenient().when(gitProvider.makePullRequest(pullRequest))
                 .thenReturn(createPullRequestResponse(pullRequest));
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(false);
@@ -119,10 +125,12 @@ class AutobumpUseCaseTest {
 
     @Test
     void doAutoBump() {
+        when(gitProvider.makePullRequest(any())).thenReturn(PullRequestResponse.builder().id(5).build());
         setUpdoAutoBumpMocks_forTestSingleBump();
         var result = AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -134,6 +142,7 @@ class AutobumpUseCaseTest {
         var result = AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(any());
@@ -147,9 +156,60 @@ class AutobumpUseCaseTest {
         var result = AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
+    }
+
+    @Test
+    void postCommentOnPullRequest_validCommentCreatesValidPostCommentOnPullRequestUseCase() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
+                        , "1.0", "release notes content"));
+        AutobumpUseCase.builder()
+                .config(config)
+                .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .doAutoBump();
+        verify(gitProvider, times(1)).commentPullRequest(any(), contains("release notes content"));
+    }
+
+    @Test
+    void postCommentOnPullRequest_blankCommentNoPostCommentOnPullRequestUseCase() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
+                        , "1.0", ""));
+        AutobumpUseCase.builder()
+                .config(config)
+                .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
+    }
+
+    @Test
+    void postCommentOnPullRequest_nullReleaseNotesNoPostCommentOnPullRequestUseCase() {
+        setUpdoAutoBump_combinedDependenciesMocks();
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(null);
+        AutobumpUseCase.builder()
+                .config(config)
+                .uri(uri)
+                .releaseNotesSource(releaseNotesSource)
+                .build()
+                .doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
     }
 
     private void setUpdoAutoBump_combinedDependenciesMocks() {
@@ -165,8 +225,8 @@ class AutobumpUseCaseTest {
     }
 
     private void setupUrlHelper() {
-        when(urlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
-        when(urlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        when(gitProviderUrlHelper.getOwnerName(REPOSITORY_URL)).thenReturn(TEST_NAME);
+        when(gitProviderUrlHelper.getRepoName(REPOSITORY_URL)).thenReturn(TEST_NAME);
     }
 
     private void setUpGitClassesMocks_forTestCombinedBumps() {
@@ -180,8 +240,8 @@ class AutobumpUseCaseTest {
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title("Bumped same:testo and same:bla to version: test")
-                .repoName(urlHelper.getRepoName(uri.toString()))
-                .repoOwner(urlHelper.getOwnerName(uri.toString()))
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
                 .build();
         PullRequestResponse response = createPullRequestResponse(pullRequest);
         lenient().when(gitProvider.makePullRequest(any()))

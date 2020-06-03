@@ -6,5 +6,5 @@ import java.net.URI;
 
 @Value
 public class PushEvent {
-    URI uri;
+    URI gitUri;
 }

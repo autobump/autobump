@@ -5,6 +5,7 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Version;
+import com.github.autobump.core.model.events.PrClosedEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,18 +24,19 @@ class PullRequestClosedUseCaseTest {
 
     @Test
     void doClose() {
-        Dependency dependency1 = Dependency.builder().group("org.springframework").name("spring-core").build();
-        Dependency dependency2 = Dependency.builder().group("org.springframework").name("spring-beans").build();
+        Dependency dependency1 = Dependency.builder().group("org.springframework").name("spring-core")
+                .version(new TestVersion("2")).build();
+        Dependency dependency2 = Dependency.builder().group("org.springframework").name("spring-beans")
+                .version(new TestVersion("3")).build();
         var dependencySet = Set.of(dependency1, dependency2);
         Bump bump = new Bump(dependencySet, new TestVersion("5.2.5.RELEASE"));
+        var event = PrClosedEvent.builder().prName(bump.getTitle()).repoName("test").build();
         var setting = PullRequestClosedUseCase.builder()
-                .bump(bump)
+                .prClosedEvent(event)
                 .settingsRepository(settingsRepository)
-                .repositoryName("test")
                 .build()
                 .doClose();
         assertThat(setting.size()).isEqualTo(2);
-
     }
 
     private class TestVersion implements Version {
