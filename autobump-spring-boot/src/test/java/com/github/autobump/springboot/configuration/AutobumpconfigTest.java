@@ -7,16 +7,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -31,13 +26,9 @@ class AutobumpconfigTest {
     @Autowired
     AtlassianHostRepository repository;
 
-    @Mock
-    AtlassianHostRepository hostRepository;
-
     WireMockServer wireMockServer;
 
     @Autowired
-    @InjectMocks
     private Autobumpconfig autobumpconfig;
 
     @BeforeEach
@@ -48,7 +39,7 @@ class AutobumpconfigTest {
         var host = new AtlassianHost();
         host.setClientKey("testKey");
         host.setSharedSecret("SuperSecretkeyThatIjustToughtOfAndIsDefinitelyUnique");
-        Mockito.lenient().when(hostRepository.findAll()).thenReturn(List.of(host));
+        repository.save(host);
         setupStubs();
     }
 
@@ -113,5 +104,14 @@ class AutobumpconfigTest {
     @Test
     void getJwt() {
         assertThat(autobumpconfig.getJwt()).isNotNull();
+    }
+
+    @Test
+    void getNullJwt(){
+        var host = new AtlassianHost();
+        host.setClientKey("testKey");
+        host.setSharedSecret("SuperSecretkeyThatIjustToughtOfAndIsDefinitelyUnique");
+        repository.delete(host);
+        assertThat(autobumpconfig.getJwt()).isNull();
     }
 }

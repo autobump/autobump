@@ -4,7 +4,7 @@ import com.atlassian.connect.spring.AtlassianHost;
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.atlassian.connect.spring.internal.request.jwt.JwtBuilder;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
-import com.github.autobump.bitbucket.model.BitBucketUrlHelper;
+import com.github.autobump.bitbucket.model.BitBucketGitProviderUrlHelper;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
@@ -73,7 +73,7 @@ public class Autobumpconfig {
     }
 
     public GitProviderUrlHelper getUrlHelper() {
-        return new BitBucketUrlHelper();
+        return new BitBucketGitProviderUrlHelper();
     }
 
     public VersionRepository getVersionRepository() {

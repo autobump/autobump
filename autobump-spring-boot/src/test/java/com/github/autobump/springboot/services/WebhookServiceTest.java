@@ -1,10 +1,11 @@
 package com.github.autobump.springboot.services;
 
-import com.github.autobump.bitbucket.model.BitBucketUrlHelper;
+import com.github.autobump.bitbucket.model.BitBucketGitProviderUrlHelper;
 import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
@@ -40,7 +41,7 @@ class WebhookServiceTest {
     @BeforeEach
     void setUp() {
         webhookService = new WebhookService(settingsRepository, autobumpconfig);
-        BitBucketUrlHelper urlHelper = Mockito.mock(BitBucketUrlHelper.class);
+        GitProviderUrlHelper urlHelper = Mockito.mock(BitBucketGitProviderUrlHelper.class);
         Mockito.lenient().when(urlHelper.getOwnerName(any())).thenReturn("test");
         Mockito.lenient().when(urlHelper.getRepoName(any())).thenReturn("test");
         Mockito.lenient().when(autobumpconfig.setupConfig()).thenReturn(UseCaseConfiguration.builder()

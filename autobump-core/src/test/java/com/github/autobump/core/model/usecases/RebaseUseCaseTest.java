@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -27,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RebaseUseCaseTest {
@@ -81,13 +81,13 @@ class RebaseUseCaseTest {
 
     private void setupPullRequestMocks() {
         Set<PullRequest> prs = createDummyPullRequests();
-        when(gitProvider.getOpenPullRequests("test", "test"))
+        lenient().when(gitProvider.getOpenPullRequests("test", "test"))
                 .thenReturn(prs);
     }
 
     private void setupUrlHelperMocks() {
-        when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
-        when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
+        lenient().when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
+        lenient().when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
     }
 
     private void setupGitClientMocks() {
@@ -168,5 +168,28 @@ class RebaseUseCaseTest {
         assertThatCode(() -> rebaseUseCaseWithConflict
                 .handlePushEvent())
                 .doesNotThrowAnyException();
+    }
+
+    @Test
+    void testPrEmpty() {
+        var provider = Mockito.mock(GitProvider.class);
+        var providerUrlHelper = Mockito.mock(GitProviderUrlHelper.class);
+        var config = UseCaseConfiguration.builder()
+                .dependencyBumper(Mockito.mock(DependencyBumper.class))
+                .dependencyResolver(Mockito.mock(DependencyResolver.class))
+                .gitClient(Mockito.mock(GitClient.class))
+                .ignoreRepository(Mockito.mock(IgnoreRepository.class))
+                .gitProvider(provider)
+                .gitProviderUrlHelper(providerUrlHelper)
+                .versionRepository(Mockito.mock(VersionRepository.class))
+                .build();
+        Mockito.when(provider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
+        //Mockito.when(gitProviderUrlHelper.getOwnerName(anyString())).thenReturn("test");
+        //Mockito.when(gitProviderUrlHelper.getRepoName(anyString())).thenReturn("test");
+        RebaseUseCase.builder()
+                .config(config)
+                .event(new PushEvent(URI.create("")))
+                .build()
+                .handlePushEvent();
     }
 }

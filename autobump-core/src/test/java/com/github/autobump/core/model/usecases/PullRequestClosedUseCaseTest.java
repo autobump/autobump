@@ -37,7 +37,6 @@ class PullRequestClosedUseCaseTest {
                 .build()
                 .doClose();
         assertThat(setting.size()).isEqualTo(2);
-
     }
 
     private class TestVersion implements Version {

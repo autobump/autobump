@@ -94,6 +94,11 @@ class MavenVersionRepositoryTest {
                                 .version(new MavenVersion(TEST)).build()));
     }
 
+    @Test
+    void testCtor(){
+        assertThat(new MavenVersionRepository()).isNotNull();
+    }
+
     private void initDependency() {
         dependency = Dependency.builder().name(TEST).group(TEST)
                 .version(new MavenVersion(TEST)).build();
