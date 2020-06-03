@@ -23,7 +23,7 @@ public class SettingsController {
     @IgnoreJwt
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav){
-        var repos = settingsService.getAllRepositoriesFromWorkspace();
+        var repos = settingsService.getAllRepositories();
         mav.setViewName("settings");
         mav.addObject("repositoryListDto", new RepositoryListDto(repos));
         return mav;

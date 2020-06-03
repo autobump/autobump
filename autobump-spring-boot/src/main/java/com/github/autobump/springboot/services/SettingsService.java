@@ -1,5 +1,6 @@
 package com.github.autobump.springboot.services;
 
+import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.springboot.controllers.dtos.BranchDto;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
@@ -12,9 +13,10 @@ import java.util.List;
 @Service
 public class SettingsService {
     SettingsRepository settingsRepository;
+    GitProvider gitProvider;
 
     // Needed: an object
-    public List<RepositoryDto> getAllRepositoriesFromWorkspace(){
+    public List<RepositoryDto> getAllRepositories(){
         // rest call to bitbucket
         // check api response ...
         // check whether all repos still valid -> separate usecase?

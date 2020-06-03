@@ -19,7 +19,7 @@ public class RepositoryConverter implements Converter<String, RepositoryDto> {
 
         int parsedId = Integer.parseInt(id);
         List<RepositoryDto> selectableRepos = new ArrayList<>();
-        for (RepositoryDto dto : service.getAllRepositoriesFromWorkspace()
+        for (RepositoryDto dto : service.getAllRepositories()
         ) {
             selectableRepos.add(dto);
         }
