@@ -44,13 +44,12 @@ class WebhooksControllerTest {
         assertThatCode(() ->
                 webhooksController.push(new PushDto(
                         new PushDto.Data.Push.Change.Event("branchname"),
-                        "link",
-                        "uuid")))
+                        "link")))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void pushWithoutBranchname() {
-        assertThatCode(() -> webhooksController.push(new PushDto(null, "link", "uuid"))).doesNotThrowAnyException();
+        assertThatCode(() -> webhooksController.push(new PushDto(null, "link"))).doesNotThrowAnyException();
     }
 }

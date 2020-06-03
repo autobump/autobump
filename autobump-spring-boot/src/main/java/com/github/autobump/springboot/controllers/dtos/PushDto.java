@@ -11,8 +11,8 @@ import java.util.List;
 public class PushDto {
     Data data;
 
-    public PushDto(Data.Push.Change.Event event, String link, String uuid) {
-        this.data = new Data(event, link, uuid);
+    public PushDto(Data.Push.Change.Event event, String link) {
+        this.data = new Data(event, link);
     }
 
     public String getBranchName() {
@@ -23,21 +23,15 @@ public class PushDto {
         return data.getUrl();
     }
 
-    public String getUuid(){
-        return data.getUuid();
-    }
-
     @lombok.Data
     @NoArgsConstructor
     public static class Data {
         Push push;
         Repository repository;
-        Actor actor;
 
-        Data(Push.Change.Event event, String link, String uuid) {
+        Data(Push.Change.Event event, String link) {
             this.push = new Push(event);
             this.repository = new Repository(link);
-            this.actor = new Actor(uuid);
         }
 
         public String getBranchName() {
@@ -46,10 +40,6 @@ public class PushDto {
 
         public String getUrl() {
             return repository.getUrl();
-        }
-
-        public String getUuid(){
-            return actor.getUuid();
         }
 
         @lombok.Data
@@ -133,16 +123,6 @@ public class PushDto {
                         this.href = url;
                     }
                 }
-            }
-        }
-
-        @lombok.Data
-        @NoArgsConstructor
-        static class Actor{
-            String uuid;
-
-            Actor(String uuid) {
-                this.uuid = uuid;
             }
         }
     }
