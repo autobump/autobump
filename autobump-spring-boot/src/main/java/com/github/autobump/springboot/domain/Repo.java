@@ -14,8 +14,6 @@ public class Repo {
     int repoId;
     boolean selected;
     String name;
-    boolean cronJob;
-    String reviewer;
     String link;
 }
 

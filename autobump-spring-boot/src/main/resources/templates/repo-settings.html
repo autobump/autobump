@@ -15,14 +15,15 @@
 <body>
 <div class="container">
 
-    <h1>Welcome to AutoBump!</h1>
+    <h1>AutoBump</h1>
 
     <div class="jumbotron">
         <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
             It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
             It then creates a pull-request for every outdated dependency</p>
 
-        <p>Configure the settings of your repository</p>
+        <p class="title">Configure the settings of <span th:text="${repoName}"/></p>
+
     </div>
 
     <!--/*@thymesVar id="repositoryDto" type="RepositoryDto"*/-->
@@ -50,12 +51,12 @@
                     <td><input class="form-control" type="text"
                                th:value="*{reviewer}"
                                th:field="*{reviewer}"
-                               th:text="${repo.getReviewer()}"
                     ></td>
                 </div>
             </div>
         </div>
-        <div class="form-group">
+
+        <div class="form-group" th:if="${not #lists.isEmpty(repo.dependencies)}">
             <div class="form-row">
                 <div class="col-md-3">
                     <th>Group</th>

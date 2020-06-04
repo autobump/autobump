@@ -55,8 +55,9 @@ public class SettingsController {
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") int repoId) {
         mav.setViewName("repo-settings");
-        RepositoryDto dto = settingsService.getRepository(repoId);
-        dto.setDependencies(settingsService.getDependenciesForRepo(dto.getName()));
+        String repoName = settingsService.getRepository(repoId).getName();
+        RepositoryDto dto = settingsService.getSettingsForRepository(repoName);
+        mav.addObject("repoName", repoName);
         mav.addObject("repo", dto);
         return mav;
     }

@@ -5,10 +5,9 @@ h1 {
     text-align: center;
 }
 
-.form-group, td {
-    font-weight: normal;
+p.title {
     text-align: center;
-    vertical-align: middle;
+    font-size: larger;
 }
 
 .form-group, th {
@@ -17,44 +16,10 @@ h1 {
     vertical-align: middle;
 }
 
-#title {
+.form-group, td {
+    font-weight: normal;
     text-align: center;
-    color: #4c2e05;
-}
-
-.jumbotron {
-    padding: 1rem 1rem;
-}
-
-#results_list {
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-#results_list td, #results_list th {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-#results_list tr:nth-child(even){
-    background-color: #f2f2f2;
-}
-
-#results_list tr:hover {
-    background-color: #ddd;
-}
-
-#results_list th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: left;
-    background-color: #679436;
-    color: white;
-}
-
-#map {
-    height: 100%;
+    vertical-align: middle;
 }
 
 html, body {
@@ -64,16 +29,7 @@ html, body {
     padding: 0;
 }
 
-#chartContainer{
-    height: 90%;
-    width: 90%;
-}
-
 nav {
     padding-top: 12px;
     padding-bottom: 12px;
-}
-
-th {
-    font-weight: bold;
 }

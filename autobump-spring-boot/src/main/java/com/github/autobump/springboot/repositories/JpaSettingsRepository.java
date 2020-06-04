@@ -9,4 +9,5 @@ interface JpaSettingsRepository extends JpaRepository<Setting, String> {
 
     List<Setting> findAllByRepositoryName(String repositoryName);
 
+    void deleteByTypeAndRepositoryName(Setting.SettingsType type, String repoName);
 }

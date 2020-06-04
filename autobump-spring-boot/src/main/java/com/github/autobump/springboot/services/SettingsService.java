@@ -1,6 +1,5 @@
 package com.github.autobump.springboot.services;
 
-import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
@@ -29,8 +28,6 @@ public class SettingsService {
     SpringSettingsRepository settingsRepository;
     @Autowired
     RepoRepository repoRepository;
-    @Autowired
-    DependencyResolver dependencyResolver;
     @Autowired
     Autobumpconfig autobumpconfig;
 
@@ -73,27 +70,57 @@ public class SettingsService {
     public List<RepositoryDto> getMonitoredRepos() {
         return repoRepository.findAll()
                 .stream()
-                .filter(r -> r.isSelected())
+                .filter(Repo::isSelected)
                 .map(repo -> modelMapper.map(repo, RepositoryDto.class))
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    // TODO - should be removed when gitprovider used
-    private List<Repo> seed() {
-        List<Repo> repos = new ArrayList<>();
-        Repo repo = new Repo();
-        repo.setName("MultiModuleMavenProject");
-        repo.setCronJob(true);
-        repo.setSelected(false);
-        repo.setRepoId(1);
-        repos.add(repo);
-        Repo repo2 = new Repo();
-        repo2.setName("TestMavenProject");
-        repo2.setCronJob(false);
-        repo2.setSelected(false);
-        repo2.setRepoId(2);
-        repos.add(repo2);
-        return repos;
+    public RepositoryDto getSettingsForRepository(String repoName){
+        List<Setting> settings = settingsRepository.findAllSettingsForDependencies(repoName);
+        RepositoryDto dto = new RepositoryDto();
+        String reviewer = getReviewerFromSetting(settings);
+        boolean cronJob = getIsCronJob(settings);
+        List<DependencyDto> dependencyDtos = getIgnoredDependenciesFromSettings(settings);
+        dto.setReviewer(reviewer);
+        dto.setCronJob(cronJob);
+        dto.setDependencies(dependencyDtos);
+        dto.setName(repoName);
+        return dto;
+    }
+
+    private String getReviewerFromSetting(List<Setting> settings) {
+        String rev = "";
+        Setting reviewer = settings
+                .stream()
+                .filter(s -> s.getType().equals(Setting.SettingsType.REVIEWER))
+                .findFirst().orElse(null);
+        if (reviewer != null) rev = reviewer.getValue();
+        return rev;
+    }
+
+    private boolean getIsCronJob(List<Setting> settings) {
+        Setting isCronJob = settings
+                .stream()
+                .filter(s -> s.getType().equals(Setting.SettingsType.CRON))
+                .findFirst().orElse(null);
+        return isCronJob != null;
+    }
+
+    private List<DependencyDto> getIgnoredDependenciesFromSettings(List<Setting> settings) {
+        List<DependencyDto> dtos = new ArrayList<>();
+        List<Setting> depSettings = settings
+                .stream()
+                .filter(s -> s.getType().equals(Setting.SettingsType.IGNORE))
+                .collect(Collectors.toList());
+        for (Setting setting: depSettings
+             ) {
+            DependencyDto dep = new DependencyDto();
+            dep.setGav(setting.getKey());
+            dep.setIgnoreMajor(setting.getValue().equals("major"));
+            dep.setIgnoreMinor(setting.getValue().equals("minor"));
+            dtos.add(dep);
+        }
+        return dtos;
     }
 
     public void doAutoBump(int repoId){
@@ -105,7 +132,24 @@ public class SettingsService {
                 .doAutoBump();
     }
 
-    public List<DependencyDto> getDependenciesForRepo(String repoName) {
+    // TODO - should be removed when gitprovider used
+    private List<Repo> seed() {
+        List<Repo> repos = new ArrayList<>();
+        Repo repo = new Repo();
+        repo.setName("MultiModuleMavenProject");
+        repo.setSelected(false);
+        repo.setRepoId(1);
+        repos.add(repo);
+        Repo repo2 = new Repo();
+        repo2.setName("TestMavenProject");
+        repo2.setSelected(false);
+        repo2.setRepoId(2);
+        repos.add(repo2);
+        return repos;
+    }
+
+    /*public List<DependencyDto> getDependenciesForRepo(String repoName) {
+        List<DependencyDto> dependencies = dependencyResolver.resolve(new Workspace());
         List<DependencyDto> deps = seedDependencies(); // TODO -> Use dependencyResolver to resolve dependencies?
         // TODO: update dependencies with settings
         return deps;
@@ -118,29 +162,36 @@ public class SettingsService {
         deps.add(new DependencyDto( "a group2", "an artifact2", "a version2", false, false));
         deps.add(new DependencyDto( "another group2", "another artifact2", "another version2", false, false));
         return deps;
-    }
+    }*/
 
     public RepositoryDto getRepository(int repoId) {
         return modelMapper.map(repoRepository.getByRepoId(repoId), RepositoryDto.class);
     }
 
-    public Repo updateRepo(RepositoryDto repositoryDto) {
+    public void updateRepo(RepositoryDto repositoryDto) {
         Repo saved = repoRepository.getByRepoId(repositoryDto.getRepoId());
         saved.setSelected(repositoryDto.isSelected());
-        return repoRepository.save(saved);
+        repoRepository.save(saved);
     }
 
-    public void saveSettings(RepositoryDto repositoryDto){
-        saveCronJob(repositoryDto.getName(), repositoryDto.isCronJob());
-        saveReviewer(repositoryDto.getName(), repositoryDto.getReviewer());
-        saveSettingsForDependencies(repositoryDto.getName(), repositoryDto.getDependencies());
+    public void saveSettings(RepositoryDto dto) {
+        if (dto.isCronJob()) saveCronJob(dto.getName());
+        if (!dto.isCronJob()) removeCronJob(dto.getName());
+        if (dto.getReviewer() != null) saveReviewer(dto.getName(), dto.getReviewer());
+        // TODO - handle changes in settings
     }
 
-    private void saveCronJob(String name, boolean isCron) {
+    private void removeCronJob(String name) {
+        if (getIsCronJob(settingsRepository.findAllSettingsForDependencies(name))){
+            settingsRepository.removeCronJob(name);
+        }
+    }
+
+    private void saveCronJob(String name) {
         Setting cron = new Setting();
         cron.setRepositoryName(name);
         cron.setKey("cron");
-        cron.setValue(String.valueOf(isCron));
+        cron.setValue(String.valueOf(true));
         cron.setType(Setting.SettingsType.CRON);
         settingsRepository.saveSetting(cron);
     }
@@ -154,30 +205,4 @@ public class SettingsService {
         settingsRepository.saveSetting(rev);
     }
 
-    public void saveSettingsForDependencies(String name, List<DependencyDto> dependencies) {
-        for (DependencyDto dep: dependencies
-             ) {
-            saveSettingsForDependency(name, dep);
-        }
-    }
-
-    //TODO - should use Usecases!
-    private void saveSettingsForDependency(String name, DependencyDto d) {
-        if (d.isIgnoreMajor()){
-            saveIgnore(name, d, "major");
-        }
-        if (d.isIgnoreMinor()){
-            saveIgnore(name, d, "minor");
-        }
-    }
-
-    private void saveIgnore(String name, DependencyDto d, String type) {
-        Setting setting = new Setting();
-        setting.setKey(d.getGroupName() + "/" + d.getArtifactId() + "/" +d.getVersionNumber());
-        setting.setRepositoryName(name);
-        if (d.isIgnoreMajor())
-            setting.setType(Setting.SettingsType.IGNORE);
-        setting.setValue(type);
-        settingsRepository.saveSetting(setting);
-    }
 }

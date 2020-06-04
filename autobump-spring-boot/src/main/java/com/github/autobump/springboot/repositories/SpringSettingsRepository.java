@@ -4,6 +4,7 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -26,5 +27,10 @@ public class SpringSettingsRepository implements SettingsRepository {
 
     public List<Setting> findAllSettingsForDependencies(String repoName) {
         return jpaSettingsRepository.findAllByRepositoryName(repoName);
+    }
+
+    @Transactional
+    public void removeCronJob(String repoName){
+        jpaSettingsRepository.deleteByTypeAndRepositoryName(Setting.SettingsType.CRON, repoName);
     }
 }
