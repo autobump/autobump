@@ -35,8 +35,10 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 class AutobumpTest {
 
     private static final String REPO_URL = "http://localhost:8090/repourl";
@@ -219,7 +221,7 @@ class AutobumpTest {
         @Override
         public AutobumpUseCase getAutobumpUseCase() {
             AutobumpUseCase mocked = Mockito.mock(AutobumpUseCase.class);
-            when(mocked.doAutoBump()).thenReturn(new AutobumpResult(5));
+            when(mocked.doAutoBump(any())).thenReturn(new AutobumpResult(5));
             return mocked;
         }
     }

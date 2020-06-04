@@ -49,7 +49,7 @@ public class Autobump implements Callable<AutobumpResult> {
     @Override
     public AutobumpResult call() {
         initialize();
-        return getAutobumpUseCase().doAutoBump();
+        return getAutobumpUseCase().doAutoBump(properties.getUrl());
     }
 
     private void initialize() {
@@ -73,7 +73,6 @@ public class Autobump implements Callable<AutobumpResult> {
                 .build();
         return AutobumpUseCase.builder()
                 .config(config)
-                .uri(properties.getUrl())
                 .releaseNotesSource(releaseNotesSource)
                 .build();
     }

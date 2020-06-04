@@ -19,34 +19,32 @@ import java.util.Set;
 public class AutobumpUseCase {
 
     @NonNull
-    private final URI uri;
-    @NonNull
     private final UseCaseConfiguration config;
     @NonNull
     private final ReleaseNotesSource releaseNotesSource;
 
-    public AutobumpResult doAutoBump() {
-        Workspace workspace = config.getGitClient().clone(getUri());
+    public AutobumpResult doAutoBump(@NonNull URI uri) {
+        Workspace workspace = config.getGitClient().clone(uri);
         Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace);
         var combinedbumps = BumpResolverUseCase.builder()
                 .ignoreRepository(config.getIgnoreRepository())
                 .versionRepository(config.getVersionRepository())
                 .build()
                 .doResolve(dependencies);
-        makeBumpsAndPullRequests(workspace, combinedbumps);
+        makeBumpsAndPullRequests(uri, workspace, combinedbumps);
         return new AutobumpResult(combinedbumps.size());
     }
 
-    private void makeBumpsAndPullRequests(Workspace workspace, Set<Bump> bumps) {
+    private void makeBumpsAndPullRequests(URI uri, Workspace workspace, Set<Bump> bumps) {
         for (Bump bump : bumps) {
             doBump(workspace, bump);
-            PullRequestResponse pullRequestResponse = doPullRequest(workspace, bump);
+            PullRequestResponse pullRequestResponse = doPullRequest(uri, workspace, bump);
             String commentContent = fetchVersionReleaseNotes(bump);
-            postCommentOnPullRequest(pullRequestResponse, commentContent);
+            postCommentOnPullRequest(uri, pullRequestResponse, commentContent);
         }
     }
 
-    private void postCommentOnPullRequest(PullRequestResponse pullRequestResponse, String commentContent) {
+    private void postCommentOnPullRequest(URI uri, PullRequestResponse pullRequestResponse, String commentContent) {
         if (!commentContent.isBlank()) {
             PostCommentOnPullRequestUseCase.builder()
                     .gitProvider(config.getGitProvider())
@@ -64,7 +62,7 @@ public class AutobumpUseCase {
                 .fetchVersionReleaseNotes(bump);
     }
 
-    private PullRequestResponse doPullRequest(Workspace workspace, Bump bump) {
+    private PullRequestResponse doPullRequest(URI uri, Workspace workspace, Bump bump) {
         return PullRequestUseCase.builder()
                 .gitProvider(config.getGitProvider())
                 .gitClient(config.getGitClient())

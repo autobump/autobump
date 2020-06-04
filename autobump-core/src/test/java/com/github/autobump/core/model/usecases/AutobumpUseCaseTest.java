@@ -129,10 +129,9 @@ class AutobumpUseCaseTest {
         setUpdoAutoBumpMocks_forTestSingleBump();
         var result = AutobumpUseCase.builder()
                 .config(config)
-                .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .doAutoBump();
+                .doAutoBump(uri);
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
@@ -141,10 +140,9 @@ class AutobumpUseCaseTest {
         setUpdoAutoBump_combinedDependenciesMocks();
         var result = AutobumpUseCase.builder()
                 .config(config)
-                .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .doAutoBump();
+                .doAutoBump(uri);
         verify(gitProvider, times(1)).makePullRequest(any());
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
@@ -155,10 +153,9 @@ class AutobumpUseCaseTest {
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
         var result = AutobumpUseCase.builder()
                 .config(config)
-                .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .doAutoBump();
+                .doAutoBump(uri);
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
     }
 
@@ -172,10 +169,9 @@ class AutobumpUseCaseTest {
                         , "1.0", "release notes content"));
         AutobumpUseCase.builder()
                 .config(config)
-                .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .doAutoBump();
+                .doAutoBump(uri);
         verify(gitProvider, times(1)).commentPullRequest(any(), contains("release notes content"));
     }
 
@@ -189,10 +185,9 @@ class AutobumpUseCaseTest {
                         , "1.0", ""));
         AutobumpUseCase.builder()
                 .config(config)
-                .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .doAutoBump();
+                .doAutoBump(uri);
         verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
     }
 
@@ -205,10 +200,9 @@ class AutobumpUseCaseTest {
                 .thenReturn(null);
         AutobumpUseCase.builder()
                 .config(config)
-                .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .doAutoBump();
+                .doAutoBump(uri);
         verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
     }
 
