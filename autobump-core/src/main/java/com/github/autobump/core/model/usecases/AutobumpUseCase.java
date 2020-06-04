@@ -3,9 +3,8 @@ package com.github.autobump.core.model.usecases;
 import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.DependencyResolver;
-import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
@@ -18,25 +17,20 @@ import java.util.Set;
 @Data
 @Builder
 public class AutobumpUseCase {
-    @NonNull
-    private final GitClient gitClient;
-    @NonNull
-    private final DependencyResolver dependencyResolver;
-    @NonNull
-    private final BumpResolverUseCase bumpResolverUseCase;
-    @NonNull
-    private final FetchVersionReleaseNotesUseCase fetchVersionReleaseNotesUseCase;
-    @NonNull
-    private final PostCommentOnPullRequestUseCase postCommentOnPullRequestUseCase;
-    @NonNull
-    private final PullRequestUseCase pullRequestUseCase;
-    @NonNull
-    private final BumpUseCase bumpUseCase;
 
-    public AutobumpResult doAutoBump(@NonNull URI uri) {
-        Workspace workspace = gitClient.clone(uri);
-        Set<Dependency> dependencies = dependencyResolver.resolve(workspace);
-        var combinedbumps = bumpResolverUseCase.doResolve(dependencies);
+    @NonNull
+    private final UseCaseConfiguration config;
+    @NonNull
+    private final ReleaseNotesSource releaseNotesSource;
+
+    public AutobumpResult doAutoBump(URI uri) {
+        Workspace workspace = config.getGitClient().clone(uri);
+        Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace);
+        var combinedbumps = BumpResolverUseCase.builder()
+                .ignoreRepository(config.getIgnoreRepository())
+                .versionRepository(config.getVersionRepository())
+                .build()
+                .doResolve(dependencies);
         makeBumpsAndPullRequests(uri, workspace, combinedbumps);
         return new AutobumpResult(combinedbumps.size());
     }
@@ -52,19 +46,35 @@ public class AutobumpUseCase {
 
     private void postCommentOnPullRequest(URI uri, PullRequestResponse pullRequestResponse, String commentContent) {
         if (!commentContent.isBlank()) {
-            postCommentOnPullRequestUseCase.postCommentOnPullRequest(uri, pullRequestResponse.getId(), commentContent);
+            PostCommentOnPullRequestUseCase.builder()
+                    .gitProvider(config.getGitProvider())
+                    .urlHelper(config.getGitProviderUrlHelper())
+                    .build()
+                    .postCommentOnPullRequest(uri, pullRequestResponse.getId(), commentContent);
         }
     }
 
     private String fetchVersionReleaseNotes(Bump bump) {
-        return fetchVersionReleaseNotesUseCase.fetchVersionReleaseNotes(bump);
+        return FetchVersionReleaseNotesUseCase.builder()
+                .releaseNotesSource(releaseNotesSource)
+                .versionRepository(config.getVersionRepository())
+                .build()
+                .fetchVersionReleaseNotes(bump);
     }
 
     private PullRequestResponse doPullRequest(URI uri, Workspace workspace, Bump bump) {
-        return pullRequestUseCase.doPullRequest(workspace, uri, bump);
+        return PullRequestUseCase.builder()
+                .gitProvider(config.getGitProvider())
+                .gitClient(config.getGitClient())
+                .gitProviderUrlHelper(config.getGitProviderUrlHelper())
+                .build()
+                .doPullRequest(workspace, uri, bump);
     }
 
     private void doBump(Workspace workspace, Bump bump) {
-        bumpUseCase.doBump(workspace, bump);
+        BumpUseCase.builder()
+                .dependencyBumper(config.getDependencyBumper())
+                .build()
+                .doBump(workspace, bump);
     }
 }

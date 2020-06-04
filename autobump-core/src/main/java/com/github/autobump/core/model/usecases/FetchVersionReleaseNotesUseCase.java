@@ -2,6 +2,7 @@ package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.ReleaseNotes;
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.VersionRepository;
 import lombok.Builder;

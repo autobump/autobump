@@ -1,4 +1,4 @@
-package com.github.autobump.core.model.usecases;
+package com.github.autobump.core.model;
 
 import lombok.Value;
 

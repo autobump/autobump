@@ -75,7 +75,7 @@ public class Autobump implements Callable<AutobumpResult> {
                 .ignoreRepository(ignoreRepository)
                 .build();
         return AutobumpUseCase.builder()
-                .
+                .config(config)
                 .releaseNotesSource(releaseNotesSource)
                 .build();
     }
