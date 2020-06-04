@@ -57,6 +57,8 @@ public class SettingsController {
         mav.setViewName("repo-settings");
         String repoName = settingsService.getRepository(repoId).getName();
         RepositoryDto dto = settingsService.getSettingsForRepository(repoName);
+        // TODO - to remove
+        //dto.setDependencies(settingsService.seedDependencies());
         mav.addObject("repoName", repoName);
         mav.addObject("repo", dto);
         return mav;

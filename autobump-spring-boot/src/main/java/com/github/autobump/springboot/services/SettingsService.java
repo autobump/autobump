@@ -10,6 +10,7 @@ import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.domain.Repo;
 import com.github.autobump.springboot.repositories.RepoRepository;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
+import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Setter
 public class SettingsService {
     @Autowired
     ModelMapper modelMapper;
@@ -35,7 +37,6 @@ public class SettingsService {
         GitProvider gitProvider = autobumpconfig.getGitProvider();
         List<Repo> remoteRepos = seed(); //TODO gitprovider.getRepositories
         List<Repo> savedRepos = repoRepository.findAll();
-
         addNewRemoteRepos(remoteRepos, savedRepos);
         removeReposNoLongerRemotelyPresent(remoteRepos, savedRepos);
 
@@ -114,13 +115,21 @@ public class SettingsService {
                 .collect(Collectors.toList());
         for (Setting setting: depSettings
              ) {
-            DependencyDto dep = new DependencyDto();
-            dep.setGav(setting.getKey());
+            DependencyDto dep = extractDependencyFromSettingKey(setting.getKey());
             dep.setIgnoreMajor(setting.getValue().equals("major"));
             dep.setIgnoreMinor(setting.getValue().equals("minor"));
             dtos.add(dep);
         }
         return dtos;
+    }
+
+    private DependencyDto extractDependencyFromSettingKey(String key) {
+        DependencyDto dep = new DependencyDto();
+        String[] elements = key.split(":");
+        dep.setGroupName(elements[0]);
+        dep.setArtifactId(elements[1]);
+        dep.setVersionNumber(elements[2]);
+        return dep;
     }
 
     public void doAutoBump(int repoId){
@@ -150,19 +159,20 @@ public class SettingsService {
 
     /*public List<DependencyDto> getDependenciesForRepo(String repoName) {
         List<DependencyDto> dependencies = dependencyResolver.resolve(new Workspace());
-        List<DependencyDto> deps = seedDependencies(); // TODO -> Use dependencyResolver to resolve dependencies?
+        List<DependencyDto> deps = seedDependencies(); //
         // TODO: update dependencies with settings
         return deps;
-    }
+    }*/
 
-    private List<DependencyDto> seedDependencies() {
+    // TODO - to remove
+    public List<DependencyDto> seedDependencies() {
         List<DependencyDto> deps = new ArrayList<>();
         deps.add(new DependencyDto("a group", "an artifact", "a version",false, false));
         deps.add(new DependencyDto( "another group", "another artifact", "another version", false, false));
         deps.add(new DependencyDto( "a group2", "an artifact2", "a version2", false, false));
         deps.add(new DependencyDto( "another group2", "another artifact2", "another version2", false, false));
         return deps;
-    }*/
+    }
 
     public RepositoryDto getRepository(int repoId) {
         return modelMapper.map(repoRepository.getByRepoId(repoId), RepositoryDto.class);

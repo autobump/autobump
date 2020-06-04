@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DependencyDto {
-    String gav;
     String groupName;
     String artifactId;
     String versionNumber;
