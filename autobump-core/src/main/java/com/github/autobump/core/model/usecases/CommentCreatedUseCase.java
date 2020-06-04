@@ -8,9 +8,8 @@ import lombok.Builder;
 @Builder
 public class CommentCreatedUseCase {
     SettingsRepository settingsRepository;
-    CommentCreatedEvent event;
 
-    public Setting doHandle(){
+    public Setting doHandle(CommentCreatedEvent event){
         String comment = event.getComment();
         Setting setting = null;
         if ("Ignore this major".equalsIgnoreCase(comment)){

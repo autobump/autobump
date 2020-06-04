@@ -28,11 +28,9 @@ class BumpUseCaseTest {
     @Test
     void doBump() {
         assertThatCode(() -> BumpUseCase.builder()
-                .workspace(workspace)
-                .bump(new Bump(dependency, latestVersion))
                 .dependencyBumper(dependencyBumper)
                 .build()
-                .doBump())
+                .doBump(workspace, new Bump(dependency, latestVersion)))
                 .doesNotThrowAnyException();
     }
 

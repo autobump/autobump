@@ -10,11 +10,10 @@ import java.util.Locale;
 
 @Builder
 public class FetchVersionReleaseNotesUseCase {
-    private final Bump bump;
     private final VersionRepository versionRepository;
     private final ReleaseNotesSource releaseNotesSource;
 
-    public String fetchVersionReleaseNotes() {
+    public String fetchVersionReleaseNotes(Bump bump) {
         StringBuilder comment = new StringBuilder();
         for (Dependency dependency : bump.getDependencies()) {
             String scmUrl = versionRepository

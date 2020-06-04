@@ -106,11 +106,8 @@ class AutoBumpSingleGroupUseCaseTest {
         setUpDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
                 .config(config)
-                .pullRequest(pullRequest)
-                .uri(uri)
-                .workspace(workspace)
                 .build()
-                .doSingleGroupAutoBump();
+                .doSingleGroupAutoBump(uri, workspace, pullRequest);
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
@@ -119,11 +116,8 @@ class AutoBumpSingleGroupUseCaseTest {
         setUpEmptyDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
                 .config(config)
-                .pullRequest(pullRequest)
-                .uri(uri)
-                .workspace(workspace)
                 .build()
-                .doSingleGroupAutoBump();
+                .doSingleGroupAutoBump(uri, workspace, pullRequest);
         verify(gitProvider, times(1)).closePullRequest(pullRequest);
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
     }

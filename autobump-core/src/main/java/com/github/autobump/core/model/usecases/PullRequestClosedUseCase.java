@@ -12,9 +12,8 @@ import java.util.List;
 @Builder
 public class PullRequestClosedUseCase {
     private final SettingsRepository settingsRepository;
-    private final PrClosedEvent prClosedEvent;
 
-    public List<Setting> doClose(){
+    public List<Setting> doClose(PrClosedEvent prClosedEvent){
         List<Setting> settings = new ArrayList<>();
         for (Dependency dependency : prClosedEvent.getBump().getDependencies()) {
             settings.add(Setting.builder()

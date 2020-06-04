@@ -35,9 +35,8 @@ public class WebhookService {
                     .build();
             CommentCreatedUseCase.builder()
                     .settingsRepository(settingsRepository)
-                    .event(event)
                     .build()
-                    .doHandle();
+                    .doHandle(event);
         }
     }
 
@@ -49,9 +48,8 @@ public class WebhookService {
                     .build();
             PullRequestClosedUseCase.builder()
                     .settingsRepository(settingsRepository)
-                    .prClosedEvent(event)
                     .build()
-                    .doClose();
+                    .doClose(event);
         }
     }
 
@@ -61,10 +59,9 @@ public class WebhookService {
                 var config = autobumpconfig.setupConfig();
                 var event = new PushEvent(gitUri);
                 RebaseUseCase.builder()
-                        .event(event)
                         .config(config)
                         .build()
-                        .handlePushEvent();
+                        .handlePushEvent(event);
             } catch (IllegalArgumentException e) {
                 if (logger.isWarnEnabled()) {
                     logger.warn(String.format("%s no rebase executed", e.getMessage()));

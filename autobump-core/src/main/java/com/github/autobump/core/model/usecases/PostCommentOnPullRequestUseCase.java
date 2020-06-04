@@ -11,17 +11,12 @@ import java.net.URI;
 @Builder
 public class PostCommentOnPullRequestUseCase {
 
-    private final int pullrequestId;
     @NonNull
     private final GitProvider gitProvider;
     @NonNull
-    private final URI uri;
-    @NonNull
     private final UrlHelper urlHelper;
-    @NonNull
-    private final String commentContent;
 
-    public void postCommentOnPullRequest() {
+    public void postCommentOnPullRequest(@NonNull URI uri, int pullrequestId, @NonNull String commentContent) {
         gitProvider.commentPullRequest(PullRequest.builder()
                         .pullRequestId(pullrequestId)
                         .title("")

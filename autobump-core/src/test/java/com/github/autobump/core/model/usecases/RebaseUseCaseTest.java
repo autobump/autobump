@@ -112,7 +112,6 @@ class RebaseUseCaseTest {
 
         rebaseUseCaseWithoutConflict = RebaseUseCase.builder()
                 .config(configWithoutConflict)
-                .event(new PushEvent(new URI("")))
                 .build();
 
         UseCaseConfiguration configWithConflict = UseCaseConfiguration.builder()
@@ -127,7 +126,6 @@ class RebaseUseCaseTest {
 
         rebaseUseCaseWithConflict = RebaseUseCase.builder()
                 .config(configWithConflict)
-                .event(new PushEvent(new URI("")))
                 .build();
     }
 
@@ -159,14 +157,14 @@ class RebaseUseCaseTest {
     @Test
     void handlePushEventWithoutConflicts() {
         assertThatCode(() -> rebaseUseCaseWithoutConflict
-                .handlePushEvent())
+                .handlePushEvent(new PushEvent(new URI(""))))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void handlePushEventWithConflicts() {
         assertThatCode(() -> rebaseUseCaseWithConflict
-                .handlePushEvent())
+                .handlePushEvent(new PushEvent(new URI(""))))
                 .doesNotThrowAnyException();
     }
 
@@ -186,9 +184,8 @@ class RebaseUseCaseTest {
         Mockito.when(provider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
         assertThatCode(() -> RebaseUseCase.builder()
                 .config(config)
-                .event(new PushEvent(URI.create("")))
                 .build()
-                .handlePushEvent())
+                .handlePushEvent(new PushEvent(new URI(""))))
                 .doesNotThrowAnyException();
     }
 }

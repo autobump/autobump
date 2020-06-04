@@ -18,11 +18,8 @@ public class PullRequestUseCase {
     private final GitProvider gitProvider;
     private final GitClient gitClient;
     private final GitProviderUrlHelper gitProviderUrlHelper;
-    private final Workspace workspace;
-    private final URI uri;
-    private final Bump bump;
 
-    public PullRequestResponse doPullRequest() {
+    public PullRequestResponse doPullRequest(Workspace workspace, URI uri, Bump bump) {
         var commitResult =
                 gitClient.commitToNewBranch(workspace, bump);
         PullRequest pullRequest = PullRequest.builder()

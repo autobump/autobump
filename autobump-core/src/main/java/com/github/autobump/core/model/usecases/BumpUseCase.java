@@ -8,18 +8,8 @@ import lombok.Builder;
 @Builder
 public class BumpUseCase {
     private final DependencyBumper dependencyBumper;
-    private final Workspace workspace;
-    private final Bump bump;
 
-    public BumpUseCase(DependencyBumper dependencyBumper,
-                       Workspace workspace, Bump bump) {
-        this.dependencyBumper = dependencyBumper;
-        this.workspace = workspace;
-        this.bump = bump;
-    }
-
-    public void doBump() {
+    public void doBump(Workspace workspace, Bump bump) {
         dependencyBumper.bump(workspace, bump);
     }
-
 }

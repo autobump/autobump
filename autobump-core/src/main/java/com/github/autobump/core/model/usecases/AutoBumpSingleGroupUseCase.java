@@ -20,40 +20,35 @@ public class AutoBumpSingleGroupUseCase {
 
     @NonNull
     private final UseCaseConfiguration config;
-    @NonNull
-    private final URI uri;
-    @NonNull
-    private final PullRequest pullRequest;
-    @NonNull
-    private final Workspace workspace;
 
-    public AutobumpResult doSingleGroupAutoBump() {
+    public AutobumpResult doSingleGroupAutoBump(
+            @NonNull URI uri,
+            @NonNull Workspace workspace,
+            @NonNull PullRequest pullRequest
+    ) {
         Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace)
                 .stream().filter(d -> d.getGroup()
                         .equalsIgnoreCase(parseGroupName(pullRequest.getTitle())))
                 .collect(Collectors.toUnmodifiableSet());
         var combinedbumps = BumpResolverUseCase.builder()
-                .dependencies(dependencies)
                 .ignoreRepository(config.getIgnoreRepository())
                 .versionRepository(config.getVersionRepository())
                 .build()
-                .doResolve();
+                .doResolve(dependencies);
         if (combinedbumps.isEmpty()) {
             config.getGitProvider().closePullRequest(pullRequest);
             config.getGitClient().deleteBranch(workspace, pullRequest.getBranchName());
         }
-        makeBumpsAndPush(combinedbumps, pullRequest.getBranchName());
+        makeBumpsAndPush(workspace, combinedbumps, pullRequest.getBranchName());
         return new AutobumpResult(combinedbumps.size());
     }
 
-    private void makeBumpsAndPush(Set<Bump> bumps, String branchName) {
+    private void makeBumpsAndPush(Workspace workspace, Set<Bump> bumps, String branchName) {
         for (Bump bump : bumps) {
             BumpUseCase.builder()
                     .dependencyBumper(config.getDependencyBumper())
-                    .workspace(workspace)
-                    .bump(bump)
                     .build()
-                    .doBump();
+                    .doBump(workspace, bump);
             PushUseCase.builder().gitClient(config.getGitClient())
                     .build()
                     .doPush(workspace, bump, branchName);
@@ -64,5 +59,4 @@ public class AutoBumpSingleGroupUseCase {
         String[] elements = title.split(" ");
         return elements[1].split(":")[0];
     }
-
 }

@@ -45,11 +45,10 @@ class FetchVersionReleaseNotesUseCaseTest {
         initializeTestBump();
         setupVersionRepositoryMock();
         String result = FetchVersionReleaseNotesUseCase.builder()
-                .bump(bump)
                 .versionRepository(versionRepository)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .fetchVersionReleaseNotes();
+                .fetchVersionReleaseNotes(bump);
         assertThat(result).contains("Autobump found release notes for" +
                 " org.springframework.boot:spring-boot-dependencies 2.2.4.RELEASE");
         assertThat(result).contains("RELEASE NOTES");
@@ -62,11 +61,10 @@ class FetchVersionReleaseNotesUseCaseTest {
         initializeTestBump();
         setupNoResultVersionRepositoryMock();
         String result = FetchVersionReleaseNotesUseCase.builder()
-                .bump(bump)
                 .versionRepository(versionRepository)
                 .releaseNotesSource(releaseNotesSource)
                 .build()
-                .fetchVersionReleaseNotes();
+                .fetchVersionReleaseNotes(bump);
         assertThat(result).isEqualTo("");
     }
 

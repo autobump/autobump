@@ -29,11 +29,10 @@ public class AutobumpUseCase {
         Workspace workspace = config.getGitClient().clone(getUri());
         Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace);
         var combinedbumps = BumpResolverUseCase.builder()
-                .dependencies(dependencies)
                 .ignoreRepository(config.getIgnoreRepository())
                 .versionRepository(config.getVersionRepository())
                 .build()
-                .doResolve();
+                .doResolve(dependencies);
         makeBumpsAndPullRequests(workspace, combinedbumps);
         return new AutobumpResult(combinedbumps.size());
     }
@@ -52,41 +51,32 @@ public class AutobumpUseCase {
             PostCommentOnPullRequestUseCase.builder()
                     .gitProvider(config.getGitProvider())
                     .urlHelper(config.getGitProviderUrlHelper())
-                    .uri(getUri())
-                    .pullrequestId(pullRequestResponse.getId())
-                    .commentContent(commentContent)
                     .build()
-                    .postCommentOnPullRequest();
+                    .postCommentOnPullRequest(uri, pullRequestResponse.getId(), commentContent);
         }
     }
 
     private String fetchVersionReleaseNotes(Bump bump) {
         return FetchVersionReleaseNotesUseCase.builder()
-                .bump(bump)
                 .releaseNotesSource(releaseNotesSource)
                 .versionRepository(config.getVersionRepository())
                 .build()
-                .fetchVersionReleaseNotes();
+                .fetchVersionReleaseNotes(bump);
     }
 
     private PullRequestResponse doPullRequest(Workspace workspace, Bump bump) {
         return PullRequestUseCase.builder()
-                .uri(uri)
                 .gitProvider(config.getGitProvider())
                 .gitClient(config.getGitClient())
                 .gitProviderUrlHelper(config.getGitProviderUrlHelper())
-                .workspace(workspace)
-                .bump(bump)
                 .build()
-                .doPullRequest();
+                .doPullRequest(workspace, uri, bump);
     }
 
     private void doBump(Workspace workspace, Bump bump) {
         BumpUseCase.builder()
                 .dependencyBumper(config.getDependencyBumper())
-                .workspace(workspace)
-                .bump(bump)
                 .build()
-                .doBump();
+                .doBump(workspace, bump);
     }
 }

@@ -13,15 +13,15 @@ import java.util.stream.Collectors;
 
 @Builder
 public class BumpResolverUseCase {
-    private Set<Dependency> dependencies;
+//    private Set<Dependency> dependencies;
     private IgnoreRepository ignoreRepository;
     private VersionRepository versionRepository;
 
-    public Set<Bump> doResolve(){
-        return groupBumps(makeBumpSet());
+    public Set<Bump> doResolve(Set<Dependency> dependencies){
+        return groupBumps(makeBumpSet(dependencies));
     }
 
-    public Set<Bump> makeBumpSet() {
+    public Set<Bump> makeBumpSet(Set<Dependency> dependencies) {
         Set<Bump> bumps = new HashSet<>();
         for (Dependency dependency : dependencies) {
             Version latestVersion = getUpdateVersion(dependency);

@@ -32,10 +32,9 @@ class PullRequestClosedUseCaseTest {
         Bump bump = new Bump(dependencySet, new TestVersion("5.2.5.RELEASE"));
         var event = PrClosedEvent.builder().prName(bump.getTitle()).repoName("test").build();
         var setting = PullRequestClosedUseCase.builder()
-                .prClosedEvent(event)
                 .settingsRepository(settingsRepository)
                 .build()
-                .doClose();
+                .doClose(event);
         assertThat(setting.size()).isEqualTo(2);
     }
 

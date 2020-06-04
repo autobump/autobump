@@ -142,14 +142,11 @@ class PullRequestUseCaseTest {
     void doPullRequest_thatSupersedesOpenPullRequest() {
         assertThatCode(() ->
                 PullRequestUseCase.builder()
-                        .bump(bump)
-                        .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProvider)
-                        .uri(uri)
                         .build()
-                        .doPullRequest()
+                        .doPullRequest(workspace, uri, bump)
         ).doesNotThrowAnyException();
     }
 
@@ -157,14 +154,11 @@ class PullRequestUseCaseTest {
     void doPullRequest_thatIsAlreadyPresentInOpenPullRequests(){
         assertThatCode(() ->
                 PullRequestUseCase.builder()
-                        .bump(bump)
-                        .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProviderWithPrAlreadyInListOpenPullRequests)
-                        .uri(uri)
                         .build()
-                        .doPullRequest()
+                        .doPullRequest(workspace, uri, bump)
         ).doesNotThrowAnyException();
     }
 
@@ -172,14 +166,11 @@ class PullRequestUseCaseTest {
     void doPullrequest_withoutOpenPullRequests (){
         assertThatCode(() ->
                 PullRequestUseCase.builder()
-                        .bump(bump)
-                        .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProviderThatReturnsEmptySetOfOpenPRs)
-                        .uri(uri)
                         .build()
-                        .doPullRequest()
+                        .doPullRequest(workspace, uri, bump)
         ).doesNotThrowAnyException();
     }
 
@@ -187,14 +178,11 @@ class PullRequestUseCaseTest {
     void doPullrequest_withOpenPullRequestsThatDoesNotSupersede (){
         assertThatCode(() ->
                 PullRequestUseCase.builder()
-                        .bump(bump)
-                        .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProviderThatReturnsNoPullRequestsToBeSuperseded)
-                        .uri(uri)
                         .build()
-                        .doPullRequest()
+                        .doPullRequest(workspace, uri, bump)
         ).doesNotThrowAnyException();
     }
 

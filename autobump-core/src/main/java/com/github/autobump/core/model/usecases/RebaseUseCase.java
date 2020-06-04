@@ -13,9 +13,8 @@ import java.util.stream.Collectors;
 public class RebaseUseCase {
 
     private final UseCaseConfiguration config;
-    private final PushEvent event;
 
-    public void handlePushEvent() {
+    public void handlePushEvent(PushEvent event) {
         List<PullRequest> pullRequests = getOpenPullRequests(
                 config.getGitProviderUrlHelper().getOwnerName(event.getGitUri().toString()),
                 config.getGitProviderUrlHelper().getRepoName(event.getGitUri().toString()));
@@ -24,12 +23,9 @@ public class RebaseUseCase {
             for (PullRequest p : pullRequests) {
                 if (config.getGitClient().rebaseBranchFromMaster(workspace, p.getBranchName()).isConflicted()) {
                     AutoBumpSingleGroupUseCase.builder()
-                            .pullRequest(p)
-                            .uri(event.getGitUri())
                             .config(config)
-                            .workspace(workspace)
                             .build()
-                            .doSingleGroupAutoBump();
+                            .doSingleGroupAutoBump(event.getGitUri(), workspace, p);
                 }
             }
         }
