@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Builder
 public class BumpResolverUseCase {
-//    private Set<Dependency> dependencies;
     private IgnoreRepository ignoreRepository;
     private VersionRepository versionRepository;
 

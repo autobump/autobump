@@ -1,6 +1,5 @@
 package com.github.autobump.springboot.configuration;
 
-import com.atlassian.connect.spring.AtlassianHost;
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.atlassian.connect.spring.internal.request.jwt.JwtBuilder;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
@@ -28,6 +27,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+
+import java.util.stream.StreamSupport;
 
 @Configuration
 public class Autobumpconfig {
@@ -94,20 +95,14 @@ public class Autobumpconfig {
                 .getToken();
     }
 
-    public String getJwt(){
-        AtlassianHost host = null;
-        for (AtlassianHost atlassianHost : repository.findAll()) {
-            host = atlassianHost;
-        }
-
-
-        if (host != null) {
-            return new JwtBuilder()
-                    .subject(host.getClientKey()) // = client key (retrieved on /install)
-                    .issuer("autobump.kdg.xplore.dev02") // = app key
-                    .signature(host.getSharedSecret()) // = shared secret (retrieved on /install)
-                    .build();
-        }
-        return null;
+    public String getJwt() {
+        return StreamSupport.stream(repository.findAll().spliterator(), false)
+                .findFirst()
+                .map(host -> new JwtBuilder()
+                        .subject(host.getClientKey()) // = client key (retrieved on /install)
+                        .issuer("autobump.kdg.xplore.dev02") // = app key
+                        .signature(host.getSharedSecret()) // = shared secret (retrieved on /install)
+                        .build())
+                .orElse(null);
     }
 }
