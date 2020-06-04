@@ -38,6 +38,8 @@ public class Autobumpconfig {
     private AtlassianHostRepository repository;
     @Value("${autobump.bitbucket.oAuthUrl}")
     private String oAuthUrl;
+    @Value("$autobump.bitbucket.key")
+    private String appKey;
 
 
     public UseCaseConfiguration setupConfig() {
@@ -100,11 +102,10 @@ public class Autobumpconfig {
             host = atlassianHost;
         }
 
-
         if (host != null) {
             return new JwtBuilder()
                     .subject(host.getClientKey()) // = client key (retrieved on /install)
-                    .issuer("autobump.kdg.xplore.dev02") // = app key
+                    .issuer(appKey) // = app key
                     .signature(host.getSharedSecret()) // = shared secret (retrieved on /install)
                     .build();
         }

@@ -58,7 +58,6 @@ class AutoBumpSingleGroupUseCaseTest {
     private List<Dependency> dependencyList;
     private UseCaseConfiguration config;
 
-
     @BeforeEach
     void setUp() throws URISyntaxException {
         pullRequest = PullRequest.builder()
@@ -105,6 +104,7 @@ class AutoBumpSingleGroupUseCaseTest {
     void doSingleGroupAutoBump() {
         setUpDependencyResolver();
         var result = AutoBumpSingleGroupUseCase.builder()
+                .
                 .config(config)
                 .build()
                 .doSingleGroupAutoBump(uri, workspace, pullRequest);

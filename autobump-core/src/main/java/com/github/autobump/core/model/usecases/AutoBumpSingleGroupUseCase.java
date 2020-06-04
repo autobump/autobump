@@ -3,14 +3,15 @@ package com.github.autobump.core.model.usecases;
 import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.DependencyResolver;
+import com.github.autobump.core.model.GitClient;
+import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.net.URI;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,26 +19,26 @@ import java.util.stream.Collectors;
 @Builder
 public class AutoBumpSingleGroupUseCase {
 
-    @NonNull
-    private final UseCaseConfiguration config;
+    private final DependencyResolver dependencyResolver;
+    private final GitClient gitClient;
+    private final GitProvider gitProvider;
+
+    private final BumpResolverUseCase bumpResolverUseCase;
+    private final BumpUseCase bumpUseCase;
+    private final PushUseCase pushUseCase;
 
     public AutobumpResult doSingleGroupAutoBump(
-            @NonNull URI uri,
             @NonNull Workspace workspace,
             @NonNull PullRequest pullRequest
     ) {
-        Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace)
+        Set<Dependency> dependencies = dependencyResolver.resolve(workspace)
                 .stream().filter(d -> d.getGroup()
                         .equalsIgnoreCase(parseGroupName(pullRequest.getTitle())))
                 .collect(Collectors.toUnmodifiableSet());
-        var combinedbumps = BumpResolverUseCase.builder()
-                .ignoreRepository(config.getIgnoreRepository())
-                .versionRepository(config.getVersionRepository())
-                .build()
-                .doResolve(dependencies);
+        var combinedbumps = bumpResolverUseCase.doResolve(dependencies);
         if (combinedbumps.isEmpty()) {
-            config.getGitProvider().closePullRequest(pullRequest);
-            config.getGitClient().deleteBranch(workspace, pullRequest.getBranchName());
+            getGitProvider().closePullRequest(pullRequest);
+            getGitClient().deleteBranch(workspace, pullRequest.getBranchName());
         }
         makeBumpsAndPush(workspace, combinedbumps, pullRequest.getBranchName());
         return new AutobumpResult(combinedbumps.size());
@@ -45,13 +46,8 @@ public class AutoBumpSingleGroupUseCase {
 
     private void makeBumpsAndPush(Workspace workspace, Set<Bump> bumps, String branchName) {
         for (Bump bump : bumps) {
-            BumpUseCase.builder()
-                    .dependencyBumper(config.getDependencyBumper())
-                    .build()
-                    .doBump(workspace, bump);
-            PushUseCase.builder().gitClient(config.getGitClient())
-                    .build()
-                    .doPush(workspace, bump, branchName);
+            bumpUseCase.doBump(workspace, bump);
+            pushUseCase.doPush(workspace, bump, branchName);
         }
     }
 

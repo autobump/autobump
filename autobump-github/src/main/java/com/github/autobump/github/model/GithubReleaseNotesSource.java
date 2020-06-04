@@ -2,7 +2,7 @@ package com.github.autobump.github.model;
 
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.ReleaseNotesUrlHelper;
-import com.github.autobump.core.model.usecases.ReleaseNotes;
+import com.github.autobump.core.model.ReleaseNotes;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 

@@ -1,6 +1,6 @@
 package com.github.autobump.github.model;
 
-import com.github.autobump.core.model.usecases.ReleaseNotes;
+import com.github.autobump.core.model.ReleaseNotes;
 import com.github.autobump.github.exceptions.GithubApiException;
 import com.github.autobump.github.exceptions.GithubBadRequestException;
 import com.github.autobump.github.exceptions.GithubNotFoundException;
