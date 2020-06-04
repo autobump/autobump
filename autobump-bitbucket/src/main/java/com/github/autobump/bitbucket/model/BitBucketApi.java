@@ -1,5 +1,6 @@
 package com.github.autobump.bitbucket.model;
 
+import com.github.autobump.bitbucket.dtos.RepositoryResponseDto;
 import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestListDto;
@@ -31,5 +32,8 @@ interface BitBucketApi {
                             @Param("repoName") String repoName,
                             @Param("pullRequestId") String pullRequestId,
                             CommentDto commentDto);
+
+    @RequestLine("GET /repositories?role=owner")
+    RepositoryResponseDto getRepos();
 }
 

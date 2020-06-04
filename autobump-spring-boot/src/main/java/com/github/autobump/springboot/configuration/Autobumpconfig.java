@@ -20,7 +20,6 @@ import com.github.autobump.maven.model.MavenIgnoreRepository;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Configuration;
@@ -28,16 +27,20 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class Autobumpconfig {
 
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
-    @Autowired
-    private AtlassianHostRepository repository;
+    private final RestTemplate restTemplateBuilder;
+    private final AtlassianHostRepository repository;
     @Value("${autobump.bitbucket.oAuthUrl}")
     private String oAuthUrl;
+
+    public Autobumpconfig(RestTemplateBuilder restTemplateBuilder, AtlassianHostRepository repository) {
+        this.restTemplateBuilder = restTemplateBuilder.build();
+        this.repository = repository;
+    }
 
 
     public UseCaseConfiguration setupConfig() {
@@ -88,7 +91,7 @@ public class Autobumpconfig {
         var map = new LinkedMultiValueMap<String, String>();
         map.add("grant_type", "urn:bitbucket:oauth2:jwt");
         var entity = new HttpEntity<>(map, headers);
-        return restTemplateBuilder.build().postForObject(oAuthUrl,
+        return restTemplateBuilder.postForObject(oAuthUrl,
                 entity,
                 AccessTokenDto.class)
                 .getToken();
