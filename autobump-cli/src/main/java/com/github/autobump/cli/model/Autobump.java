@@ -39,6 +39,8 @@ public class Autobump implements Callable<AutobumpResult> {
     private GitProvider gitProvider;
     private IgnoreRepository ignoreRepository;
 
+    private AutobumpUseCase autobumpUseCase;
+
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new Autobump());
         cmd.execute(args);
@@ -49,7 +51,7 @@ public class Autobump implements Callable<AutobumpResult> {
     @Override
     public AutobumpResult call() {
         initialize();
-        return getAutobumpUseCase().doAutoBump(properties.getUrl());
+        return autobumpUseCase.doAutoBump(properties.getUrl());
     }
 
     private void initialize() {
@@ -59,6 +61,7 @@ public class Autobump implements Callable<AutobumpResult> {
         gitProvider = new BitBucketGitProvider(bitBucketAccount, properties.getBbApiUrl());
         releaseNotesSource = new GithubReleaseNotesSource(properties.getGhApiUrl());
         ignoreRepository = new MavenIgnoreRepository(properties.getIgnoreDependencies());
+        autobumpUseCase = getAutobumpUseCase();
     }
 
     public AutobumpUseCase getAutobumpUseCase() {
@@ -72,7 +75,7 @@ public class Autobump implements Callable<AutobumpResult> {
                 .ignoreRepository(ignoreRepository)
                 .build();
         return AutobumpUseCase.builder()
-                .config(config)
+                .
                 .releaseNotesSource(releaseNotesSource)
                 .build();
     }
