@@ -9,11 +9,15 @@ import java.util.stream.Collectors;
 @Data
 public class RepositoryResponseDto {
     private int pagelen;
-    private ArrayList<Repository> values;
+    private List<Repository> values;
     private String next;
 
     public List<String> getCloneLinks() {
-        return values.stream().flatMap(repository -> repository.getCloneLink().stream()).collect(Collectors.toUnmodifiableList());
+        return values.stream()
+                .flatMap(repository -> repository
+                        .getCloneLink()
+                        .stream())
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Data
@@ -31,7 +35,7 @@ public class RepositoryResponseDto {
             public List<String> getCloneLink() {
                 List<String> cloneLinks = new ArrayList<>();
                 for (Link link : clone) {
-                    if (link.name.equalsIgnoreCase("https")){
+                    if ("https".equalsIgnoreCase(link.name)){
                         cloneLinks.add(link.href);
                     }
                 }

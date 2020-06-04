@@ -20,14 +20,19 @@ import com.github.autobump.maven.model.MavenIgnoreRepository;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class Autobumpconfig {
@@ -38,7 +43,20 @@ public class Autobumpconfig {
     private String oAuthUrl;
 
     public Autobumpconfig(RestTemplateBuilder restTemplateBuilder, AtlassianHostRepository repository) {
-        this.restTemplateBuilder = restTemplateBuilder.build();
+        this.restTemplateBuilder = restTemplateBuilder
+                .requestFactory(() -> {
+                    var factory = new OkHttp3ClientHttpRequestFactory(
+                            new OkHttpClient().newBuilder().connectionPool(
+                                    new ConnectionPool(1, 5L, TimeUnit.MINUTES))
+                                    .build());
+
+                    factory.setConnectTimeout(2_000);
+                    factory.setReadTimeout(5_000);
+                    factory.setWriteTimeout(5_000);
+
+                    return factory;
+                })
+                .build();
         this.repository = repository;
     }
 
@@ -97,7 +115,7 @@ public class Autobumpconfig {
                 .getToken();
     }
 
-    public String getJwt(){
+    public String getJwt() {
         AtlassianHost host = null;
         for (AtlassianHost atlassianHost : repository.findAll()) {
             host = atlassianHost;

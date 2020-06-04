@@ -4,6 +4,7 @@ import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,12 +14,13 @@ import java.net.URI;
 
 
 @Service
+@Setter
 public class AutoBumpService {
     private final Logger logger = LoggerFactory.getLogger(AutoBumpService.class);
 
-    private final AtlassianHostRepository repository;
+    private AtlassianHostRepository repository;
 
-    private final Autobumpconfig autobumpconfig;
+    private Autobumpconfig autobumpconfig;
 
     public AutoBumpService(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
         this.repository = repository;
@@ -26,22 +28,13 @@ public class AutoBumpService {
     }
 
     @Scheduled(fixedRate = 86_400_000L)
-    private void autoBump() {
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    public void autoBump() {
         repository.findAll().forEach(atlassianHost -> {
             var repos = autobumpconfig.getGitProvider().getRepos();
             for (String repo : repos) {
                 try {
-                    var result = AutobumpUseCase.builder()
-                            .config(autobumpconfig.setupConfig())
-                            .releaseNotesSource(new GithubReleaseNotesSource("https://api.github.com"))
-                            .uri(URI.create(repo))
-                            .build()
-                            .doAutoBump();
-                    if (logger.isInfoEnabled()) {
-                        logger.info(String.format("bumped repo: %s, number of bumps: %d",
-                                repo,
-                                result.getNumberOfBumps()));
-                    }
+                    executeAutoBump(repo);
                 } catch (RuntimeException e) {
                     if (logger.isErrorEnabled()) {
                         logger.error(String.format("Something went wrong while bumping: %s", repo), e);
@@ -49,5 +42,19 @@ public class AutoBumpService {
                 }
             }
         });
+    }
+
+    private void executeAutoBump(String repo) {
+        var result = AutobumpUseCase.builder()
+                .config(autobumpconfig.setupConfig())
+                .releaseNotesSource(new GithubReleaseNotesSource("https://api.github.com"))
+                .uri(URI.create(repo))
+                .build()
+                .doAutoBump();
+        if (logger.isInfoEnabled()) {
+            logger.info(String.format("bumped repo: %s, number of bumps: %d",
+                    repo,
+                    result.getNumberOfBumps()));
+        }
     }
 }
