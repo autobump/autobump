@@ -23,4 +23,8 @@ public class SpringSettingsRepository implements SettingsRepository {
     public List<Setting> saveAllSettings(List<Setting> settings) {
         return jpaSettingsRepository.saveAll(settings);
     }
+
+    public List<Setting> findAllSettingsForDependencies(String repoName) {
+        return jpaSettingsRepository.findAllByRepositoryName(repoName);
+    }
 }

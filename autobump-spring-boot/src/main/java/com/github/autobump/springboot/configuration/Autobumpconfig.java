@@ -20,6 +20,7 @@ import com.github.autobump.maven.model.MavenIgnoreRepository;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -64,6 +65,7 @@ public class Autobumpconfig implements WebMvcConfigurer {
         return new MavenDependencyBumper();
     }
 
+    @Bean
     public DependencyResolver getDependencyResolver() {
         return new MavenDependencyResolver();
     }
@@ -117,6 +119,11 @@ public class Autobumpconfig implements WebMvcConfigurer {
                     .build();
         }
         return null;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
     @Bean

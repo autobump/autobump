@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class SettingsController {
@@ -21,43 +20,85 @@ public class SettingsController {
     SettingsService settingsService;
 
     @IgnoreJwt
-    @GetMapping("/settings")
-    public ModelAndView settings(ModelAndView mav){
-        var repos = settingsService.getAllRepositories();
-        mav.setViewName("settings");
-        mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+    @GetMapping("/home")
+    public ModelAndView home(ModelAndView mav) {
+        List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
+        if (monitored.isEmpty()) {
+            mav.setViewName("home");
+            var repos = settingsService.getAllRepositories();
+            mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+        } else {
+            mav.setViewName("settings");
+            loadRepoOverview(mav);
+        }
         return mav;
     }
 
     @IgnoreJwt
     @PostMapping("/selectRepositories")
-    public ModelAndView selectRepositories(ModelAndView mav, @ModelAttribute RepositoryListDto dto){
-        mav.setViewName("select-repository");
-        List<RepositoryDto> repos = dto.getRepositories()
-                .stream()
-                .filter(r -> r.isSelected() && r.isIgnore())
-                .collect(Collectors.toList());
-        // save settings in repo
-        mav.addObject("repositories", repos);
+    public ModelAndView selectRepositories(ModelAndView mav, @ModelAttribute RepositoryListDto dto) {
+        updateSelectedFieldsOfRepos(dto);
+        ModelAndView modelAndView = loadRepoOverview(mav);
+        return modelAndView;
+    }
+
+    @IgnoreJwt
+    @GetMapping("/loadRepoOverview")
+    private ModelAndView loadRepoOverview(ModelAndView mav) {
+        mav.setViewName("settings");
+        mav.addObject("repositories", settingsService.getMonitoredRepos());
+        mav.addObject("rep", new RepositoryDto());
         return mav;
     }
 
     @IgnoreJwt
-    @GetMapping("/ignoreDependencies")
-    public ModelAndView ignoreDependencies(ModelAndView mav,
-                                           @RequestParam("repoName") String repoName){
-        mav.setViewName("dependencies");
-        mav.addObject("repositoryDto", settingsService.getRepository(repoName));
+    @GetMapping("/settings")
+    public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") int repoId) {
+        mav.setViewName("repo-settings");
+        RepositoryDto dto = settingsService.getRepository(repoId);
+        dto.setDependencies(settingsService.getDependenciesForRepo(dto.getName()));
+        mav.addObject("repo", dto);
         return mav;
     }
 
     @IgnoreJwt
-    @PostMapping("/saveIgnoredDependencies")
-    public ModelAndView saveIgnoredDependencies(ModelAndView mav, RepositoryDto dto){
-        // save ignore dependencies in settingsrepository
-        // return to view to select other repo for configuring dependencies
+    @GetMapping("/addRepos")
+    public ModelAndView addRepos(ModelAndView mav) {
+        mav.setViewName("home");
+        var repos = settingsService.getAllRepositories();
+        mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+        return mav;
+    }
+
+    @IgnoreJwt
+    @PostMapping("/selectRepos")
+    public ModelAndView selectRepos(ModelAndView mav, RepositoryListDto dto) {
+        mav.setViewName("settings");
+        updateSelectedFieldsOfRepos(dto);
+        mav.addObject("repositories", settingsService.getMonitoredRepos());
+        return mav;
+    }
+
+    @IgnoreJwt
+    @GetMapping("/bump")
+    public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") int repoId) {
+        settingsService.doAutoBump(repoId);
+        mav.setViewName("bumps");
+        return mav;
+    }
+
+    private void updateSelectedFieldsOfRepos(@ModelAttribute RepositoryListDto dto) {
+        for (RepositoryDto repo: dto.getRepositories()
+             ) {
+            settingsService.updateRepo(repo);
+        }
+    }
+
+    @IgnoreJwt
+    @PostMapping("/saveSettings")
+    public ModelAndView saveIgnoredDependencies(ModelAndView mav, RepositoryDto dto) {
+        settingsService.saveSettings(dto);
         mav.setViewName("settings-saved");
         return mav;
     }
-
 }

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <title>Select repository</title>
+    <title>Settings</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
@@ -18,22 +18,16 @@
     <h1>Welcome to AutoBump!</h1>
 
     <div class="jumbotron">
-        <p>For which repository do you wish to configure the dependencies?</p>
+        <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
+            It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
+            It then creates a pull-request for every outdated dependency</p>
+
     </div>
 
-    <form th:action="@{/ignoreDependencies}">
-        <select th:name="repoName">
-            <option th:each="repo, stat : ${repositories}"
-                    th:text="${repo.name}"
-                    th:value="${repositories[__${stat.index}__].getName()}"></option>
-        </select>
-        <div class="form-row">
-            <div class="form-group col-md-1">
-                <input type="submit" value="save">
-            </div>
-        </div>
+    <form class="form-group col-md-12" th:action="@{/loadRepoOverview}" method="get">
+        <p>Autobump is now bumping the dependencies of your repository</p>
+        <button class="btn btn-primary" type="submit">Configure more repos</button>
     </form>
-
 </div>
 </body>
 </html>

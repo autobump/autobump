@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Repository settings</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <h1>Welcome to AutoBump!</h1>
+
+    <div class="jumbotron">
+        <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
+            It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
+            It then creates a pull-request for every outdated dependency</p>
+
+        <p>Configure the settings of your repository</p>
+    </div>
+
+    <!--/*@thymesVar id="repositoryDto" type="RepositoryDto"*/-->
+    <form th:action="@{/saveSettings}" th:object="${repo}" method="post">
+        <div class="form-group">
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <th>Do you wish to run Autobump daily?</th>
+                </div>
+                <div class="form-group col-md-2">
+                    <td style="display: none">
+                        <input hidden
+                               th:field="*{name}"
+                               th:value="*{name}">
+                    </td>
+                    <td><input class="form-check-input" type="checkbox"
+                               th:checked="*{cronJob}"
+                               th:field="*{cronJob}">
+                    </td>
+                </div>
+                <div class="form-group col-md-4">
+                    <th>Enter the name of a default reviewer for the pull requests created by autobump</th>
+                </div>
+                <div class="form-group col-md-4">
+                    <td><input class="form-control" type="text"
+                               th:value="*{reviewer}"
+                               th:field="*{reviewer}"
+                               th:text="${repo.getReviewer()}"
+                    ></td>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="col-md-3">
+                    <th>Group</th>
+                </div>
+                <div class="col-md-3">
+                    <th>Name</th>
+                </div>
+                <div class="col-md-3">
+                    <th>Version</th>
+                </div>
+                <div class="col-md-1">
+                    <th>Ignore major</th>
+                </div>
+                <div class="col-md-1">
+                    <th>Ignore minor</th>
+                </div>
+            </div>
+            <div class="form-row" th:each="dep, stat : ${repo.dependencies}">
+                <div class="form-group col-md-3">
+                    <td><input hidden
+                               th:field="*{dependencies[__${stat.index}__].groupName}"
+                               th:value="*{dependencies[__${stat.index}__].getGroupName()}"
+                               th:text="${dep.groupName}"/></td>
+                </div>
+                <div class="form-group col-md-3">
+                    <td><input hidden
+                               th:field="*{dependencies[__${stat.index}__].artifactId}"
+                               th:value="*{dependencies[__${stat.index}__].getArtifactId()}"
+                               th:text="${dep.artifactId}"/></td>
+                </div>
+                <div class="form-group col-md-3">
+                    <td><input hidden
+                               th:field="*{dependencies[__${stat.index}__].versionNumber}"
+                               th:value="*{dependencies[__${stat.index}__].getVersionNumber()}"
+                               th:text="${dep.versionNumber}"/></td>
+                </div>
+                <div class="form-group col-md-1">
+                    <td>
+                        <input class="form-check-input" type="checkbox"
+                               th:name="|repositories(${stat.index})|"
+                               th:field="*{dependencies[__${stat.index}__].ignoreMajor}"
+                               th:value="*{dependencies[__${stat.index}__].isIgnoreMajor()}"
+                               th:checked="*{dependencies[__${stat.index}__].isIgnoreMajor()}">
+                    </td>
+                </div>
+                <div class="form-group col-md-1">
+                    <td>
+                        <input type="checkbox"
+                               th:name="|repositories(${stat.index})|"
+                               th:field="*{dependencies[__${stat.index}__].ignoreMinor}"
+                               th:value="*{dependencies[__${stat.index}__].isIgnoreMinor()}"
+                               th:checked="*{dependencies[__${stat.index}__].isIgnoreMinor()}">
+                    </td>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <input class="btn btn-primary" type="submit" value="save">
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</div>
+</body>
+</html>
