@@ -6,10 +6,14 @@ import com.github.autobump.core.model.ReleaseNotes;
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.VersionRepository;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Locale;
 
-@Builder
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class FetchVersionReleaseNotesUseCase {
     private final VersionRepository versionRepository;
     private final ReleaseNotesSource releaseNotesSource;

@@ -37,7 +37,7 @@ public class MavenIgnoreRepository implements IgnoreRepository {
         boolean isIgnored = false;
         if (ignoreDependencies.get(key).equalsIgnoreCase("all")){
             isIgnored = true;
-        }else if (ignoreDependencies.get(key).equalsIgnoreCase("major") &&
+        } else if (ignoreDependencies.get(key).equalsIgnoreCase("major") &&
                 updateType.equals(UpdateType.MAJOR)) {
             isIgnored = true;
         } else if (ignoreDependencies.get(key).equalsIgnoreCase("minor") &&

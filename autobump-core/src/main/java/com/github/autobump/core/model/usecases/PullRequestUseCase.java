@@ -8,12 +8,16 @@ import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Builder
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PullRequestUseCase {
     private final GitProvider gitProvider;
     private final GitClient gitClient;

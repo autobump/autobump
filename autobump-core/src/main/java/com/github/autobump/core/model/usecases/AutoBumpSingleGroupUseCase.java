@@ -11,12 +11,15 @@ import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Data
-@Builder
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class AutoBumpSingleGroupUseCase {
 
     private final DependencyResolver dependencyResolver;
@@ -37,8 +40,8 @@ public class AutoBumpSingleGroupUseCase {
                 .collect(Collectors.toUnmodifiableSet());
         var combinedbumps = bumpResolverUseCase.doResolve(dependencies);
         if (combinedbumps.isEmpty()) {
-            getGitProvider().closePullRequest(pullRequest);
-            getGitClient().deleteBranch(workspace, pullRequest.getBranchName());
+            gitProvider.closePullRequest(pullRequest);
+            gitClient.deleteBranch(workspace, pullRequest.getBranchName());
         }
         makeBumpsAndPush(workspace, combinedbumps, pullRequest.getBranchName());
         return new AutobumpResult(combinedbumps.size());

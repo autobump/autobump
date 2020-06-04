@@ -2,12 +2,15 @@ package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
 import com.github.autobump.core.model.Workspace;
+import lombok.RequiredArgsConstructor;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -15,6 +18,8 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class MavenModelAnalyser {
     public static final String DEPENDENCY_FILENAME = "pom.xml";
     private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile("\\$\\{(.+)}");

@@ -5,8 +5,11 @@ import com.github.autobump.core.model.DependencyBumper;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 
+import javax.inject.Inject;
+
 @Builder
 public class BumpUseCase {
+    @Inject
     private final DependencyBumper dependencyBumper;
 
     public void doBump(Workspace workspace, Bump bump) {

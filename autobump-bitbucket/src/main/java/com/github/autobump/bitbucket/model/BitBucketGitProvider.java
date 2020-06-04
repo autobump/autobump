@@ -14,9 +14,11 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import lombok.Getter;
 
+import javax.inject.Named;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Named
 @Getter
 public class BitBucketGitProvider implements GitProvider {
     private final String apiUrl;

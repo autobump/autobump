@@ -7,7 +7,9 @@ import lombok.Builder;
 
 @Builder
 public class CommentCreatedUseCase {
-    SettingsRepository settingsRepository;
+    private final SettingsRepository settingsRepository;
+    private final IgnoreMajorUseCase ignoreMajorUseCase;
+    private final IgnoreMinorUseCase ignoreMinorUseCase;
 
     public Setting doHandle(CommentCreatedEvent event){
         String comment = event.getComment();
@@ -24,10 +26,6 @@ public class CommentCreatedUseCase {
     private Setting ignoreMajor(CommentCreatedEvent commentCreatedEvent) {
         Setting setting = extractSettingFromComment(commentCreatedEvent.getPullRequestTitle(), "Major",
                 commentCreatedEvent.getRepositoryName());
-        IgnoreMajorUseCase ignoreMajorUseCase = IgnoreMajorUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
         ignoreMajorUseCase.addIgnoreMajorSetting(setting);
         return setting;
     }
@@ -35,10 +33,6 @@ public class CommentCreatedUseCase {
     private Setting ignoreMinor(CommentCreatedEvent commentCreatedEvent){
         Setting setting = extractSettingFromComment(commentCreatedEvent.getPullRequestTitle(), "Minor",
                 commentCreatedEvent.getRepositoryName());
-        IgnoreMinorUseCase ignoreMinorUseCase = IgnoreMinorUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
         ignoreMinorUseCase.addIgnoreMinorSetting(setting);
         return setting;
     }

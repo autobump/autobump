@@ -5,11 +5,15 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.events.PrClosedEvent;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PullRequestClosedUseCase {
     private final SettingsRepository settingsRepository;
 

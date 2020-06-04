@@ -14,7 +14,10 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -39,6 +42,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class AutobumpTest {
 
     private static final String REPO_URL = "http://localhost:8090/repourl";

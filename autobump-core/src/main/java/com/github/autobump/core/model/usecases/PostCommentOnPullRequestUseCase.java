@@ -5,10 +5,14 @@ import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.UrlHelper;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URI;
 
-@Builder
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PostCommentOnPullRequestUseCase {
 
     @NonNull

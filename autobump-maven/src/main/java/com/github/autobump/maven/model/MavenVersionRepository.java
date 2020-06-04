@@ -5,10 +5,13 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -21,6 +24,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 @Slf4j
 public class MavenVersionRepository implements VersionRepository {
 
@@ -46,10 +51,10 @@ public class MavenVersionRepository implements VersionRepository {
         this.mavenModelAnalyser = new MavenModelAnalyser();
     }
 
-    public MavenVersionRepository(String baseUrl, MavenModelAnalyser mavenModelAnalyser) {
-        this.baseUrl = baseUrl;
-        this.mavenModelAnalyser = mavenModelAnalyser;
-    }
+//    public MavenVersionRepository(String baseUrl, MavenModelAnalyser mavenModelAnalyser) {
+//        this.baseUrl = baseUrl;
+//        this.mavenModelAnalyser = mavenModelAnalyser;
+//    }
 
     @Override
     public Set<Version> getAllAvailableVersions(Dependency dependency) {

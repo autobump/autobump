@@ -19,6 +19,7 @@ import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;

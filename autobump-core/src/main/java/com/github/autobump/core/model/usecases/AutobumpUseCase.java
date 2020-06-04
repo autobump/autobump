@@ -11,26 +11,29 @@ import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.net.URI;
 import java.util.Set;
 
-@Data
-@Builder
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class AutobumpUseCase {
-    @NonNull
+    @Inject
     private final GitClient gitClient;
-    @NonNull
+    @Inject
     private final DependencyResolver dependencyResolver;
-    @NonNull
+    @Inject
     private final BumpResolverUseCase bumpResolverUseCase;
-    @NonNull
+    @Inject
     private final FetchVersionReleaseNotesUseCase fetchVersionReleaseNotesUseCase;
-    @NonNull
+    @Inject
     private final PostCommentOnPullRequestUseCase postCommentOnPullRequestUseCase;
-    @NonNull
+    @Inject
     private final PullRequestUseCase pullRequestUseCase;
-    @NonNull
+    @Inject
     private final BumpUseCase bumpUseCase;
 
     public AutobumpResult doAutoBump(@NonNull URI uri) {

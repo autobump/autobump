@@ -17,6 +17,7 @@ import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
 import com.github.autobump.maven.model.MavenIgnoreRepository;
+import com.github.autobump.maven.model.MavenModelAnalyser;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
@@ -28,6 +29,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+
+import java.util.Collections;
 
 @Configuration
 public class Autobumpconfig {
@@ -59,7 +62,7 @@ public class Autobumpconfig {
     }
 
     public DependencyResolver getDependencyResolver() {
-        return new MavenDependencyResolver();
+        return new MavenDependencyResolver(new MavenModelAnalyser());
     }
 
     public GitClient getGitClient() {
@@ -71,7 +74,7 @@ public class Autobumpconfig {
     }
 
     public IgnoreRepository getIgnoreRepo() {
-        return new MavenIgnoreRepository(null);
+        return new MavenIgnoreRepository(Collections.emptyMap());
     }
 
     public GitProviderUrlHelper getUrlHelper() {

@@ -9,6 +9,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,14 +19,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Named
 public class MavenDependencyResolver implements DependencyResolver {
     private static final String LOCATION_KEY = "version";
 
     private final MavenModelAnalyser mavenModelAnalyser;
 
-    public MavenDependencyResolver() {
-        this.mavenModelAnalyser = new MavenModelAnalyser();
+    @Inject
+    public MavenDependencyResolver(MavenModelAnalyser mavenModelAnalyser) {
+        this.mavenModelAnalyser = mavenModelAnalyser;
     }
+
+//    public MavenDependencyResolver() {
+//        this.mavenModelAnalyser = new MavenModelAnalyser();
+//    }
 
     @Override
     public Set<Dependency> resolve(Workspace workspace) {

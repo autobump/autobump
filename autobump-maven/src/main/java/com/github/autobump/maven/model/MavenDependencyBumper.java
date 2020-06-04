@@ -7,8 +7,11 @@ import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -19,11 +22,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 @Getter
 public class MavenDependencyBumper implements DependencyBumper {
     private static final Pattern VERSION_PROPERTY_PATTERN = Pattern.compile(".*\\$\\{(.+)\\}.*");
     MavenXpp3ReaderEx mavenXpp3ReaderEx = new MavenXpp3ReaderEx();
-
 
     @Override
     public void bump(Workspace workspace, Bump bump) {

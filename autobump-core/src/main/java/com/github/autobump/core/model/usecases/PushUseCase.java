@@ -4,8 +4,13 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
-@Builder
+import javax.inject.Inject;
+import javax.inject.Named;
+
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PushUseCase {
     GitClient gitClient;
 
