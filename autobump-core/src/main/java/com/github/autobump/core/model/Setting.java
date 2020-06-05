@@ -1,6 +1,5 @@
 package com.github.autobump.core.model;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +17,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="Settings")
 @IdClass(SettingId.class)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor//(access = AccessLevel.PROTECTED)
 public final class Setting {
     private SettingsType type;
     @Id
@@ -38,6 +37,6 @@ public final class Setting {
     }
 
     public enum SettingsType{
-        IGNORE
+        IGNORE, CRON, REVIEWER
     }
 }
