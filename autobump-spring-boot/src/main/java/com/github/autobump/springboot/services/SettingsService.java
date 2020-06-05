@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @Setter
 public class SettingsService {
+
     @Autowired
     ModelMapper modelMapper;
     @Autowired

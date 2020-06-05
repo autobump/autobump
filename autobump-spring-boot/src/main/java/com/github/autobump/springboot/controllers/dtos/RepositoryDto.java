@@ -1,5 +1,6 @@
 package com.github.autobump.springboot.controllers.dtos;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;

@@ -1,6 +1,8 @@
 package com.github.autobump.springboot.services;
 
+import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.Setting;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
@@ -10,7 +12,6 @@ import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
@@ -25,6 +26,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
 class SettingsServiceTest {
+    public static final String REPOSITORY_NAME = "TestMavenProject";
+
+    @Autowired
+    AtlassianHostRepository atlassianHostRepository;
+
     @Mock
     ModelMapper modelMapper;
 
@@ -41,10 +47,11 @@ class SettingsServiceTest {
     GitProvider gitProvider;
 
     @Autowired
-    @InjectMocks
     SettingsService service;
 
-    List<Repo> dummyRepos = getDummyRepoList();
+    List<Repo> dummyRepos;
+
+    RepositoryDto dummyRepoDto;
 
 
     @BeforeEach
@@ -52,31 +59,47 @@ class SettingsServiceTest {
         service = new SettingsService();
         service.setRepoRepository(repoRepository);
         service.setModelMapper(modelMapper);
-        //when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        service.setSettingsRepository(springSettingsRepository);
+        dummyRepos = getDummyRepoList();
+        List<DependencyDto> expectedDependencyList = new ArrayList<>();
+        expectedDependencyList.add(DependencyDto.builder()
+                .groupName("org.projectlombok")
+                .artifactId("lombok")
+                .versionNumber("1.18.12")
+                .ignoreMajor(true)
+                .ignoreMinor(false)
+                .build());
+        dummyRepoDto = new RepositoryDto();
+        dummyRepoDto.setName(REPOSITORY_NAME);
+        dummyRepoDto.setCronJob(true);
+        dummyRepoDto.setReviewer("name of a reviewer");
+        dummyRepoDto.setDependencies(expectedDependencyList);
     }
 
     @Test
     void getAllRepositories() {
+        //when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
         // TODO - fix gitprovider first
     }
 
     @Test
     void getMonitoredRepos() {
-        when(repoRepository.findAll()).thenReturn(dummyRepos);
-        when(modelMapper.map(any(Repo.class), any())).thenReturn(new RepositoryDto());
+        when(repoRepository.findAll())
+                .thenReturn(dummyRepos);
+        when(modelMapper.map(any(Repo.class), any()))
+                .thenReturn(new RepositoryDto());
         assertThat(service.getMonitoredRepos().size()).isEqualTo(1);
     }
 
     @Test
     void getSettingsForRepository() {
+        when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
+                .thenReturn(getDummySettings());
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME)).isEqualTo(dummyRepoDto);
     }
 
     @Test
     void doAutoBump() {
-    }
-
-    @Test
-    void seedDependencies() {
     }
 
     @Test
@@ -85,6 +108,7 @@ class SettingsServiceTest {
 
     @Test
     void updateRepo() {
+
     }
 
     @Test
@@ -108,12 +132,29 @@ class SettingsServiceTest {
         return repos;
     }
 
-    private List<DependencyDto> getDummyDependencyDtos(){
-        List<DependencyDto> deps = new ArrayList<>();
-        deps.add(new DependencyDto("a group", "an artifact", "a version",false, false));
-        deps.add(new DependencyDto( "another group", "another artifact", "another version", false, false));
-        deps.add(new DependencyDto( "a group2", "an artifact2", "a version2", false, false));
-        deps.add(new DependencyDto( "another group2", "another artifact2", "another version2", false, false));
-        return deps;
+    private List<Setting> getDummySettings(){
+        List<Setting> dummies = new ArrayList<Setting>();
+        Setting s1 = Setting.builder()
+                .repositoryName(REPOSITORY_NAME)
+                .key("org.projectlombok:lombok:1.18.12")
+                .type(Setting.SettingsType.IGNORE)
+                .value("major")
+                .build();
+        dummies.add(s1);
+        Setting s2 = Setting.builder()
+                .key("reviewer")
+                .type(Setting.SettingsType.REVIEWER)
+                .value("name of a reviewer")
+                .repositoryName(REPOSITORY_NAME)
+                .build();
+        dummies.add(s2);
+        Setting s3 = Setting.builder()
+                .key("cron")
+                .type(Setting.SettingsType.CRON)
+                .value("true")
+                .repositoryName(REPOSITORY_NAME)
+                .build();
+        dummies.add(s3);
+        return dummies;
     }
 }
