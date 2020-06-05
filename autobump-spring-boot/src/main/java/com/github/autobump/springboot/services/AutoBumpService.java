@@ -25,7 +25,9 @@ public class AutoBumpService {
 
     private final SettingsRepository settingsRepository;
 
-    public AutoBumpService(AtlassianHostRepository repository, Autobumpconfig autobumpconfig, SettingsRepository settingsRepository) {
+    public AutoBumpService(AtlassianHostRepository repository,
+                           Autobumpconfig autobumpconfig,
+                           SettingsRepository settingsRepository) {
         this.repository = repository;
         this.autobumpconfig = autobumpconfig;
         this.settingsRepository = settingsRepository;
