@@ -3,7 +3,6 @@ package com.github.autobump.bitbucket.model.dtos;
 import lombok.Data;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,6 @@ public class RepositoryResponseDto {
             private List<Link> clone;
 
             public String getCloneLink() {
-                List<String> cloneLinks = new ArrayList<>();
                 for (Link link : clone) {
                     if ("https".equalsIgnoreCase(link.name)){
                         return link.href;
