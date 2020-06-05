@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
@@ -48,9 +50,7 @@ class SettingsServiceTest {
 
     @Autowired
     SettingsService service;
-
     List<Repo> dummyRepos;
-
     RepositoryDto dummyRepoDto;
 
 
@@ -70,6 +70,7 @@ class SettingsServiceTest {
                 .ignoreMinor(false)
                 .build());
         dummyRepoDto = new RepositoryDto();
+        dummyRepoDto.setSelected(true);
         dummyRepoDto.setName(REPOSITORY_NAME);
         dummyRepoDto.setCronJob(true);
         dummyRepoDto.setReviewer("name of a reviewer");
@@ -104,18 +105,21 @@ class SettingsServiceTest {
 
     @Test
     void getRepository() {
+        when(repoRepository.getByRepoId(1)).thenReturn(dummyRepos.get(0));
+        when(modelMapper.map(dummyRepos.get(0), RepositoryDto.class)).thenReturn(dummyRepoDto);
+        assertThat(service.getRepository(1)).isEqualTo(dummyRepoDto);
     }
 
     @Test
     void updateRepo() {
-
+        when(repoRepository.getByRepoId(anyInt())).thenReturn(dummyRepos.get(0));
+        assertThatCode(() -> service.updateRepo(dummyRepoDto)).doesNotThrowAnyException();
     }
 
     @Test
     void saveSettings() {
+
     }
-
-
 
     private List<Repo> getDummyRepoList() {
         List<Repo> repos = new ArrayList<>();

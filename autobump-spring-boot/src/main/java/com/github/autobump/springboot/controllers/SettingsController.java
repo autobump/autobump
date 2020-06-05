@@ -30,7 +30,6 @@ public class SettingsController {
             var repos = settingsService.getAllRepositories();
             mav.addObject("repositoryListDto", new RepositoryListDto(repos));
         } else {
-            mav.setViewName("settings");
             loadRepoOverview(mav);
         }
         return mav;
@@ -59,8 +58,6 @@ public class SettingsController {
         mav.setViewName("repo-settings");
         String repoName = settingsService.getRepository(repoId).getName();
         RepositoryDto dto = settingsService.getSettingsForRepository(repoName);
-        // TODO - to remove
-        //dto.setDependencies(settingsService.seedDependencies());
         mav.addObject("repoName", repoName);
         mav.addObject("repo", dto);
         return mav;
@@ -101,7 +98,7 @@ public class SettingsController {
 
     @IgnoreJwt
     @PostMapping("/saveSettings")
-    public ModelAndView saveIgnoredDependencies(ModelAndView mav, RepositoryDto dto) {
+    public ModelAndView saveSettings(ModelAndView mav, RepositoryDto dto) {
         settingsService.saveSettings(dto);
         mav.setViewName("settings-saved");
         return mav;

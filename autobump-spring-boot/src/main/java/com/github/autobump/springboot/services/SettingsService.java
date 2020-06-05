@@ -36,7 +36,7 @@ public class SettingsService {
 
     public List<RepositoryDto> getAllRepositories(){
         GitProvider gitProvider = autobumpconfig.getGitProvider();
-        List<Repo> remoteRepos = seed(); //TODO gitprovider.getRepositories
+        List<Repo> remoteRepos = new ArrayList<>(); //TODO gitprovider.getRepositories
         List<Repo> savedRepos = repoRepository.findAll();
         addNewRemoteRepos(remoteRepos, savedRepos);
         removeReposNoLongerRemotelyPresent(remoteRepos, savedRepos);
@@ -140,39 +140,6 @@ public class SettingsService {
                 .uri(URI.create(repoRepository.getByRepoId(repoId).getLink()))
                 .build()
                 .doAutoBump();
-    }
-
-    // TODO - should be removed when gitprovider used
-    private List<Repo> seed() {
-        List<Repo> repos = new ArrayList<>();
-        Repo repo = new Repo();
-        repo.setName("MultiModuleMavenProject");
-        repo.setSelected(false);
-        repo.setRepoId(1);
-        repos.add(repo);
-        Repo repo2 = new Repo();
-        repo2.setName("TestMavenProject");
-        repo2.setSelected(false);
-        repo2.setRepoId(2);
-        repos.add(repo2);
-        return repos;
-    }
-
-    /*public List<DependencyDto> getDependenciesForRepo(String repoName) {
-        List<DependencyDto> dependencies = dependencyResolver.resolve(new Workspace());
-        List<DependencyDto> deps = seedDependencies(); //
-        // TODO: update dependencies with settings
-        return deps;
-    }*/
-
-    // TODO - to remove
-    public List<DependencyDto> seedDependencies() {
-        List<DependencyDto> deps = new ArrayList<>();
-        deps.add(new DependencyDto("a group", "an artifact", "a version",false, false));
-        deps.add(new DependencyDto( "another group", "another artifact", "another version", false, false));
-        deps.add(new DependencyDto( "a group2", "an artifact2", "a version2", false, false));
-        deps.add(new DependencyDto( "another group2", "another artifact2", "another version2", false, false));
-        return deps;
     }
 
     public RepositoryDto getRepository(int repoId) {
