@@ -1,6 +1,7 @@
 package com.github.autobump.springboot.services;
 
 import com.atlassian.connect.spring.AtlassianHostRepository;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
@@ -22,9 +23,12 @@ public class AutoBumpService {
 
     private Autobumpconfig autobumpconfig;
 
-    public AutoBumpService(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
+    private final SettingsRepository settingsRepository;
+
+    public AutoBumpService(AtlassianHostRepository repository, Autobumpconfig autobumpconfig, SettingsRepository settingsRepository) {
         this.repository = repository;
         this.autobumpconfig = autobumpconfig;
+        this.settingsRepository = settingsRepository;
     }
 
     @Scheduled(fixedRate = 86_400_000L)
@@ -49,6 +53,7 @@ public class AutoBumpService {
                 .config(autobumpconfig.setupConfig())
                 .releaseNotesSource(new GithubReleaseNotesSource("https://api.github.com"))
                 .uri(URI.create(repo))
+                .settingsRepository(settingsRepository)
                 .build()
                 .doAutoBump();
         if (logger.isInfoEnabled()) {
