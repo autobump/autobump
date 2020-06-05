@@ -5,12 +5,19 @@ import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Version.UpdateType;
 
+import javax.inject.Named;
+
 import java.util.Collections;
 import java.util.Map;
 
+@Named
 public class MavenIgnoreRepository implements IgnoreRepository {
 
     private final Map<String, String> ignoreDependencies;
+
+    public MavenIgnoreRepository() {
+        this(Collections.emptyMap());
+    }
 
     public MavenIgnoreRepository(Map<String, String> ignoreDependencies) {
         this.ignoreDependencies = ignoreDependencies == null ? Collections.emptyMap() : ignoreDependencies;
@@ -35,7 +42,7 @@ public class MavenIgnoreRepository implements IgnoreRepository {
 
     private boolean determineIgnored(String key, UpdateType updateType) {
         boolean isIgnored = false;
-        if (ignoreDependencies.get(key).equalsIgnoreCase("all")){
+        if (ignoreDependencies.get(key).equalsIgnoreCase("all")) {
             isIgnored = true;
         } else if (ignoreDependencies.get(key).equalsIgnoreCase("major") &&
                 updateType.equals(UpdateType.MAJOR)) {

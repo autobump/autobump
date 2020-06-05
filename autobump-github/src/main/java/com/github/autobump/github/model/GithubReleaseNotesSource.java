@@ -1,17 +1,11 @@
 package com.github.autobump.github.model;
 
+import com.github.autobump.core.model.ReleaseNotes;
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.ReleaseNotesUrlHelper;
-import com.github.autobump.core.model.ReleaseNotes;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
-import lombok.RequiredArgsConstructor;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-@Named
-@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class GithubReleaseNotesSource implements ReleaseNotesSource {
     private final GithubApi githubApi;
     private final ReleaseNotesUrlHelper releaseNotesUrlHelper;

@@ -6,8 +6,10 @@ import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 @Builder
+@Named
 public class BumpUseCase {
     @Inject
     private final DependencyBumper dependencyBumper;

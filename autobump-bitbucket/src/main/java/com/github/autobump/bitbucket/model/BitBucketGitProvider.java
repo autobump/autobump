@@ -14,21 +14,20 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import lombok.Getter;
 
-import javax.inject.Named;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Named
 @Getter
 public class BitBucketGitProvider implements GitProvider {
     private final String apiUrl;
     private final BitBucketApi client;
     private final GitProviderUrlHelper bitBucketGitProviderUrlHelper;
 
-    public BitBucketGitProvider(BitBucketAccount user){
+    public BitBucketGitProvider(BitBucketAccount user) {
         this(user, "https://api.bitbucket.org/2.0");
     }
-    public BitBucketGitProvider(RequestInterceptor interceptor){
+
+    public BitBucketGitProvider(RequestInterceptor interceptor) {
         this("https://api.bitbucket.org/2.0", interceptor);
     }
 
@@ -36,7 +35,7 @@ public class BitBucketGitProvider implements GitProvider {
         this(apiUrl, new BasicAuthRequestInterceptor(user.getUsername(), user.getPassword()));
     }
 
-    public BitBucketGitProvider(String apiUrl, RequestInterceptor interceptor){
+    public BitBucketGitProvider(String apiUrl, RequestInterceptor interceptor) {
         this.apiUrl = apiUrl;
         client = Feign.builder()
                 .encoder(new JacksonEncoder())
@@ -69,12 +68,12 @@ public class BitBucketGitProvider implements GitProvider {
                 .getValues()
                 .stream().filter(p -> p.getTitle().startsWith("Bumped"))
                 .map(d -> PullRequest.builder()
-                .pullRequestId(bitBucketGitProviderUrlHelper.getPullRequestId(d.getLink()))
-                .repoName(repoName)
-                .repoOwner(repoOwner)
-                .title(d.getTitle())
-                .branchName(parseBranchName(d))
-                .build())
+                        .pullRequestId(bitBucketGitProviderUrlHelper.getPullRequestId(d.getLink()))
+                        .repoName(repoName)
+                        .repoOwner(repoOwner)
+                        .title(d.getTitle())
+                        .branchName(parseBranchName(d))
+                        .build())
                 .collect(Collectors.toUnmodifiableSet());
     }
 

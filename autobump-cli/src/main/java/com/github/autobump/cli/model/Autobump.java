@@ -1,22 +1,22 @@
 package com.github.autobump.cli.model;
 
+import com.github.autobump.bitbucket.model.BitBucketAccount;
+import com.github.autobump.bitbucket.model.BitBucketGitProvider;
 import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
+import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.jgit.model.JGitGitClient;
-import lombok.Getter;
+import com.github.autobump.maven.model.MavenVersionRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Spec;
 
-import javax.inject.Inject;
 import java.util.concurrent.Callable;
 
 @SpringBootApplication
@@ -27,9 +27,6 @@ public class Autobump implements Callable<AutobumpResult> {
     private static CommandSpec spec;
     @Mixin
     AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
-    @Getter
-    @Inject
-    private AutobumpUseCase autobumpUseCase;
 
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new Autobump());
@@ -39,7 +36,12 @@ public class Autobump implements Callable<AutobumpResult> {
     }
 
     @Bean
-    public GitClient getGitClient() {
+    public MavenVersionRepository MavenVersionRepository(AutobumpPropertiesProvider properties) {
+        return new MavenVersionRepository(properties.getRepositoryUrl());
+    }
+
+    @Bean
+    public GitClient getGitClient(AutobumpPropertiesProvider properties) {
         return new JGitGitClient(properties.getUsername(), properties.getPassword());
     }
 
@@ -48,9 +50,26 @@ public class Autobump implements Callable<AutobumpResult> {
         return properties.getRepositoryUrl();
     }
 
+    @Bean
+    public AutobumpPropertiesProvider autobumpPropertiesProvider() {
+        return AutobumpPropertiesProvider.getInstance();
+    }
+
+    @Bean
+    public GithubReleaseNotesSource githubReleaseNotesSource(AutobumpPropertiesProvider properties) {
+        return new GithubReleaseNotesSource(properties.getGhApiUrl());
+    }
+
+    @Bean
+    public BitBucketGitProvider bitBucketGitProvider(AutobumpPropertiesProvider properties) {
+        BitBucketAccount bitBucketAccount = new BitBucketAccount(properties.getUsername(), properties.getPassword());
+
+        return new BitBucketGitProvider(bitBucketAccount, properties.getBbApiUrl());
+    }
+
     @Override
     public AutobumpResult call() {
-        return autobumpUseCase.doAutoBump(properties.getUrl());
+        return SpringApplication.run(Autobump.class).getBean(AutobumpUseCase.class).doAutoBump(properties.getUrl());
     }
 
 //    public AutobumpUseCase getAutobumpUseCase() {

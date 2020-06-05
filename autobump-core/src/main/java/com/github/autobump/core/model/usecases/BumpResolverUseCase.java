@@ -5,18 +5,24 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
-import lombok.Builder;
+
+import javax.inject.Named;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Builder
+@Named
 public class BumpResolverUseCase {
-    private IgnoreRepository ignoreRepository;
-    private VersionRepository versionRepository;
+    private final IgnoreRepository ignoreRepository;
+    private final VersionRepository versionRepository;
 
-    public Set<Bump> doResolve(Set<Dependency> dependencies){
+    public BumpResolverUseCase(IgnoreRepository ignoreRepository, VersionRepository versionRepository) {
+        this.ignoreRepository = ignoreRepository;
+        this.versionRepository = versionRepository;
+    }
+
+    public Set<Bump> doResolve(Set<Dependency> dependencies) {
         return groupBumps(makeBumpSet(dependencies));
     }
 

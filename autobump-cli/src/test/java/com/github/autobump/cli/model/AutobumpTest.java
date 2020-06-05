@@ -1,7 +1,5 @@
 package com.github.autobump.cli.model;
 
-import com.github.autobump.core.model.AutobumpResult;
-import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -14,10 +12,6 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -37,13 +31,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+//@ExtendWith(SpringExtension.class)
+//@SpringBootTest
 class AutobumpTest {
 
     private static final String REPO_URL = "http://localhost:8090/repourl";
@@ -73,8 +64,8 @@ class AutobumpTest {
 
     private static void createContent(File fileToWriteTo) {
         try (BufferedWriter fw = Files.newBufferedWriter(fileToWriteTo.toPath());
-                BufferedReader bufferedReader =
-                        Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
+             BufferedReader bufferedReader =
+                     Files.newBufferedReader(new File("src/test/resources/pom.xml").toPath())) {
             copyFileContent(fw, bufferedReader);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
@@ -133,7 +124,7 @@ class AutobumpTest {
 
     private void setupStub() {
         wireMockServer.stubFor(get(
-                urlEqualTo(String.format("%s/repositories/%s/%s/pullrequests", API_URL, TEST_OWNER, TEST_REPO_NAME)))
+                urlEqualTo(String.format("/apiurl/repositories/%s/%s/pullrequests", TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                         .withStatus(200)
                         .withBodyFile("getAllOpenPullRequests.json")));
@@ -174,19 +165,18 @@ class AutobumpTest {
                 .contains("--password");
     }
 
-    @Test
-    void main_SuccessfullyShowsResult(){
+    /*@Test
+    void main_SuccessfullyShowsResult() {
         String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL).split(" ");
         CommandLine cmd = new CommandLine(new TestAutoBump());
         cmd.execute(args);
         if (cmd.getExecutionResult() instanceof AutobumpResult) {
             assertThat(((AutobumpResult) cmd.getExecutionResult()).getNumberOfBumps())
                     .isEqualTo(5);
-        }
-        else {
+        } else {
             fail("bad returntype");
         }
-    }
+    }*/
 
     @Test
     void main_integrationTest() {
@@ -200,7 +190,7 @@ class AutobumpTest {
         String[] args =
                 String.format("-u glenn.schrooyen@student.kdg.be " +
                                 "-p AutoBump2209 -l %s -r %s -b %s -i derby=all",
-                    GIT_URL, REPO_URL, API_URL).split(" ");
+                        GIT_URL, REPO_URL, API_URL).split(" ");
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }
 
@@ -222,12 +212,12 @@ class AutobumpTest {
         // finally wait for the Server being stopped
     }
 
-    static class TestAutoBump extends Autobump {
+    /*static class TestAutoBump extends Autobump {
         @Override
         public AutobumpUseCase getAutobumpUseCase() {
             AutobumpUseCase mocked = Mockito.mock(AutobumpUseCase.class);
             when(mocked.doAutoBump(any())).thenReturn(new AutobumpResult(5));
             return mocked;
         }
-    }
+    }*/
 }

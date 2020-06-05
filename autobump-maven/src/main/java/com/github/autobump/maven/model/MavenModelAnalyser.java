@@ -6,15 +6,18 @@ import lombok.RequiredArgsConstructor;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
+import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3ReaderEx;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +75,7 @@ public class MavenModelAnalyser {
         try (InputStream inputStream = new URL(pomFileUrl).openStream()) {
             Model model = reader.read(inputStream, true, inputSource);
 
-            return model.getScm().getUrl();
+            return Optional.of(model).map(Model::getScm).map(Scm::getUrl).orElse(null);
 
         } catch (IOException | XmlPullParserException e) {
             throw new DependencyParserException("Could not parse file: " + pomFileUrl, e);
