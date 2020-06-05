@@ -8,6 +8,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -109,6 +110,7 @@ class AutoBumpSingleGroupUseCaseTest {
                 .pullRequest(pullRequest)
                 .uri(uri)
                 .workspace(workspace)
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
                 .build()
                 .doSingleGroupAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);

@@ -5,6 +5,7 @@ import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.ReleaseNotesSource;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
@@ -25,15 +26,18 @@ public class AutobumpUseCase {
     @NonNull
     private final ReleaseNotesSource releaseNotesSource;
 
+    private final SettingsRepository settingsRepository;
+
     public AutobumpResult doAutoBump() {
         Workspace workspace = config.getGitClient().clone(getUri());
         Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace);
         var combinedbumps = BumpResolverUseCase.builder()
                 .dependencies(dependencies)
                 .ignoreRepository(config.getIgnoreRepository())
+                .settingsRepository(settingsRepository)
                 .versionRepository(config.getVersionRepository())
                 .build()
-                .doResolve();
+                .doResolve(config.getGitProviderUrlHelper().getRepoName(uri.toString()));
         makeBumpsAndPullRequests(workspace, combinedbumps);
         return new AutobumpResult(combinedbumps.size());
     }

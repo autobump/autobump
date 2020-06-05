@@ -12,6 +12,7 @@ import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.ReleaseNotesSource;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -131,6 +133,7 @@ class AutobumpUseCaseTest {
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
                 .build()
                 .doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
@@ -143,6 +146,7 @@ class AutobumpUseCaseTest {
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(any());
@@ -174,6 +178,7 @@ class AutobumpUseCaseTest {
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(1)).commentPullRequest(any(), contains("release notes content"));
@@ -191,6 +196,7 @@ class AutobumpUseCaseTest {
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
@@ -207,6 +213,7 @@ class AutobumpUseCaseTest {
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
                 .build()
                 .doAutoBump();
         verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));

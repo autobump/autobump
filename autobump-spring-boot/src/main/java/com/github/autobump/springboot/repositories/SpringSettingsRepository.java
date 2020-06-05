@@ -5,6 +5,9 @@ import com.github.autobump.core.model.SettingsRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.github.autobump.core.model.Setting.SettingsType.IGNORE;
 
 @Repository
 public class SpringSettingsRepository implements SettingsRepository {
@@ -22,5 +25,13 @@ public class SpringSettingsRepository implements SettingsRepository {
     @Override
     public List<Setting> saveAllSettings(List<Setting> settings) {
         return jpaSettingsRepository.saveAll(settings);
+    }
+
+    @Override
+    public List<Setting> getAllIgnores() {
+        return jpaSettingsRepository.findAll()
+                .stream()
+                .filter(setting -> setting.getType().equals(IGNORE))
+                .collect(Collectors.toUnmodifiableList());
     }
 }
