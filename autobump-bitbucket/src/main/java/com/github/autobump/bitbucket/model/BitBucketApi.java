@@ -1,10 +1,10 @@
 package com.github.autobump.bitbucket.model;
 
-import com.github.autobump.bitbucket.dtos.RepositoryResponseDto;
 import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestListDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
+import com.github.autobump.bitbucket.model.dtos.RepositoryResponseDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;

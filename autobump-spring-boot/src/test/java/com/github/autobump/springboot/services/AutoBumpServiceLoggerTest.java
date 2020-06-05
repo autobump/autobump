@@ -45,9 +45,11 @@ class AutoBumpServiceLoggerTest {
     @InjectMocks
     private AutoBumpService testService;
 
+    @Mock
+    private GitProvider provider;
+
     @BeforeEach
     void setUp() {
-        var provider = Mockito.mock(GitProvider.class);
         Mockito.lenient().when(provider.getRepos()).thenReturn(List.of("test"));
         Mockito.lenient().when(autobumpconfig.getGitProvider()).thenReturn(provider);
     }

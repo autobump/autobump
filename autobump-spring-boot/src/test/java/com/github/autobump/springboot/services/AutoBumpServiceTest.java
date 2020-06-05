@@ -63,7 +63,7 @@ class AutoBumpServiceTest {
     }
 
     @Test
-    void testSuccesfulExecute(CapturedOutput log) {
+    void testSuccessfulExecute(CapturedOutput log) {
         makeStubs();
         var host = new AtlassianHost();
         host.setClientKey("test");
