@@ -51,8 +51,7 @@ class BitBucketGitProviderTest {
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format(REPO_URL, TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(200)
-                        .withBodyFile("succes_response.json")));
+                        .withStatus(200).withBodyFile("succes_response.json")));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format(REPO_URL, "BADBRANCHE", TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(400)));
@@ -65,14 +64,17 @@ class BitBucketGitProviderTest {
         wireMockServer.stubFor(get(
                 urlEqualTo(String.format(REPO_URL, TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(200)
-                        .withBodyFile("getAllOpenPullRequests.json")));
+                        .withStatus(200).withBodyFile("getAllOpenPullRequests.json")));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format("/repositories/%s/%s/pullrequests/1/decline", TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(200)));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format("/repositories/%s/%s/pullrequests/1/comments", TEST_OWNER, TEST_REPO_NAME)))
                 .willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(get(urlEqualTo("/repositories?role=owner"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200).withBodyFile("repos.json")));
     }
 
     @Test
@@ -191,5 +193,8 @@ class BitBucketGitProviderTest {
         })).isNotNull();
     }
 
-
+    @Test
+    void testGetRepos() {
+        assertThat(bitBucketGitProvider.getRepos().size()).isEqualTo(10);
+    }
 }
