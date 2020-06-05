@@ -39,7 +39,7 @@ class MavenDependencyBumperTest {
         Files.copy(Path.of("src/test/resources/project_root/testBump/pom.xml"),
                 Path.of(tempDirPath.toString() + File.separator + "pom.xml"));
         workspace = new Workspace(tempDirPath.toString());
-        resolver = new MavenDependencyResolver();
+        resolver = new MavenDependencyResolver(new MavenModelAnalyser());
         dependency = MavenDependency.builder()
                 .group(DERBY_GROUP)
                 .name(DERBY_NAME)

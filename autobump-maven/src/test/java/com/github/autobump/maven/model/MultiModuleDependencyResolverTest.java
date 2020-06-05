@@ -16,7 +16,7 @@ public class MultiModuleDependencyResolverTest {
 
     @BeforeEach
     void setUp() {
-        resolver = new MavenDependencyResolver();
+        resolver = new MavenDependencyResolver(new MavenModelAnalyser());
         multiModuleWorkspace = new Workspace("src/test/resources/multi_module_root");
     }
 

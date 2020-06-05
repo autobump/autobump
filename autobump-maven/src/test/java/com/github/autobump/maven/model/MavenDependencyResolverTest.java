@@ -37,7 +37,7 @@ public class MavenDependencyResolverTest {
         pluginWorkspace = new Workspace("src/test/resources/project_root_plugins");
         pluginDefaultGroupIdWorkspace = new Workspace("src/test/resources/project_root_plugins/pluginsDefaultGroupId");
         parentDependencyWorkspace = new Workspace("src/test/resources/parent_dependency_root");
-        resolver = new MavenDependencyResolver();
+        resolver = new MavenDependencyResolver(new MavenModelAnalyser());
     }
 
     @Test

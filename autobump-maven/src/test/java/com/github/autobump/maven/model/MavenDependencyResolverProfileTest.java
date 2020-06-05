@@ -20,7 +20,7 @@ public class MavenDependencyResolverProfileTest {
     @BeforeEach
     void setUp() {
         profilesWorkspace = new Workspace("src/test/resources/profiles_root");
-        resolver = new MavenDependencyResolver();
+        resolver = new MavenDependencyResolver(new MavenModelAnalyser());
     }
 
     @Test

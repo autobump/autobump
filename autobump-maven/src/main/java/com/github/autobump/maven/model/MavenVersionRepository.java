@@ -46,10 +46,10 @@ public class MavenVersionRepository implements VersionRepository {
         this.mavenModelAnalyser = new MavenModelAnalyser();
     }
 
-//    public MavenVersionRepository(String baseUrl, MavenModelAnalyser mavenModelAnalyser) {
-//        this.baseUrl = baseUrl;
-//        this.mavenModelAnalyser = mavenModelAnalyser;
-//    }
+    public MavenVersionRepository(String baseUrl, MavenModelAnalyser mavenModelAnalyser) {
+        this.baseUrl = baseUrl;
+        this.mavenModelAnalyser = mavenModelAnalyser;
+    }
 
     @Override
     public Set<Version> getAllAvailableVersions(Dependency dependency) {
