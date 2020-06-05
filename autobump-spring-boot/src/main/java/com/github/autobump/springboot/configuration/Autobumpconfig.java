@@ -25,9 +25,11 @@ import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,44 +56,43 @@ public class Autobumpconfig {
     private String githubApiUrl;
 
 
-    public UseCaseConfiguration setupConfig() {
-        return UseCaseConfiguration.builder()
-                .dependencyBumper(getMavenDependencyBumper())
-                .dependencyResolver(getDependencyResolver())
-                .gitClient(getGitClient())
-                .gitProvider(getGitProvider())
-                .ignoreRepository(getIgnoreRepo())
-                .gitProviderUrlHelper(getUrlHelper())
-                .versionRepository(getVersionRepository())
-                .build();
-    }
+//    public UseCaseConfiguration setupConfig() {
+//        return UseCaseConfiguration.builder()
+//                .dependencyBumper(getMavenDependencyBumper())
+//                .dependencyResolver(getDependencyResolver())
+//                .gitClient(getGitClient())
+//                .gitProvider(getGitProvider())
+//                .ignoreRepository(getIgnoreRepo())
+//                .gitProviderUrlHelper(getUrlHelper())
+//                .versionRepository(getVersionRepository())
+//                .build();
+//    }
+//
+//    public DependencyBumper getMavenDependencyBumper() {
+//        return new MavenDependencyBumper();
+//    }
+//
+//    public DependencyResolver getDependencyResolver() {
+//        return new MavenDependencyResolver(new MavenModelAnalyser());
+//    }
 
-    public DependencyBumper getMavenDependencyBumper() {
-        return new MavenDependencyBumper();
-    }
+//    public IgnoreRepository getIgnoreRepo() {
+//        return new MavenIgnoreRepository(Collections.emptyMap());
+//    }
+//
+//    public GitProviderUrlHelper getUrlHelper() {
+//        return new BitBucketGitProviderUrlHelper();
+//    }
+//
+//    public VersionRepository getVersionRepository() {
+//        return new MavenVersionRepository();
+//    }
 
-    public DependencyResolver getDependencyResolver() {
-        return new MavenDependencyResolver(new MavenModelAnalyser());
-    }
-
-    public GitClient getGitClient() {
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public GitClient gitClient() {
+//        return new JGitGitClient(properties.getUsername(), properties.getPassword());
         return new JGitGitClient("x-token-auth", getAccesToken());
-    }
-
-    public GitProvider getGitProvider() {
-        return new BitBucketGitProvider(new JwtInterceptor(getJwt()));
-    }
-
-    public IgnoreRepository getIgnoreRepo() {
-        return new MavenIgnoreRepository(Collections.emptyMap());
-    }
-
-    public GitProviderUrlHelper getUrlHelper() {
-        return new BitBucketGitProviderUrlHelper();
-    }
-
-    public VersionRepository getVersionRepository() {
-        return new MavenVersionRepository();
     }
 
     public String getAccesToken() {
@@ -129,20 +130,24 @@ public class Autobumpconfig {
         return new MavenVersionRepository(mavenRepositoryUrl);
     }
 
-    @Bean
-    public GitClient getGitClient(AutobumpPropertiesProvider properties) {
-        return new JGitGitClient(properties.getUsername(), properties.getPassword());
-    }
+
+//    public GitClient getGitClient() {
+//        return new JGitGitClient("x-token-auth", getAccesToken());
+//    }
+//
 
     @Bean
     public GithubReleaseNotesSource githubReleaseNotesSource() {
         return new GithubReleaseNotesSource(githubApiUrl);
     }
 
-    @Bean
-    public BitBucketGitProvider bitBucketGitProvider(AutobumpPropertiesProvider properties) {
-        BitBucketAccount bitBucketAccount = new BitBucketAccount(properties.getUsername(), properties.getPassword());
+    //    public GitProvider getGitProvider() {
+//        return new BitBucketGitProvider(new JwtInterceptor(getJwt()));
+//    }
 
-        return new BitBucketGitProvider(bitBucketAccount, bitbucketApiUrl);
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    public BitBucketGitProvider bitBucketGitProvider() {
+        return new BitBucketGitProvider(new JwtInterceptor(getJwt()));
     }
 }

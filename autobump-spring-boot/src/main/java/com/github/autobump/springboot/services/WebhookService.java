@@ -20,10 +20,16 @@ public class WebhookService {
     private final SettingsRepository settingsRepository;
     private final Autobumpconfig autobumpconfig;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final CommentCreatedUseCase commentCreatedUseCase;
+    private final PullRequestClosedUseCase pullRequestClosedUseCase;
+    private final RebaseUseCase rebaseUseCase;
 
-    public WebhookService(SettingsRepository settingsRepository, Autobumpconfig config) {
+    public WebhookService(SettingsRepository settingsRepository, Autobumpconfig config, CommentCreatedUseCase commentCreatedUseCase, PullRequestClosedUseCase pullRequestClosedUseCase, RebaseUseCase rebaseUseCase) {
         this.settingsRepository = settingsRepository;
         this.autobumpconfig = config;
+        this.commentCreatedUseCase = commentCreatedUseCase;
+        this.pullRequestClosedUseCase = pullRequestClosedUseCase;
+        this.rebaseUseCase = rebaseUseCase;
     }
 
     public void handleComment(String prTitle, String comment, String reponame) {
@@ -33,10 +39,7 @@ public class WebhookService {
                     .pullRequestTitle(prTitle)
                     .repositoryName(reponame)
                     .build();
-            CommentCreatedUseCase.builder()
-                    .settingsRepository(settingsRepository)
-                    .build()
-                    .doHandle(event);
+            commentCreatedUseCase.doHandle(event);
         }
     }
 
@@ -46,22 +49,19 @@ public class WebhookService {
                     .prName(prTitle)
                     .repoName(repoName)
                     .build();
-            PullRequestClosedUseCase.builder()
-                    .settingsRepository(settingsRepository)
-                    .build()
-                    .doClose(event);
+            pullRequestClosedUseCase.doClose(event);
         }
     }
 
     public void handlePush(String branchname, URI gitUri) {
         if ("master".equalsIgnoreCase(branchname)) {
             try {
-                var config = autobumpconfig.setupConfig();
+//                var config = autobumpconfig.setupConfig();
                 var event = new PushEvent(gitUri);
-                RebaseUseCase.builder()
-                        .config(config)
-                        .build()
-                        .handlePushEvent(event);
+//                RebaseUseCase.builder()
+//                        .config(config)
+//                        .build()
+                rebaseUseCase.handlePushEvent(event);
             } catch (IllegalArgumentException e) {
                 if (logger.isWarnEnabled()) {
                     logger.warn(String.format("%s no rebase executed", e.getMessage()));
