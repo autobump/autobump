@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 @ExtendWith({SpringExtension.class, MockitoExtension.class, OutputCaptureExtension.class})
 @SpringBootTest
 @ActiveProfiles("noLogTest")
-public class AutoBumpServiceLoggerTest {
+class AutoBumpServiceLoggerTest {
     @Autowired
     private AtlassianHostRepository repository;
 

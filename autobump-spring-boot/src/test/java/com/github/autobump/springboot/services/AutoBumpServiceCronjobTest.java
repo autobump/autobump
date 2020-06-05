@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @SpringBootTest
-public class AutoBumpServiceCronjobTest {
+class AutoBumpServiceCronjobTest {
 
     @SpyBean
     private AutoBumpService autoBumpService;
