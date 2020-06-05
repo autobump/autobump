@@ -12,3 +12,8 @@ autobump:
         oAuthUrl: https://bitbucket.org/site/oauth2/access_token
         base-url: https://fb3e521e475d.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
         key: autobump.kdg.xplore.dev02 # key should be unique for your own app instance
+        apiUrl: https://api.bitbucket.org/2.0
+    maven:
+        pubrepo: https://repo1.maven.org/maven2
+    github:
+        apiUrl: https://api.github.com

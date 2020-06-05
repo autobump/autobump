@@ -3,6 +3,7 @@ package com.github.autobump.springboot.configuration;
 import com.atlassian.connect.spring.AtlassianHost;
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.atlassian.connect.spring.internal.request.jwt.JwtBuilder;
+import com.github.autobump.bitbucket.model.BitBucketAccount;
 import com.github.autobump.bitbucket.model.BitBucketGitProvider;
 import com.github.autobump.bitbucket.model.BitBucketGitProviderUrlHelper;
 import com.github.autobump.core.model.DependencyBumper;
@@ -13,6 +14,7 @@ import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenDependencyBumper;
 import com.github.autobump.maven.model.MavenDependencyResolver;
@@ -24,6 +26,7 @@ import com.github.autobump.springboot.interceptors.JwtInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -43,6 +46,12 @@ public class Autobumpconfig {
     private String oAuthUrl;
     @Value("$autobump.bitbucket.key")
     private String appKey;
+    @Value("${autobump.bitbucket.apiUrl}")
+    private String bitbucketApiUrl;
+    @Value("${autobump.maven.pubRepoUrl}")
+    private String mavenRepositoryUrl;
+    @Value("${autobump.github.apiUrl}")
+    private String githubApiUrl;
 
 
     public UseCaseConfiguration setupConfig() {
@@ -113,5 +122,27 @@ public class Autobumpconfig {
                     .build();
         }
         return null;
+    }
+
+    @Bean
+    public MavenVersionRepository mavenVersionRepository() {
+        return new MavenVersionRepository(mavenRepositoryUrl);
+    }
+
+    @Bean
+    public GitClient getGitClient(AutobumpPropertiesProvider properties) {
+        return new JGitGitClient(properties.getUsername(), properties.getPassword());
+    }
+
+    @Bean
+    public GithubReleaseNotesSource githubReleaseNotesSource() {
+        return new GithubReleaseNotesSource(githubApiUrl);
+    }
+
+    @Bean
+    public BitBucketGitProvider bitBucketGitProvider(AutobumpPropertiesProvider properties) {
+        BitBucketAccount bitBucketAccount = new BitBucketAccount(properties.getUsername(), properties.getPassword());
+
+        return new BitBucketGitProvider(bitBucketAccount, bitbucketApiUrl);
     }
 }

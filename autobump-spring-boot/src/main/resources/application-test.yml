@@ -18,3 +18,8 @@ server:
 autobump:
     bitbucket:
         oAuthUrl: http://localhost:8009/site/oauth2/access_token
+        apiUrl: http://localhost:8090/apiurl
+    maven:
+        pubRepoUrl: http://localhost:8090/repourl
+    github:
+        apiUrl: http://localhost:8089
