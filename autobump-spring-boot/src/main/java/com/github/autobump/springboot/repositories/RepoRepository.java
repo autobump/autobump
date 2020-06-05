@@ -8,6 +8,9 @@ import java.util.List;
 
 @Repository
 public interface RepoRepository extends JpaRepository<Repo, Long> {
+
+    @Override
     List<Repo> findAll();
+
     Repo getByRepoId(String repoId);
 }

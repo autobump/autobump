@@ -35,32 +35,19 @@ class SettingsControllerTest {
     private RepositoryDto dummyRepoDto;
 
     @Mock
-    SettingsService service;
+    private SettingsService service;
 
     @Mock
-    AutoBumpService autoBumpService;
+    private AutoBumpService autoBumpService;
 
     @Autowired
     @InjectMocks
-    SettingsController settingsController;
+    private SettingsController settingsController;
 
     @BeforeEach
     void setUp() {
         settingsController.setSettingsService(service);
-        List<DependencyDto> expectedDependencyList = new ArrayList<>();
-        expectedDependencyList.add(DependencyDto.builder()
-                .groupName("org.projectlombok")
-                .artifactId("lombok")
-                .versionNumber("1.18.12")
-                .ignoreMajor(true)
-                .ignoreMinor(false)
-                .build());
-        dummyRepoDto = new RepositoryDto();
-        dummyRepoDto.setRepoId(MOCK_REPO_ID);
-        dummyRepoDto.setName(REPOSITORY_NAME);
-        dummyRepoDto.setCronJob(true);
-        dummyRepoDto.setReviewer("name of a reviewer");
-        dummyRepoDto.setDependencies(expectedDependencyList);
+        setupDummies();
     }
 
     @Test
@@ -121,18 +108,44 @@ class SettingsControllerTest {
         assertThat(mav.getViewName()).isEqualTo("settings-saved");
     }
 
+    private void setupDummies() {
+        List<DependencyDto> expectedDependencyList = new ArrayList<>();
+        expectedDependencyList.add(DependencyDto.builder()
+                .groupName("org.projectlombok")
+                .artifactId("lombok")
+                .versionNumber("1.18.12")
+                .ignoreMajor(true)
+                .ignoreMinor(false)
+                .build());
+        dummyRepoDto = new RepositoryDto();
+        dummyRepoDto.setRepoId(MOCK_REPO_ID);
+        dummyRepoDto.setName(REPOSITORY_NAME);
+        dummyRepoDto.setCronJob(true);
+        dummyRepoDto.setReviewer("name of a reviewer");
+        dummyRepoDto.setDependencies(expectedDependencyList);
+    }
+
     private List<RepositoryDto> getDummyRepoList() {
         List<RepositoryDto> repos = new ArrayList<>();
-        RepositoryDto repo = new RepositoryDto();
-        repo.setName("MultiModuleMavenProject");
-        repo.setSelected(true);
-        repo.setRepoId(MOCK_REPO_ID);
+        RepositoryDto repo = getRepositoryDto1();
         repos.add(repo);
         RepositoryDto repo2 = new RepositoryDto();
+        getRepositoryDto2(repos, repo2);
+        return repos;
+    }
+
+    private void getRepositoryDto2(List<RepositoryDto> repos, RepositoryDto repo2) {
         repo2.setName("TestMavenProject");
         repo2.setSelected(false);
         repo2.setRepoId(MOCK_REPO_ID_2);
         repos.add(repo2);
-        return repos;
+    }
+
+    private RepositoryDto getRepositoryDto1() {
+        RepositoryDto repo = new RepositoryDto();
+        repo.setName("MultiModuleMavenProject");
+        repo.setSelected(true);
+        repo.setRepoId(MOCK_REPO_ID);
+        return repo;
     }
 }

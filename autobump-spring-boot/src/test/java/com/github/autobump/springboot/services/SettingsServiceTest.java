@@ -144,6 +144,33 @@ class SettingsServiceTest {
     }
 
     @Test
+    void getSettingsOnlyReviewer(){
+        List<Setting> settingsOnlyReviewer = new ArrayList<>();
+        settingsOnlyReviewer.add(getReviewerSetting());
+        when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
+                .thenReturn(settingsOnlyReviewer);
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getReviewer()).isNotNull();
+    }
+
+    @Test
+    void getSettingsNoReviewer(){
+        List<Setting> settingsNoReviewer = new ArrayList<>();
+        settingsNoReviewer.add(getCronjobSetting());
+        when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
+                .thenReturn(settingsNoReviewer);
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getReviewer()).isNotNull();
+    }
+
+    @Test
+    void getSettingsNoCronJob(){
+        List<Setting> settingsNoCronJob = new ArrayList<>();
+        settingsNoCronJob.add(getReviewerSetting());
+        when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
+                .thenReturn(settingsNoCronJob);
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getReviewer()).isNotNull();
+    }
+
+    @Test
     void getRepository() {
         when(repoRepository.getByRepoId(anyString())).thenReturn(dummyRepos.get(0));
         when(modelMapper.map(dummyRepos.get(0), RepositoryDto.class)).thenReturn(dummyRepoDto);
@@ -157,20 +184,29 @@ class SettingsServiceTest {
     }
 
     @Test
-    void saveSettings() {
-        lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME)).thenReturn(getDummySettings());
-        assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
-    }
-
-    @Test
     void getRepo(){
         lenient().when(repoRepository.getByRepoId("a")).thenReturn(getDummyRepo1());
         assertThat(service.getRepo("a").getName()).isEqualTo(REPOSITORY_NAME);
     }
 
     @Test
+    void saveSettings() {
+        lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
+                .thenReturn(getDummySettings());
+        assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void saveSettings_without_reviewer(){
+        RepositoryDto repositoryDto_withoutReviewer = new RepositoryDto();
+        assertThatCode(() -> service.saveSettings(repositoryDto_withoutReviewer)).doesNotThrowAnyException();
+    }
+
+
+    @Test
     void saveSettings_removeCronJob(){
-        lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME)).thenReturn(getDummySettings());
+        lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
+                .thenReturn(getDummySettings());
         dummyRepoDto.setCronJob(false);
         assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
 
@@ -202,28 +238,42 @@ class SettingsServiceTest {
     }
 
     private List<Setting> getDummySettings(){
-        List<Setting> dummies = new ArrayList<Setting>();
-        Setting s1 = Setting.builder()
-                .repositoryName(REPOSITORY_NAME)
-                .key("org.projectlombok:lombok:1.18.12")
-                .type(Setting.SettingsType.IGNORE)
-                .value("major")
-                .build();
+        List<Setting> dummies = new ArrayList<>();
+        Setting s1 = getIgnoreSetting();
         dummies.add(s1);
-        Setting s2 = Setting.builder()
-                .key("reviewer")
-                .type(Setting.SettingsType.REVIEWER)
-                .value("name of a reviewer")
-                .repositoryName(REPOSITORY_NAME)
-                .build();
+        Setting s2 = getReviewerSetting();
         dummies.add(s2);
-        Setting s3 = Setting.builder()
-                .key("cron")
-                .type(Setting.SettingsType.CRON)
-                .value("true")
-                .repositoryName(REPOSITORY_NAME)
-                .build();
+        Setting s3 = getCronjobSetting();
         dummies.add(s3);
         return dummies;
     }
+
+    private Setting getCronjobSetting() {
+        return Setting.builder()
+                    .key("cron")
+                    .type(Setting.SettingsType.CRON)
+                    .value("true")
+                    .repositoryName(REPOSITORY_NAME)
+                    .build();
+    }
+
+    private Setting getReviewerSetting() {
+        return Setting.builder()
+                    .key("reviewer")
+                    .type(Setting.SettingsType.REVIEWER)
+                    .value("name of a reviewer")
+                    .repositoryName(REPOSITORY_NAME)
+                    .build();
+    }
+
+    private Setting getIgnoreSetting() {
+        return Setting.builder()
+                    .repositoryName(REPOSITORY_NAME)
+                    .key("org.projectlombok:lombok:1.18.12")
+                    .type(Setting.SettingsType.IGNORE)
+                    .value("major")
+                    .build();
+    }
+
+
 }

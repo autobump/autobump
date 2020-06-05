@@ -73,5 +73,14 @@ class PullRequestClosedUseCaseTest {
         public List<Setting> saveAllSettings(List<Setting> settings) {
             return settings;
         }
+
+        @Override
+        public List<Setting> findAllSettingsForDependencies(String repoName) {
+            return null;
+        }
+
+        @Override
+        public void removeCronJob(String repoName) {
+        }
     }
 }

@@ -84,18 +84,27 @@ class AutoBumpServiceLoggerTest {
 
     private List<Repo> getDummyRepoList() {
         List<Repo> repos = new ArrayList<>();
+        Repo repo = getRepo1();
+        repos.add(repo);
+        Repo repo2 = new Repo();
+        getRepo2(repos, repo2);
+        return repos;
+    }
+
+    private void getRepo2(List<Repo> repos, Repo repo2) {
+        repo2.setName("TestMavenProject");
+        repo2.setSelected(false);
+        repo2.setLink("another_link");
+        repo2.setRepoId("emofbbSbgB");
+        repos.add(repo2);
+    }
+
+    private Repo getRepo1() {
         Repo repo = new Repo();
         repo.setName("MultiModuleMavenProject");
         repo.setSelected(true);
         repo.setRepoId("cjhcvkjbub");
         repo.setLink("a_link");
-        repos.add(repo);
-        Repo repo2 = new Repo();
-        repo2.setName("TestMavenProject");
-        repo2.setSelected(false);
-        repo2.setLink("another_link");
-        repo2.setRepoId("emofbb>Sbg>B");
-        repos.add(repo2);
-        return repos;
+        return repo;
     }
 }

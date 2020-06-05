@@ -2,10 +2,10 @@ package com.github.autobump.springboot.controllers;
 
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.atlassian.connect.spring.IgnoreJwt;
+import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
-import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
 import lombok.Setter;
@@ -22,10 +22,9 @@ import java.util.List;
 @Controller
 @Setter
 public class SettingsController {
-    private final AutoBumpService autoBumpService;
-
     @Autowired
     SettingsService settingsService;
+    private final AutoBumpService autoBumpService;
 
     public SettingsController(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
         autoBumpService = new AutoBumpService(repository, autobumpconfig);
@@ -49,8 +48,7 @@ public class SettingsController {
     @PostMapping("/selectRepositories")
     public ModelAndView selectRepositories(ModelAndView mav, @ModelAttribute RepositoryListDto dto) {
         updateSelectedFieldsOfRepos(dto);
-        ModelAndView modelAndView = loadRepoOverview(mav);
-        return modelAndView;
+        return loadRepoOverview(mav);
     }
 
     @IgnoreJwt

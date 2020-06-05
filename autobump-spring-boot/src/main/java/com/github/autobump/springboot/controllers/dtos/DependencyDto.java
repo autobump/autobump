@@ -15,9 +15,4 @@ public class DependencyDto {
     String versionNumber;
     boolean ignoreMajor;
     boolean ignoreMinor;
-
-    public String toString(){
-        return groupName + "/" + artifactId + "/" +versionNumber;
-    }
-
 }
