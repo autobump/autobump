@@ -14,6 +14,7 @@ import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,4 +99,11 @@ public class BitBucketGitProvider implements GitProvider {
                 String.valueOf(pr.getPullRequestId()),
                 dto);
     }
+
+    @Override
+    public List<String> getRepos() {
+        return client.getRepos().getCloneLinks();
+    }
+
+
 }

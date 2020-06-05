@@ -22,6 +22,8 @@ import com.github.autobump.springboot.controllers.dtos.AccessTokenDto;
 import com.github.autobump.springboot.interceptors.JwtInterceptor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.ApplicationContext;
@@ -30,23 +32,43 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class Autobumpconfig implements WebMvcConfigurer {
+public class Autobumpconfig {
     @Autowired
     private ApplicationContext applicationContext;
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
-    @Autowired
-    private AtlassianHostRepository repository;
+    private final RestTemplate restTemplateBuilder;
+    private final AtlassianHostRepository repository;
     @Value("${autobump.bitbucket.oAuthUrl}")
     private String oAuthUrl;
+
+    public Autobumpconfig(RestTemplateBuilder restTemplateBuilder, AtlassianHostRepository repository) {
+        this.restTemplateBuilder = restTemplateBuilder
+                .requestFactory(() -> {
+                    var factory = new OkHttp3ClientHttpRequestFactory(
+                            new OkHttpClient().newBuilder().connectionPool(
+                                    new ConnectionPool(1, 5L, TimeUnit.MINUTES))
+                                    .build());
+
+                    factory.setConnectTimeout(2_000);
+                    factory.setReadTimeout(5_000);
+                    factory.setWriteTimeout(5_000);
+
+                    return factory;
+                })
+                .build();
+        this.repository = repository;
+    }
 
 
     public UseCaseConfiguration setupConfig() {
@@ -65,7 +87,6 @@ public class Autobumpconfig implements WebMvcConfigurer {
         return new MavenDependencyBumper();
     }
 
-    @Bean
     public DependencyResolver getDependencyResolver() {
         return new MavenDependencyResolver();
     }
@@ -98,13 +119,13 @@ public class Autobumpconfig implements WebMvcConfigurer {
         var map = new LinkedMultiValueMap<String, String>();
         map.add("grant_type", "urn:bitbucket:oauth2:jwt");
         var entity = new HttpEntity<>(map, headers);
-        return restTemplateBuilder.build().postForObject(oAuthUrl,
+        return restTemplateBuilder.postForObject(oAuthUrl,
                 entity,
                 AccessTokenDto.class)
                 .getToken();
     }
 
-    public String getJwt(){
+    public String getJwt() {
         AtlassianHost host = null;
         for (AtlassianHost atlassianHost : repository.findAll()) {
             host = atlassianHost;

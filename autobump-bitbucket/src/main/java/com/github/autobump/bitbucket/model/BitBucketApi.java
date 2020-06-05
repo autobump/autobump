@@ -4,6 +4,7 @@ import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestListDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
+import com.github.autobump.bitbucket.model.dtos.RepositoryResponseDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
@@ -31,5 +32,8 @@ interface BitBucketApi {
                             @Param("repoName") String repoName,
                             @Param("pullRequestId") String pullRequestId,
                             CommentDto commentDto);
+
+    @RequestLine("GET /repositories?role=owner")
+    RepositoryResponseDto getRepos();
 }
 
