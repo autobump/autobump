@@ -1,5 +1,6 @@
 package com.github.autobump.core.model;
 
+import java.util.List;
 import java.util.Set;
 
 public interface GitProvider {
@@ -7,4 +8,5 @@ public interface GitProvider {
     Set<PullRequest> getOpenPullRequests(String repoOwner, String repoName);
     void closePullRequest(PullRequest pullRequest);
     void commentPullRequest(PullRequest pr, String comment);
+    List<String> getRepos();
 }

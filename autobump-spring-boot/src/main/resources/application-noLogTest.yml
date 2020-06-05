@@ -1,0 +1,28 @@
+logging:
+    level:
+        root: ERROR
+
+spring:
+    datasource:
+        url: jdbc:h2:mem:testdb
+        driverClassName: org.h2.Driver
+        password: password
+        username: sa
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: create-drop
+#spring.jpa.hibernate.ddl-auto: create
+
+
+atlassian:
+    connect:
+        allow-reinstall-missing-host: true
+server:
+    port: 0
+
+autobump:
+    bitbucket:
+        oAuthUrl: http://localhost:8009/site/oauth2/access_token
+        base-url: https://ad1372b3.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
+        key: autobump.kdg.xplore.dev01 # key should be unique for each app instance

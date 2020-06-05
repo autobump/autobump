@@ -1,8 +1,10 @@
 package com.github.autobump.springboot.controllers.dtos;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class CommentDto {
     private Data data;
     public CommentDto(String comment, String reponame, String prTitle){
@@ -22,6 +24,7 @@ public class CommentDto {
     }
 
     @lombok.Data
+    @NoArgsConstructor
     static class Data {
         Comment comment;
         Repository repository;
@@ -43,6 +46,7 @@ public class CommentDto {
         }
 
         @lombok.Data
+        @NoArgsConstructor
         static class Comment {
             Content content;
             PullRequest pullrequest;
@@ -61,6 +65,7 @@ public class CommentDto {
             }
 
             @lombok.Data
+            @NoArgsConstructor
             static class Content {
                 String raw;
 
@@ -70,6 +75,7 @@ public class CommentDto {
             }
 
             @lombok.Data
+            @NoArgsConstructor
             static class PullRequest {
                 String title;
 
@@ -80,6 +86,7 @@ public class CommentDto {
         }
 
         @lombok.Data
+        @NoArgsConstructor
         static class Repository{
             String name;
 
