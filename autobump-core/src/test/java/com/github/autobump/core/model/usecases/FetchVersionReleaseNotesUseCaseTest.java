@@ -22,14 +22,16 @@ class FetchVersionReleaseNotesUseCaseTest {
 
     @Mock
     private VersionRepository versionRepository;
-
     @Mock
     private ReleaseNotesSource releaseNotesSource;
+
+    private FetchVersionReleaseNotesUseCase fetchVersionReleaseNotesUseCase;
 
     private Bump bump;
 
     @BeforeEach
     void setUp() {
+        fetchVersionReleaseNotesUseCase = new FetchVersionReleaseNotesUseCase(versionRepository, releaseNotesSource);
     }
 
     private void initializeTestBump() {
@@ -45,10 +47,7 @@ class FetchVersionReleaseNotesUseCaseTest {
     void fetchVersionReleaseNotes_supportedReleaseNotesSource_github() {
         initializeTestBump();
         setupVersionRepositoryMock();
-        String result = FetchVersionReleaseNotesUseCase.builder()
-                .versionRepository(versionRepository)
-                .releaseNotesSource(releaseNotesSource)
-                .build()
+        String result = fetchVersionReleaseNotesUseCase
                 .fetchVersionReleaseNotes(bump);
         assertThat(result).contains("Autobump found release notes for" +
                 " org.springframework.boot:spring-boot-dependencies 2.2.4.RELEASE");
@@ -61,10 +60,7 @@ class FetchVersionReleaseNotesUseCaseTest {
     void fetchVersionReleaseNotes_unsupportedReleaseNotesSource_gitlab() {
         initializeTestBump();
         setupNoResultVersionRepositoryMock();
-        String result = FetchVersionReleaseNotesUseCase.builder()
-                .versionRepository(versionRepository)
-                .releaseNotesSource(releaseNotesSource)
-                .build()
+        String result = fetchVersionReleaseNotesUseCase
                 .fetchVersionReleaseNotes(bump);
         assertThat(result).isEqualTo("");
     }

@@ -21,14 +21,13 @@ class PushUseCaseTest {
     @Mock
     GitClient gitClient;
 
-    @InjectMocks
     PushUseCase pushUseCase;
 
     @BeforeEach
     void setUp(){
         Dependency d = Dependency.builder().group("").name("").version(new TestVersion()).build();
         bump = new Bump(d, new TestVersion());
-        pushUseCase = PushUseCase.builder().gitClient(gitClient).build();
+        pushUseCase = new PushUseCase(gitClient);
     }
 
     @Test

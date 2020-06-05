@@ -38,38 +38,29 @@ class RebaseUseCaseTest {
             = "Bumped com.microsoft.sqlserver:mssql-jdbc to version: 6.1.0.jre7";
     private static final String PULL_REQUEST_TITLE_3
             = "PullRequest with title not referring to a bump";
-
+    private final Workspace workspace = new Workspace("");
     @Mock
     GitClient gitClientWithoutConflict;
-
     @Mock
     GitClient gitClientWithConflict;
-
     @Mock
     GitProvider gitProvider;
-
     @Mock
     DependencyResolver dependencyResolver;
-
     @Mock
     IgnoreRepository ignoreRepository;
-
     @Mock
     DependencyBumper dependencyBumper;
-
     @Mock
     GitProviderUrlHelper gitProviderUrlHelper;
-
     @Mock
     VersionRepository versionRepository;
-
-    @InjectMocks
+    @Mock
+    AutoBumpSingleGroupUseCase autoBumpSingleGroupUseCase;
+    //    @InjectMocks
     RebaseUseCase rebaseUseCaseWithoutConflict;
-
-    @InjectMocks
+    //    @InjectMocks
     RebaseUseCase rebaseUseCaseWithConflict;
-
-    private final Workspace workspace = new Workspace("");
 
     @BeforeEach
     void setUp() throws URISyntaxException {
@@ -110,23 +101,13 @@ class RebaseUseCaseTest {
                 .versionRepository(versionRepository)
                 .build();
 
-        rebaseUseCaseWithoutConflict = RebaseUseCase.builder()
-                .config(configWithoutConflict)
-                .build();
+        rebaseUseCaseWithoutConflict
+                = new RebaseUseCase(autoBumpSingleGroupUseCase, gitClientWithoutConflict, gitProvider,
+                gitProviderUrlHelper);
 
-        UseCaseConfiguration configWithConflict = UseCaseConfiguration.builder()
-                .gitClient(gitClientWithConflict)
-                .dependencyBumper(dependencyBumper)
-                .dependencyResolver(dependencyResolver)
-                .gitProvider(gitProvider)
-                .ignoreRepository(ignoreRepository)
-                .gitProviderUrlHelper(gitProviderUrlHelper)
-                .versionRepository(versionRepository)
-                .build();
-
-        rebaseUseCaseWithConflict = RebaseUseCase.builder()
-                .config(configWithConflict)
-                .build();
+        rebaseUseCaseWithConflict
+                = new RebaseUseCase(autoBumpSingleGroupUseCase, gitClientWithConflict, gitProvider,
+                gitProviderUrlHelper);
     }
 
     private Set<PullRequest> createDummyPullRequests() {
@@ -170,21 +151,22 @@ class RebaseUseCaseTest {
 
     @Test
     void testPrEmpty() {
-        var provider = Mockito.mock(GitProvider.class);
-        var providerUrlHelper = Mockito.mock(GitProviderUrlHelper.class);
-        var config = UseCaseConfiguration.builder()
-                .dependencyBumper(Mockito.mock(DependencyBumper.class))
-                .dependencyResolver(Mockito.mock(DependencyResolver.class))
-                .gitClient(Mockito.mock(GitClient.class))
-                .ignoreRepository(Mockito.mock(IgnoreRepository.class))
-                .gitProvider(provider)
-                .gitProviderUrlHelper(providerUrlHelper)
-                .versionRepository(Mockito.mock(VersionRepository.class))
-                .build();
-        Mockito.when(provider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
-        assertThatCode(() -> RebaseUseCase.builder()
-                .config(config)
-                .build()
+        var emptyProvider = Mockito.mock(GitProvider.class);
+//        var providerUrlHelper = Mockito.mock(GitProviderUrlHelper.class);
+//        var config = UseCaseConfiguration.builder()
+//                .dependencyBumper(Mockito.mock(DependencyBumper.class))
+//                .dependencyResolver(Mockito.mock(DependencyResolver.class))
+//                .gitClient(Mockito.mock(GitClient.class))
+//                .ignoreRepository(Mockito.mock(IgnoreRepository.class))
+//                .gitProvider(emptyProvider)
+//                .gitProviderUrlHelper(providerUrlHelper)
+//                .versionRepository(Mockito.mock(VersionRepository.class))
+//                .build();
+        Mockito.when(emptyProvider.getOpenPullRequests(any(), any())).thenReturn(Set.of());
+        RebaseUseCase rebaseUseCaseWithoutEmptyProvider
+                = new RebaseUseCase(autoBumpSingleGroupUseCase, gitClientWithoutConflict, emptyProvider,
+                gitProviderUrlHelper);
+        assertThatCode(() -> rebaseUseCaseWithoutEmptyProvider
                 .handlePushEvent(new PushEvent(new URI(""))))
                 .doesNotThrowAnyException();
     }

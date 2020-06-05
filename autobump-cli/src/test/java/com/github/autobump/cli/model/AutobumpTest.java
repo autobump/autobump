@@ -1,5 +1,6 @@
 package com.github.autobump.cli.model;
 
+import com.github.autobump.core.model.AutobumpResult;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -31,6 +32,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("PMD.TooManyStaticImports")
 //@ExtendWith(SpringExtension.class)
@@ -165,18 +167,32 @@ class AutobumpTest {
                 .contains("--password");
     }
 
-    /*@Test
+//    @Test
+//    void main_SuccessfullyShowsResult() {
+//        String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL).split(" ");
+//        CommandLine cmd = new CommandLine(new TestAutoBump());
+//        cmd.execute(args);
+//        if (cmd.getExecutionResult() instanceof AutobumpResult) {
+//            assertThat(((AutobumpResult) cmd.getExecutionResult()).getNumberOfBumps())
+//                    .isEqualTo(5);
+//        } else {
+//            fail("bad returntype");
+//        }
+//    }
+
+    @Test
     void main_SuccessfullyShowsResult() {
-        String[] args = ("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l " + GIT_URL).split(" ");
-        CommandLine cmd = new CommandLine(new TestAutoBump());
+        String[] args = String.format("-u glenn.schrooyen@student.kdg.be -p AutoBump2209 -l %s -r %s -b %s",
+                GIT_URL, REPO_URL, API_URL).split(" ");
+        CommandLine cmd = new CommandLine(new Autobump());
         cmd.execute(args);
         if (cmd.getExecutionResult() instanceof AutobumpResult) {
             assertThat(((AutobumpResult) cmd.getExecutionResult()).getNumberOfBumps())
-                    .isEqualTo(5);
+                    .isEqualTo(0);
         } else {
             fail("bad returntype");
         }
-    }*/
+    }
 
     @Test
     void main_integrationTest() {

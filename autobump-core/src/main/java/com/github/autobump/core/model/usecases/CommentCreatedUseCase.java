@@ -4,8 +4,13 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.events.CommentCreatedEvent;
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
-@Builder
+import javax.inject.Inject;
+import javax.inject.Named;
+
+@Named
+@RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class CommentCreatedUseCase {
     private final SettingsRepository settingsRepository;
     private final IgnoreMajorUseCase ignoreMajorUseCase;

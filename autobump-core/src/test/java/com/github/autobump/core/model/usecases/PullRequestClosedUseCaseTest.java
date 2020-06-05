@@ -16,10 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PullRequestClosedUseCaseTest {
     SettingsRepository settingsRepository;
+    PullRequestClosedUseCase pullRequestClosedUseCase;
 
     @BeforeEach
     void setUp() {
         settingsRepository = new TestSettingsRepo();
+        pullRequestClosedUseCase = new PullRequestClosedUseCase(settingsRepository);
     }
 
     @Test
@@ -31,9 +33,7 @@ class PullRequestClosedUseCaseTest {
         var dependencySet = Set.of(dependency1, dependency2);
         Bump bump = new Bump(dependencySet, new TestVersion("5.2.5.RELEASE"));
         var event = PrClosedEvent.builder().prName(bump.getTitle()).repoName("test").build();
-        var setting = PullRequestClosedUseCase.builder()
-                .settingsRepository(settingsRepository)
-                .build()
+        var setting = pullRequestClosedUseCase
                 .doClose(event);
         assertThat(setting.size()).isEqualTo(2);
     }

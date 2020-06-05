@@ -5,12 +5,18 @@ import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.events.CommentCreatedEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CommentCreatedUseCaseTest {
+    @Mock
     SettingsRepository settingsRepository;
+    @Mock
+    IgnoreMajorUseCase ignoreMajorUseCase;
+    @Mock
+    IgnoreMinorUseCase ignoreMinorUseCase;
     CommentCreatedUseCase commentCreatedUseCase;
     CommentCreatedEvent eventMajorIgnore;
     CommentCreatedEvent eventMinorIgnore;
@@ -18,7 +24,6 @@ class CommentCreatedUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        settingsRepository = Mockito.mock(SettingsRepository.class);
         String pullRequestTitle = "Bumped com.h2database:h2 to version: 1.4.200";
         eventMajorIgnore = CommentCreatedEvent.builder()
                 .pullRequestTitle(pullRequestTitle)
@@ -34,18 +39,11 @@ class CommentCreatedUseCaseTest {
                 .pullRequestTitle(pullRequestTitle)
                 .comment("Wrongly formulated comment")
                 .build();
-        commentCreatedUseCase = CommentCreatedUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
+        commentCreatedUseCase = new  CommentCreatedUseCase(settingsRepository, ignoreMajorUseCase, ignoreMinorUseCase);
     }
 
     @Test
     void handleIgnoreMajorComment() {
-        commentCreatedUseCase = CommentCreatedUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
         assertThat(commentCreatedUseCase
                 .doHandle(eventMajorIgnore))
                 .isEqualToComparingFieldByField(
@@ -58,10 +56,6 @@ class CommentCreatedUseCaseTest {
 
     @Test
     void handleIgnoreMinorComment() {
-        commentCreatedUseCase = CommentCreatedUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
         assertThat(commentCreatedUseCase
                 .doHandle(eventMinorIgnore))
                 .isEqualToComparingFieldByField(
@@ -74,10 +68,6 @@ class CommentCreatedUseCaseTest {
 
     @Test
     void handleWronglyFormulatedComment() {
-        commentCreatedUseCase = CommentCreatedUseCase
-                .builder()
-                .settingsRepository(settingsRepository)
-                .build();
         assertThat(commentCreatedUseCase
                 .doHandle(eventWronglyFormulated))
                 .isNull();

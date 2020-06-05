@@ -12,7 +12,7 @@ import javax.inject.Named;
 @Named
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
 public class PushUseCase {
-    GitClient gitClient;
+    private final GitClient gitClient;
 
     public void doPush(Workspace workspace, Bump bump, String branchName){
         gitClient.commitToExistingBranch(workspace, bump, branchName);
