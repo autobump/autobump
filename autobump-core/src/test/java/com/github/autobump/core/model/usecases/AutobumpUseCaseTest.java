@@ -13,7 +13,6 @@ import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.ReleaseNotes;
 import com.github.autobump.core.model.ReleaseNotesSource;
-import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.Workspace;
@@ -62,14 +61,14 @@ class AutobumpUseCaseTest {
     private DependencyResolver dependencyResolver;
     @Mock
     private VersionRepository versionRepository;
-    @Mock
-    private DependencyBumper dependencyBumper;
+//    @Mock
+//    private DependencyBumper dependencyBumper;
     @Mock
     private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
     private PullRequest pullRequest;
-    @Mock
-    private IgnoreRepository ignoreRepository;
+//    @Mock
+//    private IgnoreRepository ignoreRepository;
     @Mock
     private ReleaseNotesSource releaseNotesSource;
     private URI uri;
@@ -80,7 +79,7 @@ class AutobumpUseCaseTest {
 
     private AutobumpUseCase autobumpUseCase;
 
-    private AutobumpUseCase getAutobumpUseCase() {
+    private AutobumpUseCase initAutobumpUseCase() {
         return new AutobumpUseCase(gitClient, dependencyResolver, bumpResolverUseCase, fetchVersionReleaseNotesUseCase,
                 postCommentOnPullRequestUseCase, pullRequestUseCase, bumpUseCase);
     }
@@ -90,6 +89,7 @@ class AutobumpUseCaseTest {
     void setUp() throws URISyntaxException {
         uri = new URI(REPOSITORY_URL);
         dependencyList = createDependencies();
+        autobumpUseCase = initAutobumpUseCase();
 //        config = UseCaseConfiguration.builder()
 //                .ignoreRepository(ignoreRepository)
 //                .gitProviderUrlHelper(gitProviderUrlHelper)
@@ -99,6 +99,7 @@ class AutobumpUseCaseTest {
 //                .dependencyBumper(dependencyBumper)
 //                .gitClient(gitClient)
 //                .build();
+
     }
 
     private List<Dependency> createDependencies() {
@@ -121,16 +122,29 @@ class AutobumpUseCaseTest {
         when(gitClient.clone(uri)).thenReturn(workspace);
         when(dependencyResolver.resolve(workspace))
                 .thenReturn(Set.of(dependencyList.get(0), dependencyList.get(1), dependencyList.get(2)));
-        when(versionRepository.getAllAvailableVersions(dependencyList.get(0))).thenReturn(Set.of(tv));
-        when(versionRepository.getAllAvailableVersions(dependencyList.get(2))).thenReturn(Set.of(tv));
-        when(versionRepository.getAllAvailableVersions(dependencyList.get(1))).thenReturn(Set.of());
+//        when(versionRepository.getAllAvailableVersions(dependencyList.get(0))).thenReturn(Set.of(tv));
+//        when(versionRepository.getAllAvailableVersions(dependencyList.get(2))).thenReturn(Set.of(tv));
+//        when(versionRepository.getAllAvailableVersions(dependencyList.get(1))).thenReturn(Set.of());
+
+//        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(0), dependencyList.get(1))))
+//                .thenReturn(Set.of(new Bump(dependencyList.get(0),tv),new Bump(dependencyList.get(1),tv)));
+//        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(0), dependencyList.get(1))))
+//                .thenReturn(Set.of(new Bump(dependencyList.get(0),tv)));
+//        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(2), dependencyList.get(1))))
+//                .thenReturn(Set.of(new Bump(dependencyList.get(2),tv)));
+//        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(1))))
+//                .thenReturn(Set.of());
+
+        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(0), dependencyList.get(1), dependencyList.get(2))))
+                .thenReturn(Set.of(new Bump(dependencyList.get(0),tv),new Bump(dependencyList.get(2),tv)));
+
         setupUrlHelper();
         setUpGitClassesMocks_forTestSingleBump();
     }
 
     private void setUpGitClassesMocks_forTestSingleBump() {
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
-        when(gitClient.commitToNewBranch(any(), any())).thenReturn(commitResult);
+//        when(gitClient.commitToNewBranch(any(), any())).thenReturn(commitResult);
         pullRequest = PullRequest.builder()
                 .branchName(commitResult.getBranchName())
                 .title("Bumped heyhey:test to version: test")
@@ -138,11 +152,12 @@ class AutobumpUseCaseTest {
                 .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString())).build();
         lenient().when(gitProvider.makePullRequest(pullRequest))
                 .thenReturn(createPullRequestResponse(pullRequest));
-        when(ignoreRepository.isIgnored(any(), any())).thenReturn(false);
+//        when(ignoreRepository.isIgnored(any(), any())).thenReturn(false);
     }
 
     @Test
     void doAutoBump() {
+        when(fetchVersionReleaseNotesUseCase.fetchVersionReleaseNotes(any())).thenReturn("");
         when(gitProvider.makePullRequest(any())).thenReturn(PullRequestResponse.builder().id(5).build());
         setUpdoAutoBumpMocks_forTestSingleBump();
         var result = autobumpUseCase
@@ -153,16 +168,17 @@ class AutobumpUseCaseTest {
     @Test
     void doAutoBump_combinedDependencies() {
         setUpdoAutoBump_combinedDependenciesMocks();
+        when(fetchVersionReleaseNotesUseCase.fetchVersionReleaseNotes(any())).thenReturn("");
         var result = autobumpUseCase
                 .doAutoBump(uri);
-        verify(gitProvider, times(1)).makePullRequest(any());
+        verify(bumpResolverUseCase, times(1)).doResolve(any());
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
     @Test
     void doAutoBump_ignoreDependencyShouldNotBump() {
         setUpdoAutoBump_combinedDependenciesMocks();
-        when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
+//        when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
         var result = autobumpUseCase
                 .doAutoBump(uri);
         assertThat(result.getNumberOfBumps()).isEqualTo(0);
@@ -210,8 +226,17 @@ class AutobumpUseCaseTest {
         when(gitClient.clone(uri)).thenReturn(workspace);
         when(dependencyResolver.resolve(workspace))
                 .thenReturn(Set.of(dependencyList.get(3), dependencyList.get(4)));
-        when(versionRepository.getAllAvailableVersions(dependencyList.get(3))).thenReturn(Set.of(tv));
-        when(versionRepository.getAllAvailableVersions(dependencyList.get(4))).thenReturn(Set.of(tv));
+//        when(versionRepository.getAllAvailableVersions(dependencyList.get(3))).thenReturn(Set.of(tv));
+//        when(versionRepository.getAllAvailableVersions(dependencyList.get(4))).thenReturn(Set.of(tv));
+
+//        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(3))))
+//                .thenReturn(Set.of(new Bump(dependencyList.get(3),tv)));
+//        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(4))))
+//                .thenReturn(Set.of(new Bump(dependencyList.get(4),tv)));
+
+        when(bumpResolverUseCase.doResolve(Set.of(dependencyList.get(3),dependencyList.get(4))))
+                .thenReturn(Set.of(new Bump(Set.of(dependencyList.get(3),dependencyList.get(4)),tv)));
+
         setupUrlHelper();
         CommitResult commitResult = new CommitResult(TEST_NAME, "testMessage");
         when(gitClient.commitToNewBranch(any(), any())).thenReturn(commitResult);
