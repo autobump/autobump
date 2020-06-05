@@ -4,6 +4,7 @@ import com.github.autobump.core.model.AutobumpResult;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class AutoBumpSingleGroupUseCase {
     private final PullRequest pullRequest;
     @NonNull
     private final Workspace workspace;
+    private final SettingsRepository settingsRepository;
 
     public AutobumpResult doSingleGroupAutoBump() {
         Set<Dependency> dependencies = config.getDependencyResolver().resolve(workspace)
@@ -36,8 +38,9 @@ public class AutoBumpSingleGroupUseCase {
                 .dependencies(dependencies)
                 .ignoreRepository(config.getIgnoreRepository())
                 .versionRepository(config.getVersionRepository())
+                .settingsRepository(settingsRepository)
                 .build()
-                .doResolve();
+                .doResolve(config.getGitProviderUrlHelper().getRepoName(uri.toString()));
         if (combinedbumps.isEmpty()) {
             config.getGitProvider().closePullRequest(pullRequest);
             config.getGitClient().deleteBranch(workspace, pullRequest.getBranchName());
