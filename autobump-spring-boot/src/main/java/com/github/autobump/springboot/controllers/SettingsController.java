@@ -1,8 +1,12 @@
 package com.github.autobump.springboot.controllers;
 
+import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.atlassian.connect.spring.IgnoreJwt;
+import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
+import com.github.autobump.core.model.Repo;
+import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +22,14 @@ import java.util.List;
 @Controller
 @Setter
 public class SettingsController {
+    private final AutoBumpService autoBumpService;
+
     @Autowired
     SettingsService settingsService;
+
+    public SettingsController(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
+        autoBumpService = new AutoBumpService(repository, autobumpconfig);
+    }
 
     @IgnoreJwt
     @GetMapping("/home")
@@ -54,7 +64,7 @@ public class SettingsController {
 
     @IgnoreJwt
     @GetMapping("/settings")
-    public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") int repoId) {
+    public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
         String repoName = settingsService.getRepository(repoId).getName();
         RepositoryDto dto = settingsService.getSettingsForRepository(repoName);
@@ -83,8 +93,9 @@ public class SettingsController {
 
     @IgnoreJwt
     @GetMapping("/bump")
-    public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") int repoId) {
-        settingsService.doAutoBump(repoId);
+    public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") String repoId) {
+        Repo repo = settingsService.getRepo(repoId);
+        autoBumpService.executeAutoBump(repo.getLink());
         mav.setViewName("bumps");
         return mav;
     }

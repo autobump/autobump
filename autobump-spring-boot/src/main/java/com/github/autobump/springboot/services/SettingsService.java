@@ -1,13 +1,11 @@
 package com.github.autobump.springboot.services;
 
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.Repo;
 import com.github.autobump.core.model.Setting;
-import com.github.autobump.core.model.usecases.AutobumpUseCase;
-import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
-import com.github.autobump.springboot.domain.Repo;
 import com.github.autobump.springboot.repositories.RepoRepository;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import lombok.Setter;
@@ -15,58 +13,83 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Setter
+@Transactional
 public class SettingsService {
-
+    private final Autobumpconfig autobumpconfig;
     @Autowired
     ModelMapper modelMapper;
     @Autowired
     SpringSettingsRepository settingsRepository;
     @Autowired
     RepoRepository repoRepository;
-    @Autowired
-    Autobumpconfig autobumpconfig;
+
+    public SettingsService(Autobumpconfig autobumpconfig) {
+        this.autobumpconfig = autobumpconfig;
+    }
 
     public List<RepositoryDto> getAllRepositories(){
         GitProvider gitProvider = autobumpconfig.getGitProvider();
-        List<Repo> remoteRepos = new ArrayList<>(); //TODO gitprovider.getRepositories
+        List<Repo> remoteRepos = gitProvider.getRepos();
         List<Repo> savedRepos = repoRepository.findAll();
-        addNewRemoteRepos(remoteRepos, savedRepos);
-        removeReposNoLongerRemotelyPresent(remoteRepos, savedRepos);
-
+        savedRepos = addNewRemoteRepos(remoteRepos, savedRepos);
+        savedRepos = removeReposNoLongerRemotelyPresent(remoteRepos, savedRepos);
         return savedRepos
                 .stream()
                 .map(r -> modelMapper.map(r, RepositoryDto.class))
                 .collect(Collectors.toList());
     }
 
-    private void addNewRemoteRepos(List<Repo> remoteRepos, List<Repo> savedRepos) {
-        for (Repo repo : remoteRepos
-             ) {
-            Optional<Repo> opt = savedRepos.stream().filter(s -> s.getRepoId() == repo.getRepoId()).findAny();
-            if (opt.isEmpty()){
-                savedRepos.add(repo);
-                repoRepository.save(repo);
+    private List<Repo> addNewRemoteRepos(List<Repo> remoteRepos, List<Repo> savedRepos) {
+        if (savedRepos.isEmpty()) {
+            savedRepos = new ArrayList<>();
+            savedRepos.addAll(remoteRepos);
+            for (Repo repo: remoteRepos
+                 ) {
+                saveRepo(repo);
+            }
+        } else {
+            for (Repo repo : remoteRepos
+            ) {
+                Repo isAlreadySaved = savedRepos
+                        .stream()
+                        .filter(s -> s.getRepoId().equals(repo.getRepoId()))
+                        .findAny().orElse(null);
+                if (isAlreadySaved == null){
+                    savedRepos.add(repo);
+                    saveRepo(repo);
+                }
             }
         }
+        return savedRepos;
     }
 
-    private void removeReposNoLongerRemotelyPresent(List<Repo> remoteRepos, List<Repo> savedRepos) {
+    public void saveRepo(Repo repo) {
+        repoRepository.save(repo);
+    }
+
+    private List<Repo> removeReposNoLongerRemotelyPresent(List<Repo> remoteRepos, List<Repo> savedRepos) {
+        List<Repo> updatedList = new ArrayList<>();
         for (Repo repo : savedRepos
-        ) {
-            Optional<Repo> opt = remoteRepos.stream().filter(r -> r.getRepoId() == repo.getRepoId()).findAny();
-            if (opt.isEmpty()) {
-                savedRepos.remove(repo);
+            ) {
+            Repo stillExistsRemotely = remoteRepos
+                    .stream()
+                    .filter(r -> r.getRepoId().equals(repo.getRepoId()))
+                    .findAny().orElse(null);
+            if (stillExistsRemotely == null) {
                 repoRepository.delete(repo);
             }
+            else {
+                updatedList.add(repo);
+            }
         }
+        return updatedList;
     }
 
     public List<RepositoryDto> getMonitoredRepos() {
@@ -83,9 +106,9 @@ public class SettingsService {
         String reviewer = getReviewerFromSetting(settings);
         boolean cronJob = getIsCronJob(settings);
         List<DependencyDto> dependencyDtos = getIgnoredDependenciesFromSettings(settings);
+        dto.setDependencies(dependencyDtos);
         dto.setReviewer(reviewer);
         dto.setCronJob(cronJob);
-        dto.setDependencies(dependencyDtos);
         dto.setName(repoName);
         return dto;
     }
@@ -133,30 +156,20 @@ public class SettingsService {
         return dep;
     }
 
-    public void doAutoBump(int repoId){
-        AutobumpUseCase.builder()
-                .config(autobumpconfig.setupConfig())
-                .releaseNotesSource(new GithubReleaseNotesSource("https://api.github.com"))
-                .uri(URI.create(repoRepository.getByRepoId(repoId).getLink()))
-                .build()
-                .doAutoBump();
-    }
-
-    public RepositoryDto getRepository(int repoId) {
+    public RepositoryDto getRepository(String repoId) {
         return modelMapper.map(repoRepository.getByRepoId(repoId), RepositoryDto.class);
     }
 
     public void updateRepo(RepositoryDto repositoryDto) {
         Repo saved = repoRepository.getByRepoId(repositoryDto.getRepoId());
         saved.setSelected(repositoryDto.isSelected());
-        repoRepository.save(saved);
+        saveRepo(saved);
     }
 
     public void saveSettings(RepositoryDto dto) {
         if (dto.isCronJob()) saveCronJob(dto.getName());
         if (!dto.isCronJob()) removeCronJob(dto.getName());
         if (dto.getReviewer() != null) saveReviewer(dto.getName(), dto.getReviewer());
-        // TODO - handle changes in settings
     }
 
     private void removeCronJob(String name) {
@@ -183,4 +196,7 @@ public class SettingsService {
         settingsRepository.saveSetting(rev);
     }
 
+    public Repo getRepo(String repoId) {
+        return repoRepository.getByRepoId(repoId);
+    }
 }

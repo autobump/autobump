@@ -9,6 +9,7 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
+import com.github.autobump.core.model.Repo;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,7 +50,7 @@ class AutoBumpServiceTest {
     @BeforeEach
     void setUp() {
         var provider = Mockito.mock(GitProvider.class);
-        Mockito.lenient().when(provider.getRepos()).thenReturn(List.of("test"));
+        Mockito.lenient().when(provider.getRepos()).thenReturn(getDummyRepoList());
         Mockito.lenient().when(autobumpconfig.getGitProvider()).thenReturn(provider);
     }
 
@@ -86,5 +88,22 @@ class AutoBumpServiceTest {
                 .dependencyResolver(Mockito.mock(DependencyResolver.class))
                 .dependencyBumper(Mockito.mock(DependencyBumper.class))
                 .build());
+    }
+
+    private List<Repo> getDummyRepoList() {
+        List<Repo> repos = new ArrayList<>();
+        Repo repo = new Repo();
+        repo.setName("MultiModuleMavenProject");
+        repo.setSelected(true);
+        repo.setLink("a_link");
+        repo.setRepoId("cjhcvkjbub");
+        repos.add(repo);
+        Repo repo2 = new Repo();
+        repo2.setName("TestMavenProject");
+        repo2.setSelected(false);
+        repo2.setLink("another_link");
+        repo2.setRepoId("emofbb>Sbg>B");
+        repos.add(repo2);
+        return repos;
     }
 }

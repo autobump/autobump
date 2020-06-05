@@ -7,6 +7,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.Repo;
 import feign.Feign;
 import feign.RequestInterceptor;
 import feign.auth.BasicAuthRequestInterceptor;
@@ -101,9 +102,12 @@ public class BitBucketGitProvider implements GitProvider {
     }
 
     @Override
-    public List<String> getRepos() {
-        return client.getRepos().getCloneLinks();
+    public List<Repo> getRepos() {
+        return client.getRepos()
+                .getValues()
+                .stream()
+                .map(r -> new Repo(r.getUuid(), r.getCloneLink(), r.getName()))
+                .collect(Collectors.toUnmodifiableList());
     }
-
 
 }

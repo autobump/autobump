@@ -44,9 +44,10 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class Autobumpconfig {
+public class Autobumpconfig implements WebMvcConfigurer{
     @Autowired
     private ApplicationContext applicationContext;
+
     private final RestTemplate restTemplateBuilder;
     private final AtlassianHostRepository repository;
     @Value("${autobump.bitbucket.oAuthUrl}")
@@ -131,7 +132,6 @@ public class Autobumpconfig {
             host = atlassianHost;
         }
 
-
         if (host != null) {
             return new JwtBuilder()
                     .subject(host.getClientKey()) // = client key (retrieved on /install)
@@ -156,9 +156,6 @@ public class Autobumpconfig {
         return templateResolver;
     }
 
-    /*
-     * STEP 2 - Create SpringTemplateEngine
-     * */
     @Bean
     public SpringTemplateEngine templateEngine() {
         SpringTemplateEngine templateEngine = new SpringTemplateEngine();
@@ -167,9 +164,6 @@ public class Autobumpconfig {
         return templateEngine;
     }
 
-    /*
-     * STEP 3 - Register ThymeleafViewResolver
-     * */
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();

@@ -1,6 +1,7 @@
 package com.github.autobump.springboot.services;
 
 import com.atlassian.connect.spring.AtlassianHostRepository;
+import com.github.autobump.core.model.Repo;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -31,7 +33,12 @@ public class AutoBumpService {
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public void autoBump() {
         repository.findAll().forEach(atlassianHost -> {
-            var repos = autobumpconfig.getGitProvider().getRepos();
+            var repos = autobumpconfig
+                    .getGitProvider()
+                    .getRepos()
+                    .stream()
+                    .map(Repo::getLink)
+                    .collect(Collectors.toUnmodifiableList());
             for (String repo : repos) {
                 try {
                     executeAutoBump(repo);
@@ -44,7 +51,7 @@ public class AutoBumpService {
         });
     }
 
-    private void executeAutoBump(String repo) {
+    public void executeAutoBump(String repo) {
         var result = AutobumpUseCase.builder()
                 .config(autobumpconfig.setupConfig())
                 .releaseNotesSource(new GithubReleaseNotesSource("https://api.github.com"))

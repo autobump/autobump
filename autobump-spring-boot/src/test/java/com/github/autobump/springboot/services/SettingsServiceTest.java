@@ -2,11 +2,11 @@ package com.github.autobump.springboot.services;
 
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.github.autobump.core.model.GitProvider;
+import com.github.autobump.core.model.Repo;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
-import com.github.autobump.springboot.domain.Repo;
 import com.github.autobump.springboot.repositories.RepoRepository;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +18,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
@@ -56,11 +58,23 @@ class SettingsServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new SettingsService();
-        service.setRepoRepository(repoRepository);
-        service.setModelMapper(modelMapper);
-        service.setSettingsRepository(springSettingsRepository);
+        setupService();
         dummyRepos = getDummyRepoList();
+        setupDummyRepoDto();
+    }
+
+    private void setupDummyRepoDto() {
+        dummyRepoDto = new RepositoryDto();
+        List<DependencyDto> expectedDependencyList = getDependencyDtos();
+        dummyRepoDto.setRepoId("a");
+        dummyRepoDto.setSelected(true);
+        dummyRepoDto.setName(REPOSITORY_NAME);
+        dummyRepoDto.setCronJob(true);
+        dummyRepoDto.setReviewer("name of a reviewer");
+        dummyRepoDto.setDependencies(expectedDependencyList);
+    }
+
+    private List<DependencyDto> getDependencyDtos() {
         List<DependencyDto> expectedDependencyList = new ArrayList<>();
         expectedDependencyList.add(DependencyDto.builder()
                 .groupName("org.projectlombok")
@@ -69,18 +83,48 @@ class SettingsServiceTest {
                 .ignoreMajor(true)
                 .ignoreMinor(false)
                 .build());
-        dummyRepoDto = new RepositoryDto();
-        dummyRepoDto.setSelected(true);
-        dummyRepoDto.setName(REPOSITORY_NAME);
-        dummyRepoDto.setCronJob(true);
-        dummyRepoDto.setReviewer("name of a reviewer");
-        dummyRepoDto.setDependencies(expectedDependencyList);
+        return expectedDependencyList;
+    }
+
+    private void setupService() {
+        service = new SettingsService(autobumpconfig);
+        service.setRepoRepository(repoRepository);
+        service.setModelMapper(modelMapper);
+        service.setSettingsRepository(springSettingsRepository);
     }
 
     @Test
-    void getAllRepositories() {
-        //when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
-        // TODO - fix gitprovider first
+    void getAllRepositories_when_none_in_repo() {
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        when(gitProvider.getRepos()).thenReturn(dummyRepos);
+        when(repoRepository.findAll()).thenReturn(Collections.emptyList());
+        when(modelMapper.map(any(Repo.class), any()))
+                .thenReturn(new RepositoryDto());
+        assertThat(service.getAllRepositories().size()).isEqualTo(2);
+    }
+
+    @Test
+    void getAllRepositories_when_already_in_repo(){
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        List<Repo> dummySaved = new ArrayList<>();
+        dummySaved.add(getDummyRepo2());
+        when(gitProvider.getRepos()).thenReturn(getDummyRepoList());
+        when(repoRepository.findAll()).thenReturn(dummySaved);
+        when(modelMapper.map(any(Repo.class), any()))
+                .thenReturn(new RepositoryDto());
+        assertThat(service.getAllRepositories().size()).isEqualTo(2);
+    }
+
+    @Test
+    void getAllRepositories_when_remote_no_longer_exists(){
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        List<Repo> dummyRemote = new ArrayList<>();
+        dummyRemote.add(getDummyRepo1());
+        when(gitProvider.getRepos()).thenReturn(dummyRemote);
+        when(repoRepository.findAll()).thenReturn(getDummyRepoList());
+        when(modelMapper.map(any(Repo.class), any()))
+                .thenReturn(new RepositoryDto());
+        assertThat(service.getAllRepositories().size()).isEqualTo(1);
     }
 
     @Test
@@ -96,44 +140,65 @@ class SettingsServiceTest {
     void getSettingsForRepository() {
         when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(getDummySettings());
-        assertThat(service.getSettingsForRepository(REPOSITORY_NAME)).isEqualTo(dummyRepoDto);
-    }
-
-    @Test
-    void doAutoBump() {
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getDependencies().size()).isEqualTo(1);
     }
 
     @Test
     void getRepository() {
-        when(repoRepository.getByRepoId(1)).thenReturn(dummyRepos.get(0));
+        when(repoRepository.getByRepoId(anyString())).thenReturn(dummyRepos.get(0));
         when(modelMapper.map(dummyRepos.get(0), RepositoryDto.class)).thenReturn(dummyRepoDto);
-        assertThat(service.getRepository(1)).isEqualTo(dummyRepoDto);
+        assertThat(service.getRepository(anyString())).isEqualTo(dummyRepoDto);
     }
 
     @Test
     void updateRepo() {
-        when(repoRepository.getByRepoId(anyInt())).thenReturn(dummyRepos.get(0));
+        when(repoRepository.getByRepoId("a")).thenReturn(getDummyRepo1());
         assertThatCode(() -> service.updateRepo(dummyRepoDto)).doesNotThrowAnyException();
     }
 
     @Test
     void saveSettings() {
+        lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME)).thenReturn(getDummySettings());
+        assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void getRepo(){
+        lenient().when(repoRepository.getByRepoId("a")).thenReturn(getDummyRepo1());
+        assertThat(service.getRepo("a").getName()).isEqualTo(REPOSITORY_NAME);
+    }
+
+    @Test
+    void saveSettings_removeCronJob(){
+        lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME)).thenReturn(getDummySettings());
+        dummyRepoDto.setCronJob(false);
+        assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
 
     }
 
     private List<Repo> getDummyRepoList() {
         List<Repo> repos = new ArrayList<>();
-        Repo repo = new Repo();
-        repo.setName("MultiModuleMavenProject");
-        repo.setSelected(true);
-        repo.setRepoId(1);
+        Repo repo = getDummyRepo1();
         repos.add(repo);
-        Repo repo2 = new Repo();
-        repo2.setName("TestMavenProject");
-        repo2.setSelected(false);
-        repo2.setRepoId(2);
+        Repo repo2 = getDummyRepo2();
         repos.add(repo2);
         return repos;
+    }
+
+    private Repo getDummyRepo1() {
+        Repo repo2 = new Repo();
+        repo2.setName("TestMavenProject");
+        repo2.setSelected(true);
+        repo2.setRepoId("a");
+        return repo2;
+    }
+
+    private Repo getDummyRepo2() {
+        Repo repo = new Repo();
+        repo.setName("MultiModuleMavenProject");
+        repo.setSelected(false);
+        repo.setRepoId("b");
+        return repo;
     }
 
     private List<Setting> getDummySettings(){

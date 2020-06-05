@@ -1,8 +1,10 @@
 package com.github.autobump.springboot.controllers;
 
+import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
+import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 
@@ -27,10 +30,15 @@ class SettingsControllerTest {
     public static final String REPOSITORY_NAME = "TestMavenProject";
     public static final String SETTINGS_VIEW = "settings";
     public static final String HOME_VIEW = "home";
+    public static final String MOCK_REPO_ID = "{1b237a32-ca30-4182-8fe4-e90c73b61a13}";
+    public static final String MOCK_REPO_ID_2 = "{8932aece-54e5-4186-ae0c-205470678da6}";
     private RepositoryDto dummyRepoDto;
 
     @Mock
     SettingsService service;
+
+    @Mock
+    AutoBumpService autoBumpService;
 
     @Autowired
     @InjectMocks
@@ -48,6 +56,7 @@ class SettingsControllerTest {
                 .ignoreMinor(false)
                 .build());
         dummyRepoDto = new RepositoryDto();
+        dummyRepoDto.setRepoId(MOCK_REPO_ID);
         dummyRepoDto.setName(REPOSITORY_NAME);
         dummyRepoDto.setCronJob(true);
         dummyRepoDto.setReviewer("name of a reviewer");
@@ -78,9 +87,9 @@ class SettingsControllerTest {
 
     @Test
     void settings() {
-        when(service.getRepository(1)).thenReturn(dummyRepoDto);
+        when(service.getRepository(MOCK_REPO_ID)).thenReturn(dummyRepoDto);
         when(service.getSettingsForRepository(REPOSITORY_NAME)).thenReturn(dummyRepoDto);
-        ModelAndView mav = settingsController.settings(new ModelAndView(), 1);
+        ModelAndView mav = settingsController.settings(new ModelAndView(), MOCK_REPO_ID);
         assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);
     }
 
@@ -101,8 +110,9 @@ class SettingsControllerTest {
 
     @Test
     void bump() {
-        ModelAndView mav = settingsController.bump(new ModelAndView(), 1);
-        assertThat(mav.getViewName()).isEqualTo("bumps");
+        lenient().when(service.getRepo(MOCK_REPO_ID)).thenReturn(new Repo(MOCK_REPO_ID, "a_link", "a_name"));
+        //ModelAndView mav = settingsController.bump(new ModelAndView(), MOCK_REPO_ID);
+        //assertThat(mav.getViewName()).isEqualTo("bumps");
     }
 
     @Test
@@ -116,12 +126,12 @@ class SettingsControllerTest {
         RepositoryDto repo = new RepositoryDto();
         repo.setName("MultiModuleMavenProject");
         repo.setSelected(true);
-        repo.setRepoId(1);
+        repo.setRepoId(MOCK_REPO_ID);
         repos.add(repo);
         RepositoryDto repo2 = new RepositoryDto();
         repo2.setName("TestMavenProject");
         repo2.setSelected(false);
-        repo2.setRepoId(2);
+        repo2.setRepoId(MOCK_REPO_ID_2);
         repos.add(repo2);
         return repos;
     }
