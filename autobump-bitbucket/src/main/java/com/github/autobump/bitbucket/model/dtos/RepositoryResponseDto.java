@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Getter
@@ -12,13 +11,6 @@ public class RepositoryResponseDto {
     private int pagelen;
     private List<Repository> values;
     private String next;
-
-    public List<String> getCloneLinks() {
-        return values.stream()
-                .map(repository -> repository
-                        .getCloneLink())
-                .collect(Collectors.toUnmodifiableList());
-    }
 
     @Data
     @Getter
@@ -36,12 +28,13 @@ public class RepositoryResponseDto {
             private List<Link> clone;
 
             public String getCloneLink() {
+                String ref = "";
                 for (Link link : clone) {
                     if ("https".equalsIgnoreCase(link.name)){
-                        return link.href;
+                        ref = link.href;
                     }
                 }
-                return null;
+                return ref;
             }
 
             @Data

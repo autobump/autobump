@@ -31,6 +31,11 @@ public class SpringSettingsRepository implements SettingsRepository {
         return jpaSettingsRepository.findAllByRepositoryName(repoName);
     }
 
+    @Override
+    public Setting getCronSetting(String repoName) {
+        return jpaSettingsRepository.findByTypeAndRepositoryName(Setting.SettingsType.CRON, repoName);
+    }
+
     @Transactional
     @Override
     public void removeCronJob(String repoName){

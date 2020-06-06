@@ -3,6 +3,7 @@ package com.github.autobump.github.model;
 import com.github.autobump.core.model.ReleaseNotesSource;
 import com.github.autobump.core.model.ReleaseNotesUrlHelper;
 import com.github.autobump.core.model.usecases.ReleaseNotes;
+import com.github.autobump.github.exceptions.GithubNotFoundException;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 
@@ -23,13 +24,18 @@ public class GithubReleaseNotesSource implements ReleaseNotesSource {
     public ReleaseNotes getReleaseNotes(String projectUrl, String versionNumber) {
         String ownerName = releaseNotesUrlHelper.getOwnerName(projectUrl);
         String repoName = releaseNotesUrlHelper.getRepoName(projectUrl);
-        return githubApi.getAllReleaseNotes(ownerName, repoName).stream()
-                .filter(versionInformationDto -> versionInformationDto.getTagName().endsWith(versionNumber))
-                .map(versionInformationDto ->
-                        new ReleaseNotes(versionInformationDto.getHtmlUrl(),
-                                versionInformationDto.getTagName(),
-                                versionInformationDto.getBody()))
-                .findFirst()
-                .orElse(null);
+        try{
+            return githubApi.getAllReleaseNotes(ownerName, repoName).stream()
+                    .filter(versionInformationDto -> versionInformationDto.getTagName().endsWith(versionNumber))
+                    .map(versionInformationDto ->
+                            new ReleaseNotes(versionInformationDto.getHtmlUrl(),
+                                    versionInformationDto.getTagName(),
+                                    versionInformationDto.getBody()))
+                    .findFirst()
+                    .orElse(null);
+        }
+        catch(GithubNotFoundException g){
+            return null;
+        }
     }
 }

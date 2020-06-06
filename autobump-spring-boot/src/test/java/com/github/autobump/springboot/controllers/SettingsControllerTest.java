@@ -6,6 +6,7 @@ import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,9 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -47,6 +51,7 @@ class SettingsControllerTest {
     @BeforeEach
     void setUp() {
         settingsController.setSettingsService(service);
+        settingsController.setAutoBumpService(autoBumpService);
         setupDummies();
     }
 
@@ -97,9 +102,16 @@ class SettingsControllerTest {
 
     @Test
     void bump() {
+        WireMockServer wireMockServer = new WireMockServer(8009);
+        wireMockServer.start();
+        wireMockServer.stubFor(post(urlEqualTo("/site/oauth2/access_token"))
+                .willReturn(aResponse().withBody("{\"access_token\": \"testtoken\"}")
+                        .withHeader("content-type", "application/json")
+                        .withStatus(200)));
         lenient().when(service.getRepo(MOCK_REPO_ID)).thenReturn(new Repo(MOCK_REPO_ID, "a_link", "a_name"));
-        //ModelAndView mav = settingsController.bump(new ModelAndView(), MOCK_REPO_ID);
-        //assertThat(mav.getViewName()).isEqualTo("bumps");
+        ModelAndView mav = settingsController.bump(new ModelAndView(), MOCK_REPO_ID);
+        assertThat(mav.getViewName()).isEqualTo("bumps");
+        wireMockServer.stop();
     }
 
     @Test

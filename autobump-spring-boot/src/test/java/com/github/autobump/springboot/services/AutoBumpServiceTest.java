@@ -9,6 +9,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.RepoRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class, OutputCaptureExtension.class})
 @SpringBootTest
@@ -39,6 +41,9 @@ class AutoBumpServiceTest {
     @Mock
     private Autobumpconfig autobumpconfig;
 
+    @Mock
+    private RepoRepository repoRepository;
+
     @Autowired
     @InjectMocks
     private AutoBumpService testService;
@@ -46,44 +51,9 @@ class AutoBumpServiceTest {
     @BeforeEach
     void setUp() {
         var provider = Mockito.mock(GitProvider.class);
-        Mockito.lenient().when(provider.getRepos()).thenReturn(getDummyRepoList());
-        Mockito.lenient().when(autobumpconfig.getGitProvider()).thenReturn(provider);
-    }
-
-    /*@Test
-    void testRuntimeException(CapturedOutput log) {
-        var host = new AtlassianHost();
-        host.setClientKey("test");
-        host.setSharedSecret("test");
-        repository.save(host);
-        testService.autoBump();
-        assertThat(log).contains("Something went wrong while bumping: test");
-    }
-
-    @Test
-    void testSuccessfulExecute(CapturedOutput log) {
-        makeStubs();
-        var host = new AtlassianHost();
-        host.setClientKey("test");
-        host.setSharedSecret("test");
-        repository.save(host);
-        testService.autoBump();
-        assertThat(log).contains("bumped repo: test, number of bumps: 0");
-    }*/
-
-    private void makeStubs() {
-        GitProviderUrlHelper urlHelper = Mockito.mock(BitBucketGitProviderUrlHelper.class);
-        Mockito.lenient().when(urlHelper.getOwnerName(any())).thenReturn("test");
-        Mockito.lenient().when(urlHelper.getRepoName(any())).thenReturn("test");
-        Mockito.lenient().when(autobumpconfig.setupConfig()).thenReturn(UseCaseConfiguration.builder()
-                .gitProviderUrlHelper(urlHelper)
-                .gitProvider(Mockito.mock(GitProvider.class))
-                .versionRepository(Mockito.mock(VersionRepository.class))
-                .ignoreRepository(Mockito.mock(IgnoreRepository.class))
-                .gitClient(Mockito.mock(GitClient.class))
-                .dependencyResolver(Mockito.mock(DependencyResolver.class))
-                .dependencyBumper(Mockito.mock(DependencyBumper.class))
-                .build());
+        lenient().when(provider.getRepos()).thenReturn(getDummyRepoList());
+        lenient().when(autobumpconfig.getGitProvider()).thenReturn(provider);
+        lenient().when(repoRepository.findAll()).thenReturn(getDummyRepoList());
     }
 
     private List<Repo> getDummyRepoList() {
@@ -111,5 +81,41 @@ class AutoBumpServiceTest {
         repo2.setLink("another_link");
         repo2.setRepoId("emofbbSbgB");
         return repo2;
+    }
+
+    /*@Test
+    void testRuntimeException(CapturedOutput log) {
+        var host = new AtlassianHost();
+        host.setClientKey("test");
+        host.setSharedSecret("test");
+        repository.save(host);
+        testService.autoBump();
+        assertThat(log).contains("Something went wrong while bumping: test");
+    }
+
+    @Test
+    void testSuccessfulExecute(CapturedOutput log) {
+        makeStubs();
+        var host = new AtlassianHost();
+        host.setClientKey("test");
+        host.setSharedSecret("test");
+        repository.save(host);
+        testService.autoBump();
+        assertThat(log).contains("bumped repo: test, number of bumps: 0");
+    }*/
+
+    private void makeStubs() {
+        GitProviderUrlHelper urlHelper = Mockito.mock(BitBucketGitProviderUrlHelper.class);
+        lenient().when(urlHelper.getOwnerName(any())).thenReturn("test");
+        lenient().when(urlHelper.getRepoName(any())).thenReturn("test");
+        lenient().when(autobumpconfig.setupConfig()).thenReturn(UseCaseConfiguration.builder()
+                .gitProviderUrlHelper(urlHelper)
+                .gitProvider(Mockito.mock(GitProvider.class))
+                .versionRepository(Mockito.mock(VersionRepository.class))
+                .ignoreRepository(Mockito.mock(IgnoreRepository.class))
+                .gitClient(Mockito.mock(GitClient.class))
+                .dependencyResolver(Mockito.mock(DependencyResolver.class))
+                .dependencyBumper(Mockito.mock(DependencyBumper.class))
+                .build());
     }
 }

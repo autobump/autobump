@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+@Transactional
 @Service
 @Setter
-@Transactional
 public class SettingsService {
     @Autowired
     RepoRepository repoRepository;

@@ -24,7 +24,8 @@ import java.util.List;
 public class SettingsController {
     @Autowired
     SettingsService settingsService;
-    private final AutoBumpService autoBumpService;
+
+    private AutoBumpService autoBumpService;
 
     public SettingsController(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
         autoBumpService = new AutoBumpService(repository, autobumpconfig);

@@ -80,6 +80,11 @@ class PullRequestClosedUseCaseTest {
         }
 
         @Override
+        public Setting getCronSetting(String repoName) {
+            return null;
+        }
+
+        @Override
         public void removeCronJob(String repoName) {
         }
     }

@@ -2,12 +2,15 @@ package com.github.autobump.springboot.services;
 
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.RepoRepository;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.usecases.AutobumpUseCase;
 import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +23,18 @@ import java.util.stream.Collectors;
 public class AutoBumpService {
     private final Logger logger = LoggerFactory.getLogger(AutoBumpService.class);
 
+    @Autowired
+    SettingsRepository settingsRepository;
+
+    @Autowired
+    private RepoRepository repoRepository;
+
     private AtlassianHostRepository repository;
 
     private Autobumpconfig autobumpconfig;
 
-    public AutoBumpService(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
+    public AutoBumpService(AtlassianHostRepository repository,
+                           Autobumpconfig autobumpconfig) {
         this.repository = repository;
         this.autobumpconfig = autobumpconfig;
     }
@@ -33,10 +43,10 @@ public class AutoBumpService {
     @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public void autoBump() {
         repository.findAll().forEach(atlassianHost -> {
-            var repos = autobumpconfig
-                    .getGitProvider()
-                    .getRepos()
+            var repos = repoRepository
+                    .findAll()
                     .stream()
+                    .filter(r -> r.isSelected() && isCronJob(r))
                     .map(Repo::getLink)
                     .collect(Collectors.toUnmodifiableList());
             for (String repo : repos) {
@@ -49,6 +59,10 @@ public class AutoBumpService {
                 }
             }
         });
+    }
+
+    private boolean isCronJob(Repo repo){
+        return settingsRepository.getCronSetting(repo.getName()) != null;
     }
 
     public void executeAutoBump(String repo) {

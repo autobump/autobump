@@ -10,5 +10,7 @@ public interface SettingsRepository {
 
     List<Setting> findAllSettingsForDependencies(String repoName);
 
+    Setting getCronSetting(String repoName);
+
     void removeCronJob(String repoName);
 }
