@@ -3,11 +3,11 @@ package com.github.autobump.springboot.services;
 import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.RepoRepository;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
-import com.github.autobump.springboot.repositories.RepoRepository;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -198,8 +198,8 @@ class SettingsServiceTest {
 
     @Test
     void saveSettings_without_reviewer(){
-        RepositoryDto repositoryDto_withoutReviewer = new RepositoryDto();
-        assertThatCode(() -> service.saveSettings(repositoryDto_withoutReviewer)).doesNotThrowAnyException();
+        RepositoryDto repositoryDtoWithoutReviewer = new RepositoryDto();
+        assertThatCode(() -> service.saveSettings(repositoryDtoWithoutReviewer)).doesNotThrowAnyException();
     }
 
 

@@ -2,11 +2,11 @@ package com.github.autobump.springboot.services;
 
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.RepoRepository;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
-import com.github.autobump.springboot.repositories.RepoRepository;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
