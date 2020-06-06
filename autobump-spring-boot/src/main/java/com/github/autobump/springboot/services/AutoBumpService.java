@@ -24,7 +24,7 @@ public class AutoBumpService {
     private final Logger logger = LoggerFactory.getLogger(AutoBumpService.class);
 
     @Autowired
-    SettingsRepository settingsRepository;
+    private SettingsRepository settingsRepository;
 
     @Autowired
     private RepoRepository repoRepository;
