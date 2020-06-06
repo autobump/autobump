@@ -4,7 +4,7 @@ spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
 spring.datasource.username: sa
 spring.datasource.password: password
 
-spring.jpa.hibernate.ddl-auto: update
+spring.jpa.hibernate.ddl-auto: create-drop
 
 
 autobump:
@@ -14,6 +14,6 @@ autobump:
         key: autobump.kdg.xplore.dev02 # key should be unique for your own app instance
         apiUrl: https://api.bitbucket.org/2.0
     maven:
-        pubrepo: https://repo1.maven.org/maven2
+        pubRepoUrl: https://repo1.maven.org/maven2
     github:
         apiUrl: https://api.github.com
