@@ -1,8 +1,10 @@
 package com.github.autobump.springboot.controllers.dtos;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class CommentDto {
     private Data data;
     public CommentDto(String comment, String reponame, String prTitle){

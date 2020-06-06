@@ -9,7 +9,9 @@ import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.jgit.model.JGitGitClient;
 import com.github.autobump.maven.model.MavenVersionRepository;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import picocli.CommandLine;
@@ -69,7 +71,12 @@ public class Autobump implements Callable<AutobumpResult> {
 
     @Override
     public AutobumpResult call() {
-        return SpringApplication.run(Autobump.class).getBean(AutobumpUseCase.class).doAutoBump(properties.getUrl());
+
+        SpringApplication application = new SpringApplication(Autobump.class);
+        application.setWebApplicationType(WebApplicationType.NONE);
+        return application.run(Autobump.class).getBean(AutobumpUseCase.class).doAutoBump(properties.getUrl());
+
+//        return SpringApplication.run(Autobump.class).getBean(AutobumpUseCase.class).doAutoBump(properties.getUrl());
     }
 
 //    public AutobumpUseCase getAutobumpUseCase() {

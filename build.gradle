@@ -13,6 +13,9 @@ sourceCompatibility = 11
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://packages.atlassian.com/maven-public/"
+    }
 }
 
 subprojects {
@@ -117,7 +120,7 @@ task jar_cli(type: Jar) {
     from {
         configurations.childJarsCli.collect { zipTree(it) }
     } {
-        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'//, 'com/github/autobump/springboot/*'
     }
     manifest {
         attributes 'Main-Class': 'com.github.autobump.cli.model.Autobump'

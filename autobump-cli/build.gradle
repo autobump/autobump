@@ -6,16 +6,17 @@ dependencies {
     implementation project(':autobump-core')
     implementation project(':autobump-jgit')
     implementation project(':autobump-maven')
+
+    implementation "info.picocli:picocli-spring-boot-starter:4.3.2"
+
     testImplementation group: 'org.springframework', name: 'spring-test', version: '5.2.6.RELEASE'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-test', version: '2.3.0.RELEASE'
-//    testImplementation('org.springframework.boot:spring-boot-test') {
-//        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-//    }
+
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.26.3'
     testImplementation group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
     testImplementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r'
     testImplementation group: 'org.eclipse.jgit', name: 'org.eclipse.jgit.http.server', version: '5.7.0.202003110725-r'
-    implementation "info.picocli:picocli-spring-boot-starter:4.3.2"
 }
