@@ -43,6 +43,7 @@ public class BitBucketGitProvider implements GitProvider {
                 .requestInterceptor(interceptor)
                 .errorDecoder(new BitBucketErrorDecoder())
                 .target(BitBucketApi.class, apiUrl);
+
         bitBucketGitProviderUrlHelper = new BitBucketGitProviderUrlHelper();
     }
 

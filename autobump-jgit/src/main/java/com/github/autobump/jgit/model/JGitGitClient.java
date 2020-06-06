@@ -8,6 +8,7 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.RebaseCommand;
@@ -33,7 +34,8 @@ import static org.eclipse.jgit.lib.Constants.R_HEADS;
 @AllArgsConstructor
 public class JGitGitClient implements GitClient {
     private final String username;
-    private final String password;
+    @Setter
+    private String password;
 
     @Override
     public Workspace clone(URI uri) {
