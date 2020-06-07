@@ -21,6 +21,7 @@ import java.util.List;
 
 @Controller
 @Setter
+@IgnoreJwt
 public class SettingsController {
     @Autowired
     SettingsService settingsService;
@@ -31,7 +32,7 @@ public class SettingsController {
         autoBumpService = new AutoBumpService(repository, autobumpconfig);
     }
 
-    @IgnoreJwt
+
     @GetMapping("/home")
     public ModelAndView home(ModelAndView mav) {
         List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
@@ -45,23 +46,20 @@ public class SettingsController {
         return mav;
     }
 
-    @IgnoreJwt
     @PostMapping("/selectRepositories")
     public ModelAndView selectRepositories(ModelAndView mav, @ModelAttribute RepositoryListDto dto) {
         updateSelectedFieldsOfRepos(dto);
         return loadRepoOverview(mav);
     }
 
-    @IgnoreJwt
     @GetMapping("/loadRepoOverview")
-    private ModelAndView loadRepoOverview(ModelAndView mav) {
+    public ModelAndView loadRepoOverview(ModelAndView mav) {
         mav.setViewName("settings");
         mav.addObject("repositories", settingsService.getMonitoredRepos());
         mav.addObject("rep", new RepositoryDto());
         return mav;
     }
 
-    @IgnoreJwt
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
@@ -72,7 +70,6 @@ public class SettingsController {
         return mav;
     }
 
-    @IgnoreJwt
     @GetMapping("/addRepos")
     public ModelAndView addRepos(ModelAndView mav) {
         mav.setViewName("home");
@@ -81,7 +78,6 @@ public class SettingsController {
         return mav;
     }
 
-    @IgnoreJwt
     @PostMapping("/selectRepos")
     public ModelAndView selectRepos(ModelAndView mav, RepositoryListDto dto) {
         mav.setViewName("settings");
@@ -90,7 +86,6 @@ public class SettingsController {
         return mav;
     }
 
-    @IgnoreJwt
     @GetMapping("/bump")
     public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") String repoId) {
         Repo repo = settingsService.getRepo(repoId);
@@ -111,7 +106,6 @@ public class SettingsController {
         }
     }
 
-    @IgnoreJwt
     @PostMapping("/saveSettings")
     public ModelAndView saveSettings(ModelAndView mav, RepositoryDto dto) {
         settingsService.saveSettings(dto);

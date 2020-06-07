@@ -52,13 +52,11 @@ public class SettingsService {
     }
 
     private List<Repo> addNewRemoteRepos(List<Repo> remoteRepos, List<Repo> savedRepos) {
-        List<Repo> updated = new ArrayList<>();
         if (savedRepos.isEmpty()) {
-            updated = addAllRepos(remoteRepos);
+            return addAllRepos(remoteRepos);
         } else {
-            updated = addRemotes(remoteRepos, savedRepos);
+            return addRemotes(remoteRepos, savedRepos);
         }
-        return updated;
     }
 
     private List<Repo> addRemotes(List<Repo> remoteRepos, List<Repo> savedRepos) {
