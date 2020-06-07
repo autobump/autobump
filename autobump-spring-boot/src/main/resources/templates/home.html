@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Home</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <h1>Welcome to AutoBump!</h1>
+
+    <div class="jumbotron">
+        <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
+            It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
+            It then creates a pull-request for every outdated dependency</p>
+        <p>You can select the repositories you wish to have monitored by Autobump. This will enable Autobump to
+            receive events from your repository.</p>
+    </div>
+
+    <form th:action="@{/selectRepositories}" th:object="${repositoryListDto}" method="post">
+        <div class="form-row">
+            <div class="form-group col-md-1" style="display: none">
+                <th>Id</th>
+            </div>
+            <div class="form-group col-md-3" style="text-align: left">
+                <th>Repository name</th>
+            </div>
+            <div class="form-group col-md-1">
+                <th>Monitor</th>
+            </div>
+        </div>
+        <div class="form-row" th:each="repo, stat : ${repositoryListDto.repositories}">
+            <div class="form-group col-md-1" style="display: none">
+                <td><input hidden
+                           th:field="*{repositories[__${stat.index}__].repoId}"
+                           th:value="*{repositories[__${stat.index}__].getRepoId()}"
+                           th:text="${repo.repoId}"/></td>
+            </div>
+            <div class="form-group col-md-3" style="text-align: left; font-weight: normal">
+                <td><input hidden
+                           th:field="*{repositories[__${stat.index}__].name}"
+                           th:value="*{repositories[__${stat.index}__].getName()}"
+                           th:text="${repo.name}"/></td>
+            </div>
+            <div class="form-group col-md-1">
+                <td>
+                    <input type="checkbox"
+                           th:name="|repositories(${stat.index})|"
+                           th:field="*{repositories[__${stat.index}__].selected}"
+                           th:value="*{repositories[__${stat.index}__].isSelected()}"
+                           th:checked="*{repositories[__${stat.index}__].isSelected()}">
+                </td>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <input class="btn btn-primary" type="submit" value="save">
+            </div>
+        </div>
+    </form>
+
+</div>
+</body>
+</html>

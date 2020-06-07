@@ -8,5 +8,11 @@ public interface SettingsRepository {
 
     List<Setting> saveAllSettings(List<Setting> settings);
 
+    List<Setting> findAllSettingsForDependencies(String repoName);
+
+    Setting getCronSetting(String repoName);
+
+    void removeCronJob(String repoName);
+
     List<Setting> getAllIgnores();
 }

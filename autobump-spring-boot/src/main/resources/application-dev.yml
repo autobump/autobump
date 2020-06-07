@@ -1,14 +1,15 @@
 spring.datasource.url: jdbc:mariadb://localhost:3306/autobumpdb
 spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
 
+spring.liquibase.enabled: false
+
 spring.datasource.username: sa
 spring.datasource.password: password
 
 spring.jpa.hibernate.ddl-auto: update
 
-
 autobump:
     bitbucket:
         oAuthUrl: https://bitbucket.org/site/oauth2/access_token
-        base-url: https://647aee03e578.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
+        base-url: https://4e1554af3fe3.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
         key: autobump.kdg.xplore.dev02 # key should be unique for your own app instance

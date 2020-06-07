@@ -28,7 +28,13 @@ dependencies {
     implementation project(':autobump-github')
     implementation platform('org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE')
     implementation 'org.springframework.boot:spring-boot-starter'
+
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.2.6.RELEASE'
+    implementation group: 'org.thymeleaf', name: 'thymeleaf', version: '3.0.11.RELEASE'
+    implementation group: 'org.thymeleaf', name: 'thymeleaf-spring5', version: '3.0.11.RELEASE'
+    implementation group: 'org.webjars', name: 'bootstrap', version: '4.3.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.3.7'
     providedCompile group: 'com.atlassian.jwt', name: 'jwt-api', version: '3.1.0'
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.26.3'
     implementation group: 'io.github.openfeign', name: 'feign-core', version: '11.0'

@@ -8,5 +8,5 @@ public interface GitProvider {
     Set<PullRequest> getOpenPullRequests(String repoOwner, String repoName);
     void closePullRequest(PullRequest pullRequest);
     void commentPullRequest(PullRequest pr, String comment);
-    List<String> getRepos();
+    List<Repo> getRepos();
 }

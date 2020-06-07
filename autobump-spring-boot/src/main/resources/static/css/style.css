@@ -1,0 +1,35 @@
+h1 {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    color: #4c2e05;
+    text-align: center;
+}
+
+p.title {
+    text-align: center;
+    font-size: larger;
+}
+
+.form-group, th {
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.form-group, td {
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+}
+
+html, body {
+    background-color: #FFFFFF;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}

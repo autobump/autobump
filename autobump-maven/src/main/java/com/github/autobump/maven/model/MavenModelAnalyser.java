@@ -67,7 +67,10 @@ public class MavenModelAnalyser {
         try (InputStream inputStream = new URL(pomFileUrl).openStream()) {
             Model model = reader.read(inputStream, true, inputSource);
 
-            return model.getScm().getUrl();
+            if (model.getScm() != null){
+                return model.getScm().getUrl();
+            }
+            return null;
 
         } catch (IOException | XmlPullParserException e) {
             throw new DependencyParserException("Could not parse file: " + pomFileUrl, e);

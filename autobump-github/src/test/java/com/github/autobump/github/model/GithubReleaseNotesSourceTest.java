@@ -3,7 +3,6 @@ package com.github.autobump.github.model;
 import com.github.autobump.core.model.usecases.ReleaseNotes;
 import com.github.autobump.github.exceptions.GithubApiException;
 import com.github.autobump.github.exceptions.GithubBadRequestException;
-import com.github.autobump.github.exceptions.GithubNotFoundException;
 import com.github.autobump.github.exceptions.GithubUnauthorizedException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterEach;
@@ -85,10 +84,9 @@ class GithubReleaseNotesSourceTest {
     }
 
     @Test
-    void getReleaseNotes_ThrowsGithubNotFoundException() {
-        setupErrorStub(404);
-        assertThatExceptionOfType(GithubNotFoundException.class)
-                .isThrownBy(() -> githubReleaseNotesSource.getReleaseNotes(TEST_URL, TEST));
+    void getReleaseNotes_WhenGithubNotFoundReturnsNull() {
+        ReleaseNotes result = githubReleaseNotesSource.getReleaseNotes(TEST_URL, TEST);
+        assertThat(result).isNull();
     }
 
     @Test

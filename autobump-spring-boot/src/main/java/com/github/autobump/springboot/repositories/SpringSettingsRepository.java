@@ -4,6 +4,8 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,22 @@ public class SpringSettingsRepository implements SettingsRepository {
     @Override
     public List<Setting> saveAllSettings(List<Setting> settings) {
         return jpaSettingsRepository.saveAll(settings);
+    }
+
+    @Override
+    public List<Setting> findAllSettingsForDependencies(String repoName) {
+        return jpaSettingsRepository.findAllByRepositoryName(repoName);
+    }
+
+    @Override
+    public Setting getCronSetting(String repoName) {
+        return jpaSettingsRepository.findByTypeAndRepositoryName(Setting.SettingsType.CRON, repoName);
+    }
+
+    @Transactional
+    @Override
+    public void removeCronJob(String repoName){
+        jpaSettingsRepository.deleteByTypeAndRepositoryName(Setting.SettingsType.CRON, repoName);
     }
 
     @Override

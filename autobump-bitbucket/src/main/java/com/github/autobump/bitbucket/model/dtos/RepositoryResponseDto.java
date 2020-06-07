@@ -1,30 +1,25 @@
 package com.github.autobump.bitbucket.model.dtos;
 
 import lombok.Data;
+import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
+@Getter
 public class RepositoryResponseDto {
     private int pagelen;
     private List<Repository> values;
     private String next;
 
-    public List<String> getCloneLinks() {
-        return values.stream()
-                .flatMap(repository -> repository
-                        .getCloneLink()
-                        .stream())
-                .collect(Collectors.toUnmodifiableList());
-    }
-
     @Data
-    private static class Repository {
+    @Getter
+    public static class Repository {
         Links links;
+        String uuid;
+        String name;
 
-        public List<String> getCloneLink() {
+        public String getCloneLink() {
             return links.getCloneLink();
         }
 
@@ -32,14 +27,14 @@ public class RepositoryResponseDto {
         private static class Links{
             private List<Link> clone;
 
-            public List<String> getCloneLink() {
-                List<String> cloneLinks = new ArrayList<>();
+            public String getCloneLink() {
+                String ref = "";
                 for (Link link : clone) {
                     if ("https".equalsIgnoreCase(link.name)){
-                        cloneLinks.add(link.href);
+                        ref = link.href;
                     }
                 }
-                return cloneLinks;
+                return ref;
             }
 
             @Data

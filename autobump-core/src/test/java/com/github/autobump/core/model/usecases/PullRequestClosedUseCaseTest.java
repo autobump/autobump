@@ -79,5 +79,19 @@ class PullRequestClosedUseCaseTest {
         public List<Setting> getAllIgnores() {
             return Collections.emptyList();
         }
+
+        @Override
+        public List<Setting> findAllSettingsForDependencies(String repoName) {
+            return null;
+        }
+
+        @Override
+        public Setting getCronSetting(String repoName) {
+            return null;
+        }
+
+        @Override
+        public void removeCronJob(String repoName) {
+        }
     }
 }

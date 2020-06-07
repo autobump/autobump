@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Settings</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <h1>AutoBump</h1>
+
+    <div class="jumbotron">
+        <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
+            It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
+            It then creates a pull-request for every outdated dependency</p>
+
+    </div>
+
+    <form class="form-group col-md-12" th:action="@{/loadRepoOverview}" method="get">
+        <p>Your settings have been successfully saved</p>
+        <button class="btn btn-primary" type="submit">Configure more repos</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class SpringSettingsRepositoryTest {
+    public static final String REPOSITORY_NAME = "TestMavenProject";
+
     @Autowired
     private SettingsRepository springSettingsRepository;
 
@@ -34,21 +36,52 @@ class SpringSettingsRepositoryTest {
 
     @Test
     void saveAllSettings() {
-        var setting = Setting.builder()
-                .key("com.h2database:h2:1.4.200")
-                .value("Minor")
-                .type(Setting.SettingsType.IGNORE)
-                .repositoryName("test")
-                .build();
-        var setting2 = Setting.builder()
-                .key("com.h2database:h2:1.4.199")
-                .value("Major")
-                .repositoryName("test")
-                .type(Setting.SettingsType.IGNORE)
-                .build();
+        Setting setting = createSetting1();
+        Setting setting2 = createSetting2();
         assertThat(springSettingsRepository.saveAllSettings(List.of(setting, setting2))
                 .containsAll(List.of(setting, setting2)));
     }
+
+    @Test
+    void findSettings(){
+        Setting setting = createSetting1();
+        Setting setting2 = createSetting2();
+        springSettingsRepository.saveSetting(setting);
+        springSettingsRepository.saveSetting(setting2);
+        assertThat(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME).size())
+                .isEqualTo(2);
+    }
+
+    @Test
+    void removeCronJob(){
+        Setting cronSetting = new Setting();
+        cronSetting.setRepositoryName(REPOSITORY_NAME);
+        cronSetting.setKey("cron");
+        cronSetting.setValue("true");
+        cronSetting.setType(Setting.SettingsType.CRON);
+        springSettingsRepository.saveSetting(cronSetting);
+        springSettingsRepository.removeCronJob(REPOSITORY_NAME);
+        assertThat(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME).size()).isEqualTo(0);
+    }
+
+    private Setting createSetting1() {
+        return Setting.builder()
+                .key("com.h2database:h2:1.4.200")
+                .value("Minor")
+                .type(Setting.SettingsType.IGNORE)
+                .repositoryName(REPOSITORY_NAME)
+                .build();
+    }
+
+    private Setting createSetting2() {
+        return Setting.builder()
+                .key("com.h2database:h2:1.4.199")
+                .value("Major")
+                .repositoryName(REPOSITORY_NAME)
+                .type(Setting.SettingsType.IGNORE)
+                .build();
+    }
+
 
     @Test
     void testgetIgnores() {
