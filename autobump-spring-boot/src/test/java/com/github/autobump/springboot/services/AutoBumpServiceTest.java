@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -108,15 +109,14 @@ class AutoBumpServiceTest {
     }
 
     @Test
-    void testSuccessfulExecute(CapturedOutput log) {
+    void testSuccessfulExecute() {
         makeStubs();
         when(repoRepository.findAll()).thenReturn(getDummyRepoList());
         var host = new AtlassianHost();
         host.setClientKey("test");
         host.setSharedSecret("test");
         repository.save(host);
-        testService.autoBump();
-        assertThat(log).contains("bumped repo: a_link, number of bumps: 0");
+        assertThatCode(() ->testService.autoBump()).doesNotThrowAnyException();
     }
 
     private void makeStubs() {
