@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -116,7 +115,7 @@ class AutoBumpServiceTest {
         host.setClientKey("test");
         host.setSharedSecret("test");
         repository.save(host);
-        assertThatCode(() -> testService.autoBump()).doesNotThrowAnyException();
+        assertThatCode(() ->testService.autoBump()).doesNotThrowAnyException();
     }
 
     private void makeStubs() {
