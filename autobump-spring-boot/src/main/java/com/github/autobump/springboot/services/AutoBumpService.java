@@ -79,4 +79,9 @@ public class AutoBumpService {
                     result.getNumberOfBumps()));
         }
     }
+
+    public void executeOnNewThread(String link) {
+        Thread thread = new Thread(() -> executeAutoBump(link));
+        thread.start();
+    }
 }

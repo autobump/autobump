@@ -48,7 +48,7 @@ public class SettingsController {
 
     @PostMapping("/selectRepositories")
     public ModelAndView selectRepositories(ModelAndView mav, @ModelAttribute RepositoryListDto dto) {
-        updateSelectedFieldsOfRepos(dto);
+        settingsService.updateSelectedFieldsOfRepos(dto);
         return loadRepoOverview(mav);
     }
 
@@ -63,9 +63,8 @@ public class SettingsController {
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
-        String repoName = settingsService.getRepository(repoId).getName();
-        RepositoryDto dto = settingsService.getSettingsForRepository(repoName);
-        mav.addObject("repoName", repoName);
+        RepositoryDto dto = settingsService.getRepositoryDto(repoId);
+        mav.addObject("repoName", dto.getName());
         mav.addObject("repo", dto);
         return mav;
     }
@@ -81,7 +80,7 @@ public class SettingsController {
     @PostMapping("/selectRepos")
     public ModelAndView selectRepos(ModelAndView mav, RepositoryListDto dto) {
         mav.setViewName("settings");
-        updateSelectedFieldsOfRepos(dto);
+        settingsService.updateSelectedFieldsOfRepos(dto);
         mav.addObject("repositories", settingsService.getMonitoredRepos());
         return mav;
     }
@@ -89,21 +88,9 @@ public class SettingsController {
     @GetMapping("/bump")
     public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") String repoId) {
         Repo repo = settingsService.getRepo(repoId);
-        doBumpOnOtherThread(repo);
+        autoBumpService.executeOnNewThread(repo.getLink());
         mav.setViewName("bumps");
         return mav;
-    }
-
-    private void doBumpOnOtherThread(Repo repo) {
-        Thread thread = new Thread(() -> autoBumpService.executeAutoBump(repo.getLink()));
-        thread.start();
-    }
-
-    private void updateSelectedFieldsOfRepos(@ModelAttribute RepositoryListDto dto) {
-        for (RepositoryDto repo: dto.getRepositories()
-             ) {
-            settingsService.updateRepo(repo);
-        }
     }
 
     @PostMapping("/saveSettings")

@@ -83,12 +83,11 @@ class GithubReleaseNotesSourceTest {
                 .isThrownBy(() -> githubReleaseNotesSource.getReleaseNotes(TEST_URL, TEST));
     }
 
-    /*@Test
-    void getReleaseNotes_ThrowsGithubNotFoundException() {
-        setupErrorStub(404);
-        assertThatExceptionOfType(GithubNotFoundException.class)
-                .isThrownBy(() -> githubReleaseNotesSource.getReleaseNotes(TEST_URL, TEST));
-    }*/
+    @Test
+    void getReleaseNotes_WhenGithubNotFoundReturnsNull() {
+        ReleaseNotes result = githubReleaseNotesSource.getReleaseNotes(TEST_URL, TEST);
+        assertThat(result).isNull();
+    }
 
     @Test
     void getReleaseNotes_ThrowsGithubApiException() {

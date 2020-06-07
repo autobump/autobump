@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -79,8 +80,7 @@ class SettingsControllerTest {
 
     @Test
     void settings() {
-        when(service.getRepository(MOCK_REPO_ID)).thenReturn(dummyRepoDto);
-        when(service.getSettingsForRepository(REPOSITORY_NAME)).thenReturn(dummyRepoDto);
+        when(service.getRepositoryDto(anyString())).thenReturn(dummyRepoDto);
         ModelAndView mav = settingsController.settings(new ModelAndView(), MOCK_REPO_ID);
         assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);
     }

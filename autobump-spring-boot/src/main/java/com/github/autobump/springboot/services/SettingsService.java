@@ -7,11 +7,13 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
+import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.transaction.Transactional;
 
@@ -209,5 +211,17 @@ public class SettingsService {
 
     public Repo getRepo(String repoId) {
         return repoRepository.getByRepoId(repoId);
+    }
+
+    public RepositoryDto getRepositoryDto(String repoId) {
+        String name = getRepo(repoId).getName();
+        return getSettingsForRepository(name);
+    }
+
+    public void updateSelectedFieldsOfRepos(@ModelAttribute RepositoryListDto dto) {
+        for (RepositoryDto repo: dto.getRepositories()
+        ) {
+            updateRepo(repo);
+        }
     }
 }
