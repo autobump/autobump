@@ -6,7 +6,6 @@ import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Version.UpdateType;
 
 import javax.inject.Named;
-
 import java.util.Collections;
 import java.util.Map;
 

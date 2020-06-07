@@ -7,7 +7,6 @@ import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.Workspace;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

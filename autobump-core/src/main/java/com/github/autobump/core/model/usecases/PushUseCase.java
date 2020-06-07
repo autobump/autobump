@@ -3,7 +3,6 @@ package com.github.autobump.core.model.usecases;
 import com.github.autobump.core.model.Bump;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.Workspace;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

@@ -6,10 +6,7 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.DependencyResolver;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.PullRequestResponse;
-import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

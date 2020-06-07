@@ -4,7 +4,6 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.events.PrClosedEvent;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;

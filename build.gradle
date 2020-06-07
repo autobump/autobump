@@ -120,7 +120,7 @@ task jar_cli(type: Jar) {
     from {
         configurations.childJarsCli.collect { zipTree(it) }
     } {
-        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'//, 'com/github/autobump/springboot/*'
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     }
     manifest {
         attributes 'Main-Class': 'com.github.autobump.cli.model.Autobump'

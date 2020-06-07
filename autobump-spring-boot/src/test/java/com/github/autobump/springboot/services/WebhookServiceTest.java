@@ -1,15 +1,8 @@
 package com.github.autobump.springboot.services;
 
 import com.github.autobump.bitbucket.model.BitBucketGitProviderUrlHelper;
-import com.github.autobump.core.model.DependencyBumper;
-import com.github.autobump.core.model.DependencyResolver;
-import com.github.autobump.core.model.GitClient;
-import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
-import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.SettingsRepository;
-import com.github.autobump.core.model.UseCaseConfiguration;
-import com.github.autobump.core.model.VersionRepository;
 import com.github.autobump.core.model.usecases.CommentCreatedUseCase;
 import com.github.autobump.core.model.usecases.PullRequestClosedUseCase;
 import com.github.autobump.core.model.usecases.RebaseUseCase;

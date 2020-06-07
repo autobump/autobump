@@ -8,8 +8,6 @@ import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.Workspace;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

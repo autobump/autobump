@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import java.net.URI;
 
 @Named

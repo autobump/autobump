@@ -30,10 +30,6 @@ public class MavenDependencyResolver implements DependencyResolver {
         this.mavenModelAnalyser = mavenModelAnalyser;
     }
 
-//    public MavenDependencyResolver() {
-//        this.mavenModelAnalyser = new MavenModelAnalyser();
-//    }
-
     @Override
     public Set<Dependency> resolve(Workspace workspace) {
         return resolve(workspace, new HashSet<>());

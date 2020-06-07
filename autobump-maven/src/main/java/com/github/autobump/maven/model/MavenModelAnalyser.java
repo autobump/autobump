@@ -12,7 +12,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;

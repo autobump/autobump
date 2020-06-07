@@ -7,7 +7,6 @@ import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 
 import javax.inject.Named;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
