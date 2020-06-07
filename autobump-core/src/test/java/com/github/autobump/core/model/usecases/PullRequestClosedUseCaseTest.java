@@ -9,6 +9,7 @@ import com.github.autobump.core.model.events.PrClosedEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -72,6 +73,11 @@ class PullRequestClosedUseCaseTest {
         @Override
         public List<Setting> saveAllSettings(List<Setting> settings) {
             return settings;
+        }
+
+        @Override
+        public List<Setting> getAllIgnores() {
+            return Collections.emptyList();
         }
 
         @Override

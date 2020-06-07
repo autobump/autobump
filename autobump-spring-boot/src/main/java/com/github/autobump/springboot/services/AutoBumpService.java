@@ -70,6 +70,7 @@ public class AutoBumpService {
                 .config(autobumpconfig.setupConfig())
                 .releaseNotesSource(new GithubReleaseNotesSource("https://api.github.com"))
                 .uri(URI.create(repo))
+                .settingsRepository(settingsRepository)
                 .build()
                 .doAutoBump();
         if (logger.isInfoEnabled()) {

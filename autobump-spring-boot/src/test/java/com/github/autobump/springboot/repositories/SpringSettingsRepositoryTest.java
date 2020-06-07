@@ -82,4 +82,16 @@ class SpringSettingsRepositoryTest {
                 .build();
     }
 
+
+    @Test
+    void testgetIgnores() {
+        var setting = Setting.builder()
+                .key("com.h2database:h2:1.4.200")
+                .value("Minor")
+                .type(Setting.SettingsType.IGNORE)
+                .repositoryName("test")
+                .build();
+        springSettingsRepository.saveSetting(setting);
+        assertThat(springSettingsRepository.getAllIgnores()).contains(setting);
+    }
 }
