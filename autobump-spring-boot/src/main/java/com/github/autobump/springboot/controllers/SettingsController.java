@@ -94,9 +94,14 @@ public class SettingsController {
     @GetMapping("/bump")
     public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") String repoId) {
         Repo repo = settingsService.getRepo(repoId);
-        autoBumpService.executeAutoBump(repo.getLink());
+        doBumpOnOtherThread(repo);
         mav.setViewName("bumps");
         return mav;
+    }
+
+    private void doBumpOnOtherThread(Repo repo) {
+        Thread thread = new Thread(() -> autoBumpService.executeAutoBump(repo.getLink()));
+        thread.start();
     }
 
     private void updateSelectedFieldsOfRepos(@ModelAttribute RepositoryListDto dto) {
