@@ -88,7 +88,7 @@ public class SettingsController {
     @GetMapping("/bump")
     public ModelAndView bump(ModelAndView mav, @RequestParam("repoId") String repoId) {
         Repo repo = settingsService.getRepo(repoId);
-        autoBumpService.executeOnNewThread(repo.getLink());
+        autoBumpService.executeAutoBump(repo.getLink());
         mav.setViewName("bumps");
         return mav;
     }

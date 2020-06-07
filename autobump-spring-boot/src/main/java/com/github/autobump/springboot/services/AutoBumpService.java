@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +66,7 @@ public class AutoBumpService {
         return settingsRepository.getCronSetting(repo.getName()) != null;
     }
 
+    @Async
     public void executeAutoBump(String repo) {
         var result = AutobumpUseCase.builder()
                 .config(autobumpconfig.setupConfig())
@@ -78,10 +80,5 @@ public class AutoBumpService {
                     repo,
                     result.getNumberOfBumps()));
         }
-    }
-
-    public void executeOnNewThread(String link) {
-        Thread thread = new Thread(() -> executeAutoBump(link));
-        thread.start();
     }
 }
