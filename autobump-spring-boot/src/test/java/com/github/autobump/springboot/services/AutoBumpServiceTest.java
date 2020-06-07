@@ -42,6 +42,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 class AutoBumpServiceTest {
+
+    @Mock
+    private SettingsRepository settingsRepository;
+
     @Autowired
     private AtlassianHostRepository repository;
 
@@ -51,31 +55,16 @@ class AutoBumpServiceTest {
     @Mock
     private RepoRepository repoRepository;
 
-    @Mock
-    private SettingsRepository settingsRepository;
-
     @Autowired
     @InjectMocks
     private AutoBumpService testService;
 
-    private Setting setting;
-
     @BeforeEach
     void setUp() {
+        when(settingsRepository.getCronSetting(any())).thenReturn(Setting.builder().value("gdsv").key("hdjsbfjl")
+                .repositoryName("dsffd").type(Setting.SettingsType.CRON).build());
         testService.setRepoRepository(repoRepository);
-        testService.setSettingsRepository(settingsRepository);
         var provider = Mockito.mock(GitProvider.class);
-        testService.setAutobumpconfig(autobumpconfig);
-        testService.setRepository(repository);
-        setting = Setting.builder()
-                .repositoryName("MultiModuleMavenProject")
-                .key("cron")
-                .type(Setting.SettingsType.CRON)
-                .value("true")
-                .build();
-        lenient().when(settingsRepository
-                .getCronSetting("MultiModuleMavenProject"))
-                .thenReturn(setting);
         lenient().when(provider.getRepos()).thenReturn(getDummyRepoList());
         lenient().when(autobumpconfig.getGitProvider()).thenReturn(provider);
     }
@@ -109,13 +98,13 @@ class AutoBumpServiceTest {
 
     @Test
     void testRuntimeException(CapturedOutput log) {
-        makeStubs();
+        when(repoRepository.findAll()).thenReturn(getDummyRepoList());
         var host = new AtlassianHost();
         host.setClientKey("test");
         host.setSharedSecret("test");
         repository.save(host);
         testService.autoBump();
-        assertThat(log).contains("Something went wrong while bumping: test");
+        assertThat(log).contains("Something went wrong while bumping: a_link");
     }
 
     @Test
@@ -127,7 +116,7 @@ class AutoBumpServiceTest {
         host.setSharedSecret("test");
         repository.save(host);
         testService.autoBump();
-        assertThat(log).contains("bumped repo: test, number of bumps: 0");
+        assertThat(log).contains("bumped repo: a_link, number of bumps: 0");
     }
 
     private void makeStubs() {
