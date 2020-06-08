@@ -61,9 +61,12 @@ public class DashBoardController {
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
-        RepositoryDto dto = settingsService.getRepositoryDto(repoId);
         Set<String> reviewers = settingsService.getReviewerNames(repoId);
         RepositoryDto dto = settingsService.getRepositoryDtoWithSettings(repoId);
+        dto.setRepoId(repoId);
+        if (dto.getReviewer() != null){
+            mav.addObject("reviewerName", dto.getReviewer());
+        }
         mav.addObject("repoName", dto.getName());
         mav.addObject("reviewerNames", reviewers);
         mav.addObject("repo", dto);

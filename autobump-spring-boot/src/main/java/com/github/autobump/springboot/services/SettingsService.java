@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -108,21 +110,43 @@ public class SettingsService {
     }
 
     public List<RepositoryDto> getMonitoredRepos() {
-        return repoRepository.findAll()
+        var repos = repoRepository.findAll()
                 .stream()
                 .filter(Repo::isSelected)
                 .map(repo -> modelMapper.map(repo, RepositoryDto.class))
                 .collect(Collectors.toUnmodifiableList());
+        return repos;
     }
 
-    public RepositoryDto getSettingsForRepository(String repoName) {
+    public RepositoryDto getSettingsForRepository(String repoName, String repoId) {
         List<Setting> settings = settingsRepository.findAllSettingsForDependencies(repoName);
         RepositoryDto dto = new RepositoryDto();
+        dto.setRepoId(repoId);
         dto.setDependencies(getIgnoredDependenciesFromSettings(settings));
-        dto.setReviewer(getReviewerFromSetting(settings));
+        String reviewerUuid = getReviewerFromSetting(settings);
+        if (!reviewerUuid.equals("none") && !reviewerUuid.equals("")){
+            dto.setReviewer(getReviewerName(dto.getRepoId(), reviewerUuid));
+        }
+        else{
+            dto.setReviewer("none");
+        }
         dto.setCronJob(getIsCronJob(settings));
         dto.setName(repoName);
         return dto;
+    }
+
+    private String getReviewerName(String repoId, String uuid){
+        var repo = getRepo(repoId);
+        Map<String, String> members = autobumpconfig.getGitProvider().getMembersFromWorkspace(repo);
+        String name = "";
+        var optionalName = members.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue(), uuid))
+                .map(Map.Entry::getKey)
+                .findFirst();
+        if(optionalName.isPresent()) {
+            name = optionalName.get();}
+        return name;
     }
 
     private String getReviewerFromSetting(List<Setting> settings) {
@@ -197,8 +221,11 @@ public class SettingsService {
 
     public void saveSettings(RepositoryDto dto) {
         saveCronJob(dto.isCronJob(), dto.getName());
-        if (dto.getReviewer() != null) {
-            saveReviewer(dto.getName(), dto.getReviewer());
+        if (dto.getReviewer() != "none") {
+            Repo repo = getRepo(dto.getRepoId());
+            Map<String, String> members = autobumpconfig.getGitProvider().getMembersFromWorkspace(repo);
+            String uuid = members.get(dto.getReviewer());
+            saveReviewer(dto.getName(), uuid);
         }
     }
 
@@ -231,7 +258,8 @@ public class SettingsService {
 
     public RepositoryDto getRepositoryDtoWithSettings(String repoId) {
         String name = getRepo(repoId).getName();
-        return getSettingsForRepository(name);
+        RepositoryDto dto = getSettingsForRepository(name, repoId);
+        return dto;
     }
 
     public void updateSelectedFieldsOfRepos(@ModelAttribute RepositoryListDto dto) {
@@ -243,7 +271,9 @@ public class SettingsService {
 
     public Set<String> getReviewerNames(String repoId) {
         var repo = getRepo(repoId);
-        Map<String, String> members = autobumpconfig.getGitProvider().getMembersFromWorkspace(repo);
+        Map<String, String> members = new HashMap<>();
+        members.put("none", "none");
+        members.putAll(autobumpconfig.getGitProvider().getMembersFromWorkspace(repo));
         return members.keySet();
     }
 }

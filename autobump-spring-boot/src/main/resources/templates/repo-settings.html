@@ -39,6 +39,11 @@
                                th:field="*{name}"
                                th:value="*{name}">
                     </td>
+                    <td style="display: none">
+                        <input hidden
+                               th:field="*{repoId}"
+                               th:value="*{repoId}">
+                    </td>
                     <td><input class="form-check-input" type="checkbox"
                                th:checked="*{cronJob}"
                                th:field="*{cronJob}">
@@ -52,7 +57,8 @@
                         <select class="selectpicker form-control" th:field="*{reviewer}">
                             <option th:each="rev : ${reviewerNames}"
                                     th:value="${rev}"
-                                    th:text="${rev}">
+                                    th:text="${rev}"
+                                    th:selected="${reviewerName}">
                             </option>
                         </select>
                     </td>
