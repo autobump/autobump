@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -61,26 +63,17 @@ class SettingsServiceTest {
         List<DependencyDto> expectedDependencyList = getDependencyDtos();
         dummyRepoDto.setName(REPOSITORY_NAME);
         dummyRepoDto.setCronJob(true);
-        dummyRepoDto.setReviewer("name of a reviewer");
+        dummyRepoDto.setRepoId("a");
+        dummyRepoDto.setReviewer("reviewer_name");
         dummyRepoDto.setDependencies(expectedDependencyList);
     }
 
     private List<DependencyDto> getDependencyDtos() {
         List<DependencyDto> expectedDependencyList = new ArrayList<>();
-        expectedDependencyList.add(DependencyDto.builder()
-                .groupName("org.projectlombok")
-                .artifactId("lombok")
-                .versionNumber("1.18.12")
-                .ignoreMajor(true)
-                .ignoreMinor(false)
-                .build());
-        expectedDependencyList.add(DependencyDto.builder()
-                .groupName("com.google.code.gson")
-                .artifactId("gson")
-                .versionNumber("2.2.2")
-                .ignoreMinor(true)
-                .ignoreMajor(false)
-                .build());
+        expectedDependencyList.add(DependencyDto.builder().groupName("org.projectlombok")
+                .artifactId("lombok").versionNumber("1.18.12").ignoreMajor(true).ignoreMinor(false).build());
+        expectedDependencyList.add(DependencyDto.builder().groupName("com.google.code.gson")
+                .artifactId("gson").versionNumber("2.2.2").ignoreMinor(true).ignoreMajor(false).build());
         return expectedDependencyList;
     }
 
@@ -136,36 +129,34 @@ class SettingsServiceTest {
 
     @Test
     void getSettingsForRepository() {
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
         when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(getDummySettings());
-        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getDependencies().size()).isEqualTo(2);
-    }
-
-    @Test
-    void getSettingsOnlyReviewer(){
-        List<Setting> settingsOnlyReviewer = new ArrayList<>();
-        settingsOnlyReviewer.add(getReviewerSetting());
-        when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
-                .thenReturn(settingsOnlyReviewer);
-        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getReviewer()).isNotNull();
+        Map<String, String> members = new HashMap<>();
+        members.put("reviewer_name", "reviewer_uuid");
+        when(gitProvider.getMembersFromWorkspace(any())).thenReturn(members);
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME, "a").getDependencies().size()).isEqualTo(2);
     }
 
     @Test
     void getSettingsNoReviewer(){
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        when(gitProvider.getMembersFromWorkspace(any())).thenReturn(Collections.emptyMap());
         List<Setting> settingsNoReviewer = new ArrayList<>();
         settingsNoReviewer.add(getCronjobSetting());
         when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(settingsNoReviewer);
-        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getReviewer()).isNotNull();
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME, "a").getReviewer()).isNotNull();
     }
 
     @Test
     void getSettingsNoCronJob(){
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
         List<Setting> settingsNoCronJob = new ArrayList<>();
         settingsNoCronJob.add(getReviewerSetting());
         when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(settingsNoCronJob);
-        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getReviewer()).isNotNull();
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME, "a").getReviewer()).isNotNull();
     }
 
     @Test
@@ -191,6 +182,7 @@ class SettingsServiceTest {
 
     @Test
     void saveSettings() {
+        mockGitProviderReturnMembers();
         lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(getDummySettings());
         assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
@@ -199,11 +191,15 @@ class SettingsServiceTest {
     @Test
     void saveSettings_without_reviewer(){
         RepositoryDto repositoryDtoWithoutReviewer = new RepositoryDto();
+        repositoryDtoWithoutReviewer.setRepoId("c");
+        repositoryDtoWithoutReviewer.setName(REPOSITORY_NAME);
+        repositoryDtoWithoutReviewer.setReviewer("none");
         assertThatCode(() -> service.saveSettings(repositoryDtoWithoutReviewer)).doesNotThrowAnyException();
     }
 
     @Test
     void saveSettings_removeCronJob(){
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
         lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(getDummySettings());
         dummyRepoDto.setCronJob(false);
@@ -212,13 +208,20 @@ class SettingsServiceTest {
 
     @Test
     void getRepositoryDtoWithSettings(){
+        mockGitProviderReturnMembers();
         RepositoryDto dummyRepoWithSettings = new RepositoryDto();
         dummyRepoWithSettings.setDependencies(getDependencyDtos());
-        lenient().when(springSettingsRepository
-                .findAllSettingsForDependencies(anyString()))
+        lenient().when(springSettingsRepository.findAllSettingsForDependencies(anyString()))
                 .thenReturn(getDummySettings());
         lenient().when(repoRepository.getByRepoId(anyString())).thenReturn(getDummyRepo1());
         assertThat(service.getRepositoryDtoWithSettings("a")).isEqualToComparingFieldByField(dummyRepoDto);
+    }
+
+    private void mockGitProviderReturnMembers() {
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        Map<String, String> members = new HashMap<>();
+        members.put("reviewer_name", "reviewer_uuid");
+        when(gitProvider.getMembersFromWorkspace(any())).thenReturn(members);
     }
 
     @Test
@@ -268,16 +271,12 @@ class SettingsServiceTest {
     }
 
     private Setting getCronjobSetting() {
-        return Setting.builder()
-                    .key("cron")
-                    .type(Setting.SettingsType.CRON)
-                    .value("true")
-                    .repositoryName(REPOSITORY_NAME)
-                    .build();
+        return Setting.builder().key("cron").type(Setting.SettingsType.CRON).value("true")
+                .repositoryName(REPOSITORY_NAME).build();
     }
 
     private Setting getReviewerSetting() {
-        return Setting.builder().key("reviewer").type(Setting.SettingsType.REVIEWER).value("name of a reviewer")
+        return Setting.builder().key("reviewer").type(Setting.SettingsType.REVIEWER).value("reviewer_uuid")
                 .repositoryName(REPOSITORY_NAME).build();
     }
 

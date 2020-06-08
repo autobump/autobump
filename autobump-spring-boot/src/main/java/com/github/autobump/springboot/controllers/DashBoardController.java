@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @Setter
@@ -61,14 +60,13 @@ public class DashBoardController {
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
-        Set<String> reviewers = settingsService.getReviewerNames(repoId);
         RepositoryDto dto = settingsService.getRepositoryDtoWithSettings(repoId);
         dto.setRepoId(repoId);
         if (dto.getReviewer() != null){
             mav.addObject("reviewerName", dto.getReviewer());
         }
         mav.addObject("repoName", dto.getName());
-        mav.addObject("reviewerNames", reviewers);
+        mav.addObject("reviewerNames", settingsService.getContributerNamesFromWorkspace(repoId));
         mav.addObject("repo", dto);
         return mav;
     }
