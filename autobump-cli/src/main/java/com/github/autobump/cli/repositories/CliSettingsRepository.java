@@ -4,7 +4,6 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +17,13 @@ public class CliSettingsRepository implements SettingsRepository {
 
     @Override
     public Setting saveSetting(Setting setting) {
+        settingList.add(setting);
         return setting;
     }
 
     @Override
     public List<Setting> saveAllSettings(List<Setting> settings) {
+        settingList.addAll(settings);
         return settingList;
     }
 
@@ -39,12 +40,12 @@ public class CliSettingsRepository implements SettingsRepository {
     }
 
     @Override
-    public void removeCronJob(String repoName) {
-
-    }
+    public void removeCronJob(String repoName) {}
 
     @Override
     public List<Setting> getAllIgnores() {
-        return Collections.emptyList();
+        return settingList.stream()
+                .filter(s -> s.getType().equals(Setting.SettingsType.IGNORE))
+                .collect(Collectors.toUnmodifiableList());
     }
 }
