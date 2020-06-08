@@ -81,6 +81,10 @@ class PullRequestClosedUseCaseTest {
         }
 
         @Override
+        public void deleteAll() {
+        }
+
+        @Override
         public List<Setting> findAllSettingsForDependencies(String repoName) {
             return null;
         }

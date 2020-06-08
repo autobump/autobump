@@ -8,6 +8,7 @@ import com.github.autobump.core.model.Setting;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
+import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,30 +32,22 @@ import static org.mockito.Mockito.when;
 @ExtendWith({MockitoExtension.class})
 class SettingsServiceTest {
     public static final String REPOSITORY_NAME = "TestMavenProject";
-
     @Autowired
     AtlassianHostRepository atlassianHostRepository;
-
     @Mock
     ModelMapper modelMapper;
-
     @Mock
     SpringSettingsRepository springSettingsRepository;
-
     @Mock
     RepoRepository repoRepository;
-
     @Mock
     Autobumpconfig autobumpconfig;
-
     @Mock
     GitProvider gitProvider;
-
     @Autowired
     SettingsService service;
     List<Repo> dummyRepos;
     RepositoryDto dummyRepoDto;
-
 
     @BeforeEach
     void setUp() {
@@ -66,8 +59,6 @@ class SettingsServiceTest {
     private void setupDummyRepoDto() {
         dummyRepoDto = new RepositoryDto();
         List<DependencyDto> expectedDependencyList = getDependencyDtos();
-        dummyRepoDto.setRepoId("a");
-        dummyRepoDto.setSelected(true);
         dummyRepoDto.setName(REPOSITORY_NAME);
         dummyRepoDto.setCronJob(true);
         dummyRepoDto.setReviewer("name of a reviewer");
@@ -82,6 +73,13 @@ class SettingsServiceTest {
                 .versionNumber("1.18.12")
                 .ignoreMajor(true)
                 .ignoreMinor(false)
+                .build());
+        expectedDependencyList.add(DependencyDto.builder()
+                .groupName("com.google.code.gson")
+                .artifactId("gson")
+                .versionNumber("2.2.2")
+                .ignoreMinor(true)
+                .ignoreMajor(false)
                 .build());
         return expectedDependencyList;
     }
@@ -140,7 +138,7 @@ class SettingsServiceTest {
     void getSettingsForRepository() {
         when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(getDummySettings());
-        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getDependencies().size()).isEqualTo(1);
+        assertThat(service.getSettingsForRepository(REPOSITORY_NAME).getDependencies().size()).isEqualTo(2);
     }
 
     @Test
@@ -179,7 +177,9 @@ class SettingsServiceTest {
 
     @Test
     void updateRepo() {
-        when(repoRepository.getByRepoId("a")).thenReturn(getDummyRepo1());
+        dummyRepoDto.setRepoId("a");
+        dummyRepoDto.setSelected(true);
+        lenient().when(repoRepository.getByRepoId("a")).thenReturn(getDummyRepo1());
         assertThatCode(() -> service.updateRepo(dummyRepoDto)).doesNotThrowAnyException();
     }
 
@@ -202,14 +202,34 @@ class SettingsServiceTest {
         assertThatCode(() -> service.saveSettings(repositoryDtoWithoutReviewer)).doesNotThrowAnyException();
     }
 
-
     @Test
     void saveSettings_removeCronJob(){
         lenient().when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
                 .thenReturn(getDummySettings());
         dummyRepoDto.setCronJob(false);
         assertThatCode(() -> service.saveSettings(dummyRepoDto)).doesNotThrowAnyException();
+    }
 
+    @Test
+    void getRepositoryDtoWithSettings(){
+        RepositoryDto dummyRepoWithSettings = new RepositoryDto();
+        dummyRepoWithSettings.setDependencies(getDependencyDtos());
+        lenient().when(springSettingsRepository
+                .findAllSettingsForDependencies(anyString()))
+                .thenReturn(getDummySettings());
+        lenient().when(repoRepository.getByRepoId(anyString())).thenReturn(getDummyRepo1());
+        assertThat(service.getRepositoryDtoWithSettings("a")).isEqualToComparingFieldByField(dummyRepoDto);
+    }
+
+    @Test
+    void updateSelectedFieldsOfRepos(){
+        dummyRepoDto.setRepoId("a");
+        dummyRepoDto.setSelected(true);
+        List<RepositoryDto> dtos = new ArrayList<>();
+        dtos.add(dummyRepoDto);
+        RepositoryListDto dto = new RepositoryListDto(dtos);
+        lenient().when(repoRepository.getByRepoId(anyString())).thenReturn(getDummyRepo1());
+        assertThatCode(() -> service.updateSelectedFieldsOfRepos(dto)).doesNotThrowAnyException();
     }
 
     private List<Repo> getDummyRepoList() {
@@ -223,7 +243,7 @@ class SettingsServiceTest {
 
     private Repo getDummyRepo1() {
         Repo repo2 = new Repo();
-        repo2.setName("TestMavenProject");
+        repo2.setName(REPOSITORY_NAME);
         repo2.setSelected(true);
         repo2.setRepoId("a");
         return repo2;
@@ -239,12 +259,11 @@ class SettingsServiceTest {
 
     private List<Setting> getDummySettings(){
         List<Setting> dummies = new ArrayList<>();
-        Setting s1 = getIgnoreSetting();
-        dummies.add(s1);
-        Setting s2 = getReviewerSetting();
-        dummies.add(s2);
-        Setting s3 = getCronjobSetting();
-        dummies.add(s3);
+        dummies.add(getIgnoreSetting1());
+        dummies.add(getIgnoreSetting2());
+        dummies.add(getIgnoreSetting3());
+        dummies.add(getReviewerSetting());
+        dummies.add(getCronjobSetting());
         return dummies;
     }
 
@@ -258,22 +277,22 @@ class SettingsServiceTest {
     }
 
     private Setting getReviewerSetting() {
-        return Setting.builder()
-                    .key("reviewer")
-                    .type(Setting.SettingsType.REVIEWER)
-                    .value("name of a reviewer")
-                    .repositoryName(REPOSITORY_NAME)
-                    .build();
+        return Setting.builder().key("reviewer").type(Setting.SettingsType.REVIEWER).value("name of a reviewer")
+                .repositoryName(REPOSITORY_NAME).build();
     }
 
-    private Setting getIgnoreSetting() {
-        return Setting.builder()
-                    .repositoryName(REPOSITORY_NAME)
-                    .key("org.projectlombok:lombok:1.18.12")
-                    .type(Setting.SettingsType.IGNORE)
-                    .value("major")
-                    .build();
+    private Setting getIgnoreSetting1() {
+        return Setting.builder().repositoryName(REPOSITORY_NAME).key("org.projectlombok:lombok:1.18.12")
+                    .type(Setting.SettingsType.IGNORE).value("Major").build();
     }
 
+    private Setting getIgnoreSetting2() {
+        return Setting.builder().repositoryName(REPOSITORY_NAME).key("junit:junit").type(Setting.SettingsType.IGNORE)
+                .value("3.8.1").build();
+    }
 
+    private Setting getIgnoreSetting3() {
+        return Setting.builder().repositoryName(REPOSITORY_NAME).key("com.google.code.gson:gson:2.2.2")
+                .type(Setting.SettingsType.IGNORE).value("Minor").build();
+    }
 }

@@ -80,7 +80,7 @@ class DashBoardControllerTest {
 
     @Test
     void settings() {
-        when(service.getRepositoryDto(anyString())).thenReturn(dummyRepoDto);
+         when(service.getRepositoryDtoWithSettings(anyString())).thenReturn(dummyRepoDto);
         ModelAndView mav = dashBoardController.settings(new ModelAndView(), MOCK_REPO_ID);
         assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);
     }

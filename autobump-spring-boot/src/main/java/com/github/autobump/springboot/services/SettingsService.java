@@ -153,20 +153,35 @@ public class SettingsService {
                 .collect(Collectors.toList());
         for (Setting setting : depSettings
         ) {
-            DependencyDto dep = extractDependencyFromSettingKey(setting.getKey());
-            dep.setIgnoreMajor(setting.getValue().equals("major"));
-            dep.setIgnoreMinor(setting.getValue().equals("minor"));
-            dtos.add(dep);
+            DependencyDto dep = extractDependencyFromSettingKey(setting.getKey(), setting.getValue());
+            if (dep != null){
+                dep.setIgnoreMajor(setting.getValue().equals("Major"));
+                dep.setIgnoreMinor(setting.getValue().equals("Minor"));
+                dtos.add(dep);
+            }
         }
         return dtos;
     }
 
-    private DependencyDto extractDependencyFromSettingKey(String key) {
-        DependencyDto dep = new DependencyDto();
+    private DependencyDto extractDependencyFromSettingKey(String key, String value) {
         String[] elements = key.split(":");
+        if (elements.length > 2){
+            return getDependencyDto(value, elements);
+        }
+        return null;
+    }
+
+    private DependencyDto getDependencyDto(String value, String... elements) {
+        DependencyDto dep = new DependencyDto();
         dep.setGroupName(elements[0]);
         dep.setArtifactId(elements[1]);
         dep.setVersionNumber(elements[2]);
+        if ("Major".equals(value)){
+            dep.setIgnoreMajor(true);
+        }
+        if ("Minor".equals(value)){
+            dep.setIgnoreMinor(true);
+        }
         return dep;
     }
 
@@ -214,7 +229,7 @@ public class SettingsService {
         return repoRepository.getByRepoId(repoId);
     }
 
-    public RepositoryDto getRepositoryDto(String repoId) {
+    public RepositoryDto getRepositoryDtoWithSettings(String repoId) {
         String name = getRepo(repoId).getName();
         return getSettingsForRepository(name);
     }

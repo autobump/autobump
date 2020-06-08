@@ -71,10 +71,10 @@
                     <th>Version</th>
                 </div>
                 <div class="col-md-1">
-                    <th>Ignore major</th>
+                    <th>Major ignored</th>
                 </div>
                 <div class="col-md-1">
-                    <th>Ignore minor</th>
+                    <th>Minor ignored</th>
                 </div>
             </div>
             <div class="form-row" th:each="dep, stat : ${repo.dependencies}">
@@ -98,7 +98,7 @@
                 </div>
                 <div class="form-group col-md-1">
                     <td>
-                        <input class="form-check-input" type="checkbox"
+                        <input type="checkbox" disabled="disabled"
                                th:name="|repositories(${stat.index})|"
                                th:field="*{dependencies[__${stat.index}__].ignoreMajor}"
                                th:value="*{dependencies[__${stat.index}__].isIgnoreMajor()}"
@@ -107,7 +107,7 @@
                 </div>
                 <div class="form-group col-md-1">
                     <td>
-                        <input type="checkbox"
+                        <input type="checkbox" disabled="disabled"
                                th:name="|repositories(${stat.index})|"
                                th:field="*{dependencies[__${stat.index}__].ignoreMinor}"
                                th:value="*{dependencies[__${stat.index}__].isIgnoreMinor()}"

@@ -63,6 +63,7 @@ public class DashBoardController {
         mav.setViewName("repo-settings");
         RepositoryDto dto = settingsService.getRepositoryDto(repoId);
         Set<String> reviewers = settingsService.getReviewerNames(repoId);
+        RepositoryDto dto = settingsService.getRepositoryDtoWithSettings(repoId);
         mav.addObject("repoName", dto.getName());
         mav.addObject("reviewerNames", reviewers);
         mav.addObject("repo", dto);
