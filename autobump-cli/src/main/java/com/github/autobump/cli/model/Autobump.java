@@ -30,10 +30,10 @@ import java.util.concurrent.Callable;
 public class Autobump implements Callable<AutobumpResult> {
     @Spec
     private static CommandSpec spec;
-    @Mixin
-    AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
     private final DependencyResolver dependencyResolver = new MavenDependencyResolver();
     private final DependencyBumper dependencyBumper = new MavenDependencyBumper();
+    @Mixin
+    private final AutobumpPropertiesProvider properties = AutobumpPropertiesProvider.getInstance();
     private ReleaseNotesSource releaseNotesSource;
     private VersionRepository versionRepository;
     private GitClient gitClient;
@@ -44,7 +44,7 @@ public class Autobump implements Callable<AutobumpResult> {
         CommandLine cmd = new CommandLine(new Autobump());
         cmd.execute(args);
         AutobumpResult result = cmd.getExecutionResult();
-        spec.commandLine().getOut().println("amountBumped: " + result.getNumberOfBumps());
+        spec.commandLine().getOut().println(result == null ? "" : "amountBumped: " + result.getNumberOfBumps());
     }
 
     @Override

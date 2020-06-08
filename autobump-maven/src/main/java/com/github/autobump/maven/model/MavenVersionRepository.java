@@ -5,9 +5,10 @@ import com.github.autobump.core.model.Dependency;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.VersionRepository;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +22,12 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class MavenVersionRepository implements VersionRepository {
 
     private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
     private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(5);
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(MavenVersionRepository.class);
 
     @NonNull
     private final String baseUrl;
@@ -64,7 +66,7 @@ public class MavenVersionRepository implements VersionRepository {
         } catch (XmlPullParserException e) {
             throw new DependencyParserException("Something went wrong while parsing the xml", e);
         } catch (IOException e) {
-            log.warn("Unable to read maven-metadata.xml for dependency {}", dependency, e);
+            LOGGER.warn("Unable to read maven-metadata.xml for dependency {}", dependency, e);
         }
 
         return Collections.emptySet();

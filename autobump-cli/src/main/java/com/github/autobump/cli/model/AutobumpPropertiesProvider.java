@@ -9,7 +9,12 @@ import java.util.Map;
 
 @Getter
 @Command(mixinStandardHelpOptions = true, name = "autobump",
-        description = "automatically creates a pull-request for every outdated dependency in a project")
+        description = "%nAutobump automatically creates a pull-request for every outdated " +
+                "dependency in a Bitbucket repository. Provide at least a username, password " +
+                "and project repository url%n",
+        version = {"Version: @|yellow Autobump 1.0|@"},
+        footer = "Copyright(c) 2020 Xplore - distributed under the terms of the MIT license" +
+                "%nvisit https://github.com/autobump/autobump for more information")
 public final class AutobumpPropertiesProvider {
     private static AutobumpPropertiesProvider instance;
     @Option(names = {"-u", "--username"}, description = "User name for your remote repository", required = true)
