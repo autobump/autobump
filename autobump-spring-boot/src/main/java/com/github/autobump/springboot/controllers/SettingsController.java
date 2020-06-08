@@ -1,15 +1,12 @@
 package com.github.autobump.springboot.controllers;
 
-import com.atlassian.connect.spring.AtlassianHostRepository;
 import com.atlassian.connect.spring.IgnoreJwt;
 import com.github.autobump.core.model.Repo;
-import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,13 +20,13 @@ import java.util.List;
 @Setter
 @IgnoreJwt
 public class SettingsController {
-    @Autowired
-    SettingsService settingsService;
 
+    private SettingsService settingsService;
     private AutoBumpService autoBumpService;
 
-    public SettingsController(AtlassianHostRepository repository, Autobumpconfig autobumpconfig) {
-        autoBumpService = new AutoBumpService(repository, autobumpconfig);
+    public SettingsController(AutoBumpService autoBumpService, SettingsService settingsService) {
+        this.autoBumpService = autoBumpService;
+        this.settingsService = settingsService;
     }
 
 
