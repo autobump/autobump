@@ -13,6 +13,9 @@ sourceCompatibility = 11
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://packages.atlassian.com/maven-public/"
+    }
 }
 
 subprojects {

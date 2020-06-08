@@ -52,7 +52,7 @@ public class AutobumpUseCase {
     }
 
     private void postCommentOnPullRequest(PullRequestResponse pullRequestResponse, String commentContent) {
-        if (!commentContent.isBlank()) {
+        if (!commentContent.isBlank() && pullRequestResponse.getCommentCount() == 0) {
             PostCommentOnPullRequestUseCase.builder()
                     .gitProvider(config.getGitProvider())
                     .urlHelper(config.getGitProviderUrlHelper())
