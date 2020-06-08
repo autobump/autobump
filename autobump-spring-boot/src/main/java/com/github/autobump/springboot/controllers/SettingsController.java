@@ -60,7 +60,7 @@ public class SettingsController {
     @GetMapping("/settings")
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
-        RepositoryDto dto = settingsService.getRepositoryDto(repoId);
+        RepositoryDto dto = settingsService.getRepositoryDtoWithSettings(repoId);
         mav.addObject("repoName", dto.getName());
         mav.addObject("repo", dto);
         return mav;

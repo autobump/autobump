@@ -40,12 +40,19 @@ public class CliSettingsRepository implements SettingsRepository {
     }
 
     @Override
-    public void removeCronJob(String repoName) {}
+    public void removeCronJob(String repoName) {
+        // unused
+    }
 
     @Override
     public List<Setting> getAllIgnores() {
         return settingList.stream()
                 .filter(s -> s.getType().equals(Setting.SettingsType.IGNORE))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public void deleteAll() {
+        settingList.clear();
     }
 }

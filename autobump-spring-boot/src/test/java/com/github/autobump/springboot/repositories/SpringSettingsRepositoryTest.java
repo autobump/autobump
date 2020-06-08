@@ -2,6 +2,7 @@ package com.github.autobump.springboot.repositories;
 
 import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ class SpringSettingsRepositoryTest {
 
     @Autowired
     private SettingsRepository springSettingsRepository;
+
+    @BeforeEach
+    void setUp(){
+        springSettingsRepository.deleteAll();
+    }
 
     @Test
     void saveSetting() {
@@ -53,15 +59,25 @@ class SpringSettingsRepositoryTest {
     }
 
     @Test
+    void getCronSetting(){
+        createAndSaveCronSetting();
+        assertThat(springSettingsRepository.getCronSetting(REPOSITORY_NAME)).isNotNull();
+    }
+
+    @Test
     void removeCronJob(){
+        createAndSaveCronSetting();
+        springSettingsRepository.removeCronJob(REPOSITORY_NAME);
+        assertThat(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME).size()).isEqualTo(0);
+    }
+
+    private void createAndSaveCronSetting() {
         Setting cronSetting = new Setting();
         cronSetting.setRepositoryName(REPOSITORY_NAME);
         cronSetting.setKey("cron");
         cronSetting.setValue("true");
         cronSetting.setType(Setting.SettingsType.CRON);
         springSettingsRepository.saveSetting(cronSetting);
-        springSettingsRepository.removeCronJob(REPOSITORY_NAME);
-        assertThat(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME).size()).isEqualTo(0);
     }
 
     private Setting createSetting1() {

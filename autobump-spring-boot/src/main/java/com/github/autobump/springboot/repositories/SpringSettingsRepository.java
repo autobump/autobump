@@ -52,4 +52,9 @@ public class SpringSettingsRepository implements SettingsRepository {
                 .filter(setting -> setting.getType().equals(IGNORE))
                 .collect(Collectors.toUnmodifiableList());
     }
+
+    @Override
+    public void deleteAll() {
+        jpaSettingsRepository.deleteAll();
+    }
 }
