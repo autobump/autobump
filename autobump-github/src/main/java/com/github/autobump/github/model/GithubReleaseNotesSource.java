@@ -9,6 +9,9 @@ import feign.jackson.JacksonDecoder;
 
 
 public class GithubReleaseNotesSource implements ReleaseNotesSource {
+
+    private static final String INVISIBLE_SPACE = "\u200B";
+
     private final GithubApi githubApi;
     private final ReleaseNotesUrlHelper releaseNotesUrlHelper;
 
@@ -24,18 +27,21 @@ public class GithubReleaseNotesSource implements ReleaseNotesSource {
     public ReleaseNotes getReleaseNotes(String projectUrl, String versionNumber) {
         String ownerName = releaseNotesUrlHelper.getOwnerName(projectUrl);
         String repoName = releaseNotesUrlHelper.getRepoName(projectUrl);
-        try{
+        try {
             return githubApi.getAllReleaseNotes(ownerName, repoName).stream()
                     .filter(versionInformationDto -> versionInformationDto.getTagName().endsWith(versionNumber))
                     .map(versionInformationDto ->
                             new ReleaseNotes(versionInformationDto.getHtmlUrl(),
                                     versionInformationDto.getTagName(),
-                                    versionInformationDto.getBody()))
+                                    removeUsernameMentionsFromBody(versionInformationDto.getBody())))
                     .findFirst()
                     .orElse(null);
-        }
-        catch(GithubNotFoundException g){
+        } catch (GithubNotFoundException g) {
             return null;
         }
+    }
+
+    private String removeUsernameMentionsFromBody(String body) {
+        return body.replace("@", "@" + INVISIBLE_SPACE);
     }
 }
