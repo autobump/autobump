@@ -12,4 +12,5 @@ public class PullRequestResponse {
     String title;
     int id;
     String state;
+    int commentCount;
 }

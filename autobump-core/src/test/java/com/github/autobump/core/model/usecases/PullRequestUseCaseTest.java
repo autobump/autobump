@@ -135,6 +135,7 @@ class PullRequestUseCaseTest {
                 .title(pullRequest.getTitle())
                 .id(5)
                 .state("OPEN")
+                .commentCount(0)
                 .build();
     }
 

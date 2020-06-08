@@ -39,11 +39,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("PMD.TooManyFields")
 @ExtendWith(MockitoExtension.class)
 class AutobumpUseCaseTest {
-    public static final String REPOSITORY_URL = "http://www.test.test";
-    public static final String TEST_NAME = "testName";
+    private static final String REPOSITORY_URL = "http://www.test.test";
+    private static final String TEST_NAME = "testName";
     private static final String TEST_PROJ_URL = "https://github.com/testprojecturl";
+    private static final String TEST_REL_NOTES_CONTENT = "release notes content";
     private final Workspace workspace = new Workspace("");
     @Mock
     private GitProvider gitProvider;
@@ -68,7 +70,7 @@ class AutobumpUseCaseTest {
     private TestVersion tv1;
     private List<Dependency> dependencyList;
     private UseCaseConfiguration config;
-
+    private int prResponseCommentCount;
 
     @BeforeEach
     void setUp() throws URISyntaxException {
@@ -83,6 +85,7 @@ class AutobumpUseCaseTest {
                 .dependencyBumper(dependencyBumper)
                 .gitClient(gitClient)
                 .build();
+        prResponseCommentCount = 0;
     }
 
     private List<Dependency> createDependencies() {
@@ -129,26 +132,14 @@ class AutobumpUseCaseTest {
     void doAutoBump() {
         when(gitProvider.makePullRequest(any())).thenReturn(PullRequestResponse.builder().id(5).build());
         setUpdoAutoBumpMocks_forTestSingleBump();
-        var result = AutobumpUseCase.builder()
-                .config(config)
-                .uri(uri)
-                .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
-                .build()
-                .doAutoBump();
+        var result = buildAutobumpUseCase().doAutoBump();
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
 
     @Test
     void doAutoBump_combinedDependencies() {
         setUpdoAutoBump_combinedDependenciesMocks();
-        var result = AutobumpUseCase.builder()
-                .config(config)
-                .uri(uri)
-                .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
-                .build()
-                .doAutoBump();
+        var result = buildAutobumpUseCase().doAutoBump();
         verify(gitProvider, times(1)).makePullRequest(any());
         assertThat(result.getNumberOfBumps()).isEqualTo(1);
     }
@@ -157,31 +148,25 @@ class AutobumpUseCaseTest {
     void doAutoBump_ignoreDependencyShouldNotBump() {
         setUpdoAutoBump_combinedDependenciesMocks();
         when(ignoreRepository.isIgnored(any(), any())).thenReturn(true);
-        var result = AutobumpUseCase.builder()
+        var result = buildAutobumpUseCase().doAutoBump();
+        assertThat(result.getNumberOfBumps()).isEqualTo(0);
+    }
+
+    private AutobumpUseCase buildAutobumpUseCase() {
+        return AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
-                .build()
-                .doAutoBump();
-        assertThat(result.getNumberOfBumps()).isEqualTo(0);
+                .settingsRepository(Mockito.mock(SettingsRepository.class))
+                .build();
     }
 
     @Test
     void postCommentOnPullRequest_validCommentCreatesValidPostCommentOnPullRequestUseCase() {
         setUpdoAutoBump_combinedDependenciesMocks();
-        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
-                .thenReturn(TEST_PROJ_URL);
-        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
-                .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
-                        , "1.0", "release notes content"));
-        AutobumpUseCase.builder()
-                .config(config)
-                .uri(uri)
-                .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
-                .build()
-                .doAutoBump();
-        verify(gitProvider, times(1)).commentPullRequest(any(), contains("release notes content"));
+        setupAvailableReleaseNotesMocks();
+        buildAutobumpUseCase().doAutoBump();
+        verify(gitProvider, times(1)).commentPullRequest(any(), contains(TEST_REL_NOTES_CONTENT));
     }
 
     @Test
@@ -192,14 +177,8 @@ class AutobumpUseCaseTest {
         when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
                 .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
                         , "1.0", ""));
-        AutobumpUseCase.builder()
-                .config(config)
-                .uri(uri)
-                .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
-                .build()
-                .doAutoBump();
-        verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
+        buildAutobumpUseCase().doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains(TEST_REL_NOTES_CONTENT));
     }
 
     @Test
@@ -209,14 +188,25 @@ class AutobumpUseCaseTest {
                 .thenReturn(TEST_PROJ_URL);
         when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
                 .thenReturn(null);
-        AutobumpUseCase.builder()
-                .config(config)
-                .uri(uri)
-                .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
-                .build()
-                .doAutoBump();
-        verify(gitProvider, times(0)).commentPullRequest(any(), contains("release notes content"));
+        buildAutobumpUseCase().doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains(TEST_REL_NOTES_CONTENT));
+    }
+
+    @Test
+    void postCommentOnPullRequest_DontPostCommentOnOlderPullRequest() {
+        prResponseCommentCount = 1;
+        setUpdoAutoBump_combinedDependenciesMocks();
+        setupAvailableReleaseNotesMocks();
+        buildAutobumpUseCase().doAutoBump();
+        verify(gitProvider, times(0)).commentPullRequest(any(), contains(TEST_REL_NOTES_CONTENT));
+    }
+
+    private void setupAvailableReleaseNotesMocks() {
+        when(versionRepository.getScmUrlForDependencyVersion(any(), any()))
+                .thenReturn(TEST_PROJ_URL);
+        when(releaseNotesSource.getReleaseNotes(eq(TEST_PROJ_URL), any()))
+                .thenReturn(new ReleaseNotes(TEST_PROJ_URL + "/tags/1.0"
+                        , "1.0", TEST_REL_NOTES_CONTENT));
     }
 
     private void setUpdoAutoBump_combinedDependenciesMocks() {
@@ -263,6 +253,7 @@ class AutobumpUseCaseTest {
                 .title(pullRequest.getTitle())
                 .id(5)
                 .state("OPEN")
+                .commentCount(prResponseCommentCount)
                 .build();
     }
 
