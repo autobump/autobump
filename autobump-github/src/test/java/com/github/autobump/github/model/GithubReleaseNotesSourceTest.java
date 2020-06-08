@@ -28,8 +28,10 @@ class GithubReleaseNotesSourceTest {
     private static final String TEST_GETTAGS_NONE_MOCKURL = "/repos/test/notags/releases";
     private static final String TEST_ALLRELEASENOTESTAGS_JSON
             = "[{\"tag_name\":\"v2.2.0.RELEASE\",\"body\":\"RELEASE NOTES\\nRelease notes sample text\"}," +
-            "{\"tag_name\":\"v2.3.0.RELEASE\",\"body\":\"RELEASE NOTES\\nRelease notes sample text. Contributors: @username\"}]";
-    private static final String TEST_RELEASENOTESSAMPLE = "RELEASE NOTES\nRelease notes sample text. Contributors: @\u200Busername";
+            "{\"tag_name\":\"v2.3.0.RELEASE\",\"body\":\"RELEASE NOTES\\nRelease notes sample text. " +
+            "Contributors: @username\"}]";
+    private static final String TEST_RELEASENOTESSAMPLE = "RELEASE NOTES\nRelease notes sample text. " +
+            "Contributors: @\u200Busername";
     private static final String TEST_VERSIONNUMBER = "2.3.0.RELEASE";
 
     private GithubReleaseNotesSource githubReleaseNotesSource;
