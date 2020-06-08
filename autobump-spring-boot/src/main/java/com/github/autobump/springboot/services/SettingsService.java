@@ -16,9 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import javax.transaction.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -223,5 +224,11 @@ public class SettingsService {
         ) {
             updateRepo(repo);
         }
+    }
+
+    public Set<String> getReviewerNames(String repoId) {
+        var repo = getRepo(repoId);
+        Map<String, String> members = autobumpconfig.getGitProvider().getMembersFromWorkspace(repo);
+        return members.keySet();
     }
 }

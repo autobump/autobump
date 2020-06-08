@@ -16,6 +16,7 @@ import feign.jackson.JacksonEncoder;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -109,6 +110,13 @@ public class BitBucketGitProvider implements GitProvider {
                 .stream()
                 .map(r -> new Repo(r.getUuid(), r.getCloneLink(), r.getName()))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public Map<String, String> getMembersFromWorkspace(Repo repo){
+        String workspaceName = bitBucketGitProviderUrlHelper.getOwnerName(repo.getLink());
+        return client.getMembersFromWorkspace(workspaceName)
+                .getMembers();
     }
 
 }

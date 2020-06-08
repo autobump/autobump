@@ -15,16 +15,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @Setter
 @IgnoreJwt
-public class SettingsController {
+public class DashBoardController {
 
     private SettingsService settingsService;
     private AutoBumpService autoBumpService;
 
-    public SettingsController(AutoBumpService autoBumpService, SettingsService settingsService) {
+    public DashBoardController(AutoBumpService autoBumpService, SettingsService settingsService) {
         this.autoBumpService = autoBumpService;
         this.settingsService = settingsService;
     }
@@ -61,7 +62,9 @@ public class SettingsController {
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
         RepositoryDto dto = settingsService.getRepositoryDto(repoId);
+        Set<String> reviewers = settingsService.getReviewerNames(repoId);
         mav.addObject("repoName", dto.getName());
+        mav.addObject("reviewerNames", reviewers);
         mav.addObject("repo", dto);
         return mav;
     }
