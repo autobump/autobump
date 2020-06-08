@@ -53,6 +53,6 @@ public class CliSettingsRepository implements SettingsRepository {
 
     @Override
     public void deleteAll() {
-        // unused
+        settingList.clear();
     }
 }

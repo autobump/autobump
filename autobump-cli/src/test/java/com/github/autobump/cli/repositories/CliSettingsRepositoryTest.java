@@ -68,7 +68,10 @@ class CliSettingsRepositoryTest {
 
     @Test
     void deleteAll(){
-        settingsRepository.saveAllSettings(List.of(setting1,setting2));
+        settingsRepository.saveSetting(setting1);
+        assertThat(settingsRepository.findAllSettingsForDependencies(setting1.getRepositoryName()))
+                .containsExactlyInAnyOrderElementsOf(List.of(setting1));
         assertThatCode(() -> settingsRepository.deleteAll()).doesNotThrowAnyException();
-    }
+        assertThat(settingsRepository.findAllSettingsForDependencies(setting1.getRepositoryName()))
+                .containsExactlyInAnyOrderElementsOf(List.of());    }
 }
