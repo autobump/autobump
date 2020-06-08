@@ -65,4 +65,10 @@ class CliSettingsRepositoryTest {
         settingsRepository.saveAllSettings(List.of(setting1,setting2));
         assertThat(settingsRepository.getAllIgnores()).containsOnly(setting1);
     }
+
+    @Test
+    void deleteAll(){
+        settingsRepository.saveAllSettings(List.of(setting1,setting2));
+        assertThatCode(() -> settingsRepository.deleteAll()).doesNotThrowAnyException();
+    }
 }
