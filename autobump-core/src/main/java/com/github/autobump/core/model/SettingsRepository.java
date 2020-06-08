@@ -15,4 +15,6 @@ public interface SettingsRepository {
     void removeCronJob(String repoName);
 
     List<Setting> getAllIgnores();
+
+    void deleteAll();
 }

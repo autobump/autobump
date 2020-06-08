@@ -163,23 +163,24 @@ public class SettingsService {
     }
 
     private DependencyDto extractDependencyFromSettingKey(String key, String value) {
-        DependencyDto dep = new DependencyDto();
         String[] elements = key.split(":");
+        if (elements.length > 2){
+            return getDependencyDto(value, elements);
+        }
+        return null;
+    }
+
+    private DependencyDto getDependencyDto(String value, String... elements) {
+        DependencyDto dep = new DependencyDto();
         dep.setGroupName(elements[0]);
         dep.setArtifactId(elements[1]);
-        if (elements.length > 2){
-            dep.setVersionNumber(elements[2]);
-        }
-        if (value.equals("Major")){
+        dep.setVersionNumber(elements[2]);
+        if ("Major".equals(value)){
             dep.setIgnoreMajor(true);
         }
-        else if (value.equals("Minor")){
+        if ("Minor".equals(value)){
             dep.setIgnoreMinor(true);
         }
-        else {
-            dep = null;
-        }
-
         return dep;
     }
 
@@ -227,7 +228,7 @@ public class SettingsService {
         return repoRepository.getByRepoId(repoId);
     }
 
-    public RepositoryDto getRepositoryDto(String repoId) {
+    public RepositoryDto getRepositoryDtoWithSettings(String repoId) {
         String name = getRepo(repoId).getName();
         return getSettingsForRepository(name);
     }
