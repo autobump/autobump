@@ -152,20 +152,34 @@ public class SettingsService {
                 .collect(Collectors.toList());
         for (Setting setting : depSettings
         ) {
-            DependencyDto dep = extractDependencyFromSettingKey(setting.getKey());
-            dep.setIgnoreMajor(setting.getValue().equals("major"));
-            dep.setIgnoreMinor(setting.getValue().equals("minor"));
-            dtos.add(dep);
+            DependencyDto dep = extractDependencyFromSettingKey(setting.getKey(), setting.getValue());
+            if (dep != null){
+                dep.setIgnoreMajor(setting.getValue().equals("Major"));
+                dep.setIgnoreMinor(setting.getValue().equals("Minor"));
+                dtos.add(dep);
+            }
         }
         return dtos;
     }
 
-    private DependencyDto extractDependencyFromSettingKey(String key) {
+    private DependencyDto extractDependencyFromSettingKey(String key, String value) {
         DependencyDto dep = new DependencyDto();
         String[] elements = key.split(":");
         dep.setGroupName(elements[0]);
         dep.setArtifactId(elements[1]);
-        dep.setVersionNumber(elements[2]);
+        if (elements.length > 2){
+            dep.setVersionNumber(elements[2]);
+        }
+        if (value.equals("Major")){
+            dep.setIgnoreMajor(true);
+        }
+        else if (value.equals("Minor")){
+            dep.setIgnoreMinor(true);
+        }
+        else {
+            dep = null;
+        }
+
         return dep;
     }
 
