@@ -3,6 +3,10 @@
 
 build/
 
+# Intellij Gradle plugin folders
+generated/
+generated_tests/
+
 .idea/
 # *.iml
 # *.ipr
