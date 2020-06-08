@@ -60,6 +60,7 @@ public class BitBucketGitProvider implements GitProvider {
                 .title(dto.getTitle())
                 .id(dto.getId())
                 .state(dto.getState())
+                .commentCount(dto.getCommentCount())
                 .build();
     }
 
