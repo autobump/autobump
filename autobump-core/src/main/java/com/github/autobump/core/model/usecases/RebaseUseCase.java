@@ -16,6 +16,7 @@ public class RebaseUseCase {
     private final UseCaseConfiguration config;
     private final SettingsRepository settingsRepository;
     private final PushEvent event;
+    private final SettingsRepository settingsRepository;
 
     public void handlePushEvent() {
         List<PullRequest> pullRequests = getOpenPullRequests(
@@ -31,6 +32,7 @@ public class RebaseUseCase {
                             .settingsRepository(settingsRepository)
                             .config(config)
                             .workspace(workspace)
+                            .settingsRepository(settingsRepository)
                             .build()
                             .doSingleGroupAutoBump();
                 }
