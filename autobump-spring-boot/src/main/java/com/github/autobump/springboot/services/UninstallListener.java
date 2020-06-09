@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UninstallListener implements ApplicationListener<AddonUninstalledEvent> {
     private final AtlassianHostRepository repository;
-
     private final SettingsRepository settingsRepository;
-
     private final RepoRepository repoRepository;
 
     public UninstallListener(AtlassianHostRepository repository, SettingsRepository settingsRepository,
