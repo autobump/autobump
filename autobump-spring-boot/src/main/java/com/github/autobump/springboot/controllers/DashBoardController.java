@@ -8,6 +8,7 @@ import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,6 +25,8 @@ public class DashBoardController {
 
     private SettingsService settingsService;
     private AutoBumpService autoBumpService;
+    @Value("${autobump.bitbucket.base-url}")
+    private String baseUrl;
 
     public DashBoardController(AutoBumpService autoBumpService, SettingsService settingsService) {
         this.autoBumpService = autoBumpService;
@@ -33,6 +36,7 @@ public class DashBoardController {
 
     @GetMapping("/")
     public ModelAndView bitbucket(ModelAndView mav){
+        mav.addObject("baseUrl",baseUrl);
         mav.setViewName("bitbucket");
         return mav;
     }
@@ -50,6 +54,7 @@ public class DashBoardController {
             }
         }
         catch(BitbucketUnauthorizedException b){
+            mav.addObject("baseUrl",baseUrl);
             mav.setViewName("bitbucket");
         }
         return mav;

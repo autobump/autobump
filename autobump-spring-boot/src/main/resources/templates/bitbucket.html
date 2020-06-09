@@ -23,9 +23,9 @@
             It then creates a pull-request for every outdated dependency</p>
         <p>Hit the button to install the app in your bitbucket workspace!.</p>
     </div>
-
-    <div class="installbtn col-md-12"><button><a href="https://bitbucket.org/site/addons/authorize?descriptor_uri
-    =https://prod.autobump.be&redirect_uri=https://prod.autobump.be/home">Install</a></button>
+    <div class="installbtn col-md-12">
+        <button><a th:href="@{'https://bitbucket.org/site/addons/authorize?descriptor_uri='
+     + ${baseUrl} + '&redirect_uri=' +${baseUrl}+'/home'}">Install</a></button>
     </div>
 
 </div>
