@@ -63,6 +63,7 @@ public class WebhookService {
                 RebaseUseCase.builder()
                         .event(event)
                         .config(config)
+                        .settingsRepository(settingsRepository)
                         .build()
                         .handlePushEvent();
             } catch (IllegalArgumentException e) {

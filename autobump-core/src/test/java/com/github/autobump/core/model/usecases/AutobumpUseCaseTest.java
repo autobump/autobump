@@ -21,7 +21,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
@@ -65,6 +64,8 @@ class AutobumpUseCaseTest {
     private IgnoreRepository ignoreRepository;
     @Mock
     private ReleaseNotesSource releaseNotesSource;
+    @Mock
+    private SettingsRepository settingsRepository;
     private URI uri;
     private TestVersion tv;
     private TestVersion tv1;
@@ -157,7 +158,7 @@ class AutobumpUseCaseTest {
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
+                .settingsRepository(settingsRepository)
                 .build();
     }
 
