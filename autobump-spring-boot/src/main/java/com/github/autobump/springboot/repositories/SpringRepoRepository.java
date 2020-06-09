@@ -38,4 +38,9 @@ public class SpringRepoRepository implements RepoRepository {
     public void delete(Repo repo) {
         jpaRepoRepository.delete(repo);
     }
+
+    @Override
+    public void deleteAll() {
+        jpaRepoRepository.deleteAll();
+    }
 }
