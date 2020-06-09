@@ -11,7 +11,6 @@ import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.repositories.SpringSettingsRepository;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -31,15 +30,16 @@ import java.util.stream.Collectors;
 @Setter
 public class SettingsService {
     private final Autobumpconfig autobumpconfig;
-    @Autowired
-    RepoRepository repoRepository;
-    @Autowired
-    SpringSettingsRepository settingsRepository;
-    @Autowired
-    ModelMapper modelMapper;
+    private final RepoRepository repoRepository;
+    private final SpringSettingsRepository settingsRepository;
+    private final ModelMapper modelMapper;
 
-    public SettingsService(Autobumpconfig autobumpconfig) {
+    public SettingsService(Autobumpconfig autobumpconfig, RepoRepository repoRepository,
+                           SpringSettingsRepository settingsRepository, ModelMapper modelMapper) {
         this.autobumpconfig = autobumpconfig;
+        this.repoRepository = repoRepository;
+        this.settingsRepository = settingsRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<RepositoryDto> getAllRepositories() {

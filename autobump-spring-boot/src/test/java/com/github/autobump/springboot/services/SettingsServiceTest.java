@@ -78,10 +78,8 @@ class SettingsServiceTest {
     }
 
     private void setupService() {
-        service = new SettingsService(autobumpconfig);
-        service.setRepoRepository(repoRepository);
-        service.setModelMapper(modelMapper);
-        service.setSettingsRepository(springSettingsRepository);
+        service = new SettingsService(autobumpconfig, repoRepository,
+                springSettingsRepository, modelMapper);
     }
 
     @Test

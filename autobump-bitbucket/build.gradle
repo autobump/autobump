@@ -13,5 +13,5 @@ dependencies {
     implementation group: 'io.github.openfeign', name: 'feign-core', version : '11.0'
     implementation group: 'io.github.openfeign', name: 'feign-jackson', version : '11.0'
     testImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.26.3'
-    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 }

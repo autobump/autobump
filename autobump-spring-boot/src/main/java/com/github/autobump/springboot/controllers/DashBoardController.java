@@ -33,7 +33,6 @@ public class DashBoardController {
         this.settingsService = settingsService;
     }
 
-
     @GetMapping("/")
     public ModelAndView bitbucket(ModelAndView mav){
         mav.addObject("baseUrl",baseUrl);
@@ -47,8 +46,8 @@ public class DashBoardController {
             List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
             if (monitored.isEmpty()) {
                 mav.setViewName("home");
-                var repos = settingsService.getAllRepositories();
-                mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+                mav.addObject("repositoryListDto",
+                        new RepositoryListDto(settingsService.getAllRepositories()));
             } else {
                 loadRepoOverview(mav);
             }
