@@ -10,8 +10,7 @@ import java.util.Map;
 @Getter
 @Command(mixinStandardHelpOptions = true, name = "autobump",
         description = "%nAutobump automatically creates a pull-request for every outdated " +
-                "dependency in a Bitbucket repository. Provide at least a username, password " +
-                "and project repository url%n",
+                "dependency in a Bitbucket repository.%n",
         version = {"Version: @|yellow Autobump 1.0|@"},
         footer = "Copyright(c) 2020 Xplore - distributed under the terms of the MIT license" +
                 "%nvisit https://github.com/autobump/autobump for more information")
