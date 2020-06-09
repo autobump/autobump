@@ -155,7 +155,6 @@ class AutobumpUseCaseTest {
     }
 
     private AutobumpUseCase buildAutobumpUseCase() {
-        SettingsRepository settingsRepository = Mockito.mock(SettingsRepository.class);
         Setting reviewerSetting = new Setting();
         reviewerSetting.setValue("reviewer_uuid");
         reviewerSetting.setKey("reviewer_name");
