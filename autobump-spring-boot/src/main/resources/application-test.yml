@@ -1,20 +1,23 @@
-spring.datasource.url: jdbc:h2:mem:testdb
-spring.datasource.driverClassName: org.h2.Driver
-spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+spring:
+    datasource:
+        url: jdbc:h2:mem:testdb
+        driverClassName: org.h2.Driver
+        username: sa
+        password: password
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: create-drop
 
-spring.datasource.username: sa
-spring.datasource.password: password
+atlassian:
+    connect:
+        allow-reinstall-missing-host: true
 
-spring.jpa.hibernate.ddl-auto: create-drop
-#spring.jpa.hibernate.ddl-auto: create
-
-autobump.bitbucket.key: autobump.kdg.xplore.dev01 # key should be unique for each app instance
-autobump.bitbucket.base-url: https://ad1372b3.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
-
-atlassian.connect.allow-reinstall-missing-host: true
 server:
     port: 0
 
 autobump:
     bitbucket:
         oAuthUrl: http://localhost:8009/site/oauth2/access_token
+        key: autobump.kdg.xplore.dev01 # key should be unique for each app instance
+        base-url: https://ad1372b3.ngrok.io # cmd: 'ngrok http 8080' and set your ngrok url here
