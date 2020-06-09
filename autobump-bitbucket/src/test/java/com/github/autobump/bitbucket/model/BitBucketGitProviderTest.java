@@ -5,6 +5,7 @@ import com.github.autobump.bitbucket.exceptions.BitbucketNotFoundException;
 import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.Repo;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -27,8 +28,9 @@ class BitBucketGitProviderTest {
     private static final String TEST_OWNER = "testOwner";
     private static final String TEST_REPO_NAME = "testRepoName";
     private static final String TEST_TITLE = "testTitle";
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String APPLICATION_JSON = "application/json";
     private BitBucketGitProvider bitBucketGitProvider;
-    private BitBucketGitProviderUrlHelper urlHelper;
     private WireMockServer wireMockServer;
 
     @BeforeEach
@@ -50,7 +52,7 @@ class BitBucketGitProviderTest {
     private void setupStub() {
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format(REPO_URL, TEST_OWNER, TEST_REPO_NAME)))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withHeader(CONTENT_TYPE, APPLICATION_JSON)
                         .withStatus(200).withBodyFile("succes_response.json")));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format(REPO_URL, "BADBRANCHE", TEST_REPO_NAME)))
@@ -63,7 +65,7 @@ class BitBucketGitProviderTest {
                 .willReturn(aResponse().withStatus(418)));
         wireMockServer.stubFor(get(
                 urlEqualTo(String.format(REPO_URL, TEST_OWNER, TEST_REPO_NAME)))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                .willReturn(aResponse().withHeader(CONTENT_TYPE, APPLICATION_JSON)
                         .withStatus(200).withBodyFile("getAllOpenPullRequests.json")));
         wireMockServer.stubFor(post(
                 urlEqualTo(String.format("/repositories/%s/%s/pullrequests/1/decline", TEST_OWNER, TEST_REPO_NAME)))
@@ -73,7 +75,7 @@ class BitBucketGitProviderTest {
                 .willReturn(aResponse().withStatus(200)));
         wireMockServer.stubFor(get(urlEqualTo("/repositories?role=owner"))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON)
                         .withStatus(200).withBodyFile("repos.json")));
     }
 
@@ -198,23 +200,23 @@ class BitBucketGitProviderTest {
         assertThat(bitBucketGitProvider.getRepos().size()).isEqualTo(10);
     }
 
-    /*@Test
+    @Test
     void getMembersFromWorkspace(){
-        //Repo repo =
-        wireMockServer.stubFor(get(urlEqualTo("/workspaces/grietvermeesch/members"))
+        Repo repo = new Repo();
+        repo.setName("grietvermeesch");
+        repo.setLink("https://bitbucket.org/grietvermeesch/simplemultimoduletestproject/src/master/");
+        wireMockServer.stubFor(get(urlEqualTo("/workspaces/master/members"))
                 .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
+                        .withHeader(CONTENT_TYPE, APPLICATION_JSON)
                         .withStatus(200)
                         .withBodyFile("members.json")));
-        urlHelper = Mockito.mock(BitBucketGitProviderUrlHelper.class);
-        when(urlHelper.getOwnerName(anyString())).thenReturn("grietvermeesch");
-        assertThat(bitBucketGitProvider.getMembersFromWorkspace("grietvermeesch"));
-    }*/
+        assertThat(bitBucketGitProvider.getMembersFromWorkspace(repo).size()).isEqualTo(3);
+    }
 
     @Test
     void getCurrentUser(){
         wireMockServer.stubFor(get(urlEqualTo("/user")).willReturn(aResponse()
-                .withHeader("Content-Type", "application/json")
+                .withHeader(CONTENT_TYPE, APPLICATION_JSON)
                 .withStatus(200)
                 .withBodyFile("user.json")));
         assertThat(bitBucketGitProvider.getCurrentUserUuid()).isEqualTo("{63738a1c-70ca-4e41-88fd-cd02a4c25c61}");

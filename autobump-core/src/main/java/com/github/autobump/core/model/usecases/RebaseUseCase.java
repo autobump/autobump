@@ -1,6 +1,7 @@
 package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.PullRequest;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Workspace;
 import com.github.autobump.core.model.events.PushEvent;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public class RebaseUseCase {
 
     private final UseCaseConfiguration config;
+    private final SettingsRepository settingsRepository;
     private final PushEvent event;
 
     public void handlePushEvent() {
@@ -26,6 +28,7 @@ public class RebaseUseCase {
                     AutoBumpSingleGroupUseCase.builder()
                             .pullRequest(p)
                             .uri(event.getGitUri())
+                            .settingsRepository(settingsRepository)
                             .config(config)
                             .workspace(workspace)
                             .build()

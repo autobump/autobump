@@ -128,6 +128,18 @@ class SettingsServiceTest {
     }
 
     @Test
+    void getContributorNames(){
+        when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
+        lenient().when(repoRepository.getByRepoId("a")).thenReturn(getDummyRepo1());
+        Map<String, String> dummyMembers = new HashMap<>();
+        dummyMembers.put("reviewer_name1", "reviewer_uuid1");
+        dummyMembers.put("reviewer_owner_name", "reviewer_owner_uuid");
+        lenient().when(gitProvider.getMembersFromWorkspace(getDummyRepo1())).thenReturn(dummyMembers);
+        lenient().when(gitProvider.getCurrentUserUuid()).thenReturn("reviewer_owner_uuid");
+        assertThat(service.getContributerNamesFromWorkspace(getDummyRepo1().getRepoId())).contains("reviewer_name1");
+    }
+
+    @Test
     void getSettingsForRepository() {
         when(autobumpconfig.getGitProvider()).thenReturn(gitProvider);
         when(springSettingsRepository.findAllSettingsForDependencies(REPOSITORY_NAME))
@@ -236,12 +248,7 @@ class SettingsServiceTest {
     }
 
     private List<Repo> getDummyRepoList() {
-        List<Repo> repos = new ArrayList<>();
-        Repo repo = getDummyRepo1();
-        repos.add(repo);
-        Repo repo2 = getDummyRepo2();
-        repos.add(repo2);
-        return repos;
+        return List.of(getDummyRepo1(), getDummyRepo2());
     }
 
     private Repo getDummyRepo1() {
@@ -261,13 +268,8 @@ class SettingsServiceTest {
     }
 
     private List<Setting> getDummySettings(){
-        List<Setting> dummies = new ArrayList<>();
-        dummies.add(getIgnoreSetting1());
-        dummies.add(getIgnoreSetting2());
-        dummies.add(getIgnoreSetting3());
-        dummies.add(getReviewerSetting());
-        dummies.add(getCronjobSetting());
-        return dummies;
+        return List.of(getIgnoreSetting1(), getIgnoreSetting2(), getIgnoreSetting3(),
+                getCronjobSetting(), getReviewerSetting());
     }
 
     private Setting getCronjobSetting() {
