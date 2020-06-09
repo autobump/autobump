@@ -13,4 +13,6 @@ public interface RepoRepository {
     List<Repo> findAll();
 
     void delete(Repo repo);
+
+    void deleteAll();
 }
