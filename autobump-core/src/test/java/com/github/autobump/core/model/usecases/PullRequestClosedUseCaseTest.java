@@ -76,6 +76,11 @@ class PullRequestClosedUseCaseTest {
         }
 
         @Override
+        public Setting findSettingForReviewer(String repoName) {
+            return null;
+        }
+
+        @Override
         public List<Setting> getAllIgnores() {
             return Collections.emptyList();
         }

@@ -1,0 +1,136 @@
+{
+  "pagelen": 50,
+  "values": [
+    {
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/workspaces/grietvermeesch/members/%7B2275f575-d885-41d5-ae42-f59129d90d4e%7D"
+        }
+      },
+      "type": "workspace_membership",
+      "user": {
+        "display_name": "Joseph",
+        "uuid": "{2275f575-d885-41d5-ae42-f59129d90d4e}",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/users/%7B2275f575-d885-41d5-ae42-f59129d90d4e%7D"
+          },
+          "html": {
+            "href": "https://bitbucket.org/%7B2275f575-d885-41d5-ae42-f59129d90d4e%7D/"
+          },
+          "avatar": {
+            "href": "https://secure.gravatar.com/avatar/bf6efd52aaddd90b8fb658cb04885ab5?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FJ-5.png"
+          }
+        },
+        "nickname": "Joseph",
+        "type": "user",
+        "account_id": "5ebaa62396bbcb0b85a9ef74"
+      },
+      "workspace": {
+        "slug": "grietvermeesch",
+        "type": "workspace",
+        "name": "Griet Vermeesch",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/workspaces/grietvermeesch"
+          },
+          "html": {
+            "href": "https://bitbucket.org/grietvermeesch/"
+          },
+          "avatar": {
+            "href": "https://bitbucket.org/workspaces/grietvermeesch/avatar/?ts=1591697360"
+          }
+        },
+        "uuid": "{2851e702-152e-4c1d-9165-e96c7760c098}"
+      }
+    },
+    {
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/workspaces/grietvermeesch/members/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D"
+        }
+      },
+      "type": "workspace_membership",
+      "user": {
+        "display_name": "glennS",
+        "uuid": "{63738a1c-70ca-4e41-88fd-cd02a4c25c61}",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/users/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D"
+          },
+          "html": {
+            "href": "https://bitbucket.org/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D/"
+          },
+          "avatar": {
+            "href": "https://secure.gravatar.com/avatar/1536c1c8fb1c61d685a50f8dd3ecd906?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FG-0.png"
+          }
+        },
+        "nickname": "glennS",
+        "type": "user",
+        "account_id": "5eaa9d7696bbcb0b85475165"
+      },
+      "workspace": {
+        "slug": "grietvermeesch",
+        "type": "workspace",
+        "name": "Griet Vermeesch",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/workspaces/grietvermeesch"
+          },
+          "html": {
+            "href": "https://bitbucket.org/grietvermeesch/"
+          },
+          "avatar": {
+            "href": "https://bitbucket.org/workspaces/grietvermeesch/avatar/?ts=1591697360"
+          }
+        },
+        "uuid": "{2851e702-152e-4c1d-9165-e96c7760c098}"
+      }
+    },
+    {
+      "links": {
+        "self": {
+          "href": "https://api.bitbucket.org/2.0/workspaces/grietvermeesch/members/%7B2851e702-152e-4c1d-9165-e96c7760c098%7D"
+        }
+      },
+      "type": "workspace_membership",
+      "user": {
+        "display_name": "Griet Vermeesch",
+        "uuid": "{2851e702-152e-4c1d-9165-e96c7760c098}",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/users/%7B2851e702-152e-4c1d-9165-e96c7760c098%7D"
+          },
+          "html": {
+            "href": "https://bitbucket.org/%7B2851e702-152e-4c1d-9165-e96c7760c098%7D/"
+          },
+          "avatar": {
+            "href": "https://secure.gravatar.com/avatar/46ef51e5ec3bf36fd0f99979dcf38950?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FGV-4.png"
+          }
+        },
+        "nickname": "Griet",
+        "type": "user",
+        "account_id": "5e9d9fed1067100c1961de79"
+      },
+      "workspace": {
+        "slug": "grietvermeesch",
+        "type": "workspace",
+        "name": "Griet Vermeesch",
+        "links": {
+          "self": {
+            "href": "https://api.bitbucket.org/2.0/workspaces/grietvermeesch"
+          },
+          "html": {
+            "href": "https://bitbucket.org/grietvermeesch/"
+          },
+          "avatar": {
+            "href": "https://bitbucket.org/workspaces/grietvermeesch/avatar/?ts=1591697360"
+          }
+        },
+        "uuid": "{2851e702-152e-4c1d-9165-e96c7760c098}"
+      }
+    }
+  ],
+  "page": 1,
+  "size": 3
+}

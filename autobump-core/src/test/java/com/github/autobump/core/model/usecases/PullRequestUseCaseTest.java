@@ -8,6 +8,8 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.Setting;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +50,8 @@ class PullRequestUseCaseTest {
     @Mock
     private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
+    private SettingsRepository settingsRepository;
+    @Mock
     private Workspace workspace;
     private URI uri;
     private Bump bump;
@@ -79,8 +83,17 @@ class PullRequestUseCaseTest {
                 .title(commitResult.getCommitMessage())
                 .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
                 .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
+                .reviewer("reviewer_name")
                 .build();
         setUpGitProviders(pullRequest);
+        when(settingsRepository.findSettingForReviewer(TEST_NAME)).thenReturn(getReviewerSetting());
+    }
+
+    private Setting getReviewerSetting() {
+        Setting reviewerSetting = new Setting();
+        reviewerSetting.setValue("reviewer_uuid");
+        reviewerSetting.setKey("reviewer_name");
+        return reviewerSetting;
     }
 
     private void setUpGitProviders(PullRequest pullRequest) {
@@ -110,6 +123,7 @@ class PullRequestUseCaseTest {
                 .title(PULL_REQUEST_TITLE_1)
                 .repoName("test")
                 .repoOwner("test")
+                .reviewer("reviewer_name")
                 .pullRequestId(5)
                 .build();
         return Set.of(pr);
@@ -122,6 +136,7 @@ class PullRequestUseCaseTest {
                 .title(PULL_REQUEST_TITLE_1)
                 .repoName("test")
                 .repoOwner("test")
+                .reviewer("reviewer_name")
                 .pullRequestId(5)
                 .build());
         return prs;
@@ -148,6 +163,7 @@ class PullRequestUseCaseTest {
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProvider)
+                        .settingsRepository(settingsRepository)
                         .uri(uri)
                         .build()
                         .doPullRequest()
@@ -162,6 +178,7 @@ class PullRequestUseCaseTest {
                         .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
+                        .settingsRepository(settingsRepository)
                         .gitProvider(gitProviderWithPrAlreadyInListOpenPullRequests)
                         .uri(uri)
                         .build()
@@ -178,6 +195,7 @@ class PullRequestUseCaseTest {
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProviderThatReturnsEmptySetOfOpenPRs)
+                        .settingsRepository(settingsRepository)
                         .uri(uri)
                         .build()
                         .doPullRequest()
@@ -192,6 +210,7 @@ class PullRequestUseCaseTest {
                         .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
+                        .settingsRepository(settingsRepository)
                         .gitProvider(gitProviderThatReturnsNoPullRequestsToBeSuperseded)
                         .uri(uri)
                         .build()

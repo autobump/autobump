@@ -1,0 +1,33 @@
+{
+  "username": "SchroGlenn",
+  "display_name": "glennS",
+  "has_2fa_enabled": null,
+  "links": {
+    "hooks": {
+      "href": "https://api.bitbucket.org/2.0/users/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D/hooks"
+    },
+    "self": {
+      "href": "https://api.bitbucket.org/2.0/users/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D"
+    },
+    "repositories": {
+      "href": "https://api.bitbucket.org/2.0/repositories/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D"
+    },
+    "html": {
+      "href": "https://bitbucket.org/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D/"
+    },
+    "avatar": {
+      "href": "https://secure.gravatar.com/avatar/1536c1c8fb1c61d685a50f8dd3ecd906?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FG-0.png"
+    },
+    "snippets": {
+      "href": "https://api.bitbucket.org/2.0/snippets/%7B63738a1c-70ca-4e41-88fd-cd02a4c25c61%7D"
+    }
+  },
+  "nickname": "glennS",
+  "account_id": "5eaa9d7696bbcb0b85475165",
+  "created_on": "2020-04-30T09:43:17.804119+00:00",
+  "is_staff": false,
+  "location": null,
+  "account_status": "active",
+  "type": "user",
+  "uuid": "{63738a1c-70ca-4e41-88fd-cd02a4c25c61}"
+}

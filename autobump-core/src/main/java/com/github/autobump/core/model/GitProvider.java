@@ -1,6 +1,7 @@
 package com.github.autobump.core.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface GitProvider {
@@ -9,4 +10,6 @@ public interface GitProvider {
     void closePullRequest(PullRequest pullRequest);
     void commentPullRequest(PullRequest pr, String comment);
     List<Repo> getRepos();
+    Map<String, String> getMembersFromWorkspace(Repo repo);
+    String getCurrentUserUuid();
 }

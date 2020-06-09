@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 public class RebaseUseCase {
 
     private final UseCaseConfiguration config;
-    private final PushEvent event;
     private final SettingsRepository settingsRepository;
+    private final PushEvent event;
 
     public void handlePushEvent() {
         List<PullRequest> pullRequests = getOpenPullRequests(
@@ -28,9 +28,9 @@ public class RebaseUseCase {
                     AutoBumpSingleGroupUseCase.builder()
                             .pullRequest(p)
                             .uri(event.getGitUri())
+                            .settingsRepository(settingsRepository)
                             .config(config)
                             .workspace(workspace)
-                            .settingsRepository(settingsRepository)
                             .build()
                             .doSingleGroupAutoBump();
                 }

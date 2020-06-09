@@ -1,5 +1,6 @@
 package com.github.autobump.springboot.controllers;
 
+import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SettingsControllerTest {
+class DashBoardControllerTest {
     public static final String REPOSITORY_NAME = "TestMavenProject";
     public static final String SETTINGS_VIEW = "settings";
     public static final String HOME_VIEW = "home";
@@ -47,33 +48,46 @@ class SettingsControllerTest {
 
     @Autowired
     @InjectMocks
-    private SettingsController settingsController;
+    private DashBoardController dashBoardController;
 
     @BeforeEach
     void setUp() {
-        settingsController.setSettingsService(service);
-        settingsController.setAutoBumpService(autoBumpService);
+        dashBoardController.setSettingsService(service);
+        dashBoardController.setAutoBumpService(autoBumpService);
         setupDummies();
+    }
+
+    @Test
+    void installPageAppears(){
+        ModelAndView mav = dashBoardController.bitbucket(new ModelAndView());
+        assertThat(mav.getViewName()).isEqualTo("bitbucket");
+    }
+
+    @Test
+    void nonAuthenticatedReturnsInstallPage(){
+        when(service.getMonitoredRepos()).thenThrow(BitbucketUnauthorizedException.class);
+        ModelAndView mav = dashBoardController.home(new ModelAndView());
+        assertThat(mav.getViewName()).isEqualTo("bitbucket");
     }
 
     @Test
     void home_with_monitored_repos() {
         when(service.getMonitoredRepos()).thenReturn(getDummyRepoList());
-        ModelAndView mav = settingsController.home(new ModelAndView());
+        ModelAndView mav = dashBoardController.home(new ModelAndView());
         assertThat(mav.getViewName()).isEqualTo(SETTINGS_VIEW);
     }
 
     @Test
     void home_without_monitored_repos(){
         when(service.getMonitoredRepos()).thenReturn(new ArrayList<>());
-        ModelAndView mav = settingsController.home(new ModelAndView());
+        ModelAndView mav = dashBoardController.home(new ModelAndView());
         assertThat(mav.getViewName()).isEqualTo(HOME_VIEW);
     }
 
     @Test
     void selectRepositories() {
         when(service.getMonitoredRepos()).thenReturn(getDummyRepoList());
-        ModelAndView mav = settingsController
+        ModelAndView mav = dashBoardController
                 .selectRepositories(new ModelAndView(), new RepositoryListDto(getDummyRepoList()));
         assertThat(mav.getViewName()).isEqualTo(SETTINGS_VIEW);
     }
@@ -81,21 +95,29 @@ class SettingsControllerTest {
     @Test
     void settings() {
         when(service.getRepositoryDtoWithSettings(anyString())).thenReturn(dummyRepoDto);
-        ModelAndView mav = settingsController.settings(new ModelAndView(), MOCK_REPO_ID);
+        ModelAndView mav = dashBoardController.settings(new ModelAndView(), MOCK_REPO_ID);
+        assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);
+    }
+
+    @Test
+    void settings_withoutReviewerInDto() {
+        dummyRepoDto.setReviewer(null);
+        when(service.getRepositoryDtoWithSettings(anyString())).thenReturn(dummyRepoDto);
+        ModelAndView mav = dashBoardController.settings(new ModelAndView(), MOCK_REPO_ID);
         assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);
     }
 
     @Test
     void addRepos() {
         when(service.getAllRepositories()).thenReturn(getDummyRepoList());
-        ModelAndView mav = settingsController.addRepos(new ModelAndView());
+        ModelAndView mav = dashBoardController.addRepos(new ModelAndView());
         assertThat(mav.getViewName()).isEqualTo(HOME_VIEW);
 
     }
 
     @Test
     void selectRepos() {
-        ModelAndView mav = settingsController
+        ModelAndView mav = dashBoardController
                 .selectRepos(new ModelAndView(), new RepositoryListDto(getDummyRepoList()));
         assertThat(mav.getViewName()).isEqualTo(SETTINGS_VIEW);
     }
@@ -109,14 +131,14 @@ class SettingsControllerTest {
                         .withHeader("content-type", "application/json")
                         .withStatus(200)));
         lenient().when(service.getRepo(MOCK_REPO_ID)).thenReturn(new Repo(MOCK_REPO_ID, "a_link", "a_name"));
-        ModelAndView mav = settingsController.bump(new ModelAndView(), MOCK_REPO_ID);
+        ModelAndView mav = dashBoardController.bump(new ModelAndView(), MOCK_REPO_ID);
         assertThat(mav.getViewName()).isEqualTo("bumps");
         wireMockServer.stop();
     }
 
     @Test
     void saveSettings() {
-        ModelAndView mav = settingsController.saveSettings(new ModelAndView(), dummyRepoDto);
+        ModelAndView mav = dashBoardController.saveSettings(new ModelAndView(), dummyRepoDto);
         assertThat(mav.getViewName()).isEqualTo("settings-saved");
     }
 

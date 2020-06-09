@@ -6,6 +6,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
 
@@ -18,6 +19,7 @@ public class PullRequestUseCase {
     private final GitProvider gitProvider;
     private final GitClient gitClient;
     private final GitProviderUrlHelper gitProviderUrlHelper;
+    private final SettingsRepository settingsRepository;
     private final Workspace workspace;
     private final URI uri;
     private final Bump bump;
@@ -30,6 +32,8 @@ public class PullRequestUseCase {
                 .title(bump.getTitle())
                 .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
                 .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
+                .reviewer(settingsRepository
+                        .findSettingForReviewer(gitProviderUrlHelper.getRepoName(uri.toString())).getValue())
                 .build();
         PullRequestResponse response = pushPullRequest(pullRequest);
         PullRequest pr = getPullRequestThatShouldBeSuperSeded(pullRequest, response.getId());

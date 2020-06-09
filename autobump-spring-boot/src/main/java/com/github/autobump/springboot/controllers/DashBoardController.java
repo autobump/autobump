@@ -1,12 +1,14 @@
 package com.github.autobump.springboot.controllers;
 
 import com.atlassian.connect.spring.IgnoreJwt;
+import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.services.AutoBumpService;
 import com.github.autobump.springboot.services.SettingsService;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,26 +21,40 @@ import java.util.List;
 @Controller
 @Setter
 @IgnoreJwt
-public class SettingsController {
+public class DashBoardController {
 
     private SettingsService settingsService;
     private AutoBumpService autoBumpService;
+    @Value("${autobump.bitbucket.base-url}")
+    private String baseUrl;
 
-    public SettingsController(AutoBumpService autoBumpService, SettingsService settingsService) {
+    public DashBoardController(AutoBumpService autoBumpService, SettingsService settingsService) {
         this.autoBumpService = autoBumpService;
         this.settingsService = settingsService;
     }
 
+    @GetMapping("/")
+    public ModelAndView bitbucket(ModelAndView mav){
+        mav.addObject("baseUrl",baseUrl);
+        mav.setViewName("bitbucket");
+        return mav;
+    }
 
     @GetMapping("/home")
     public ModelAndView home(ModelAndView mav) {
-        List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
-        if (monitored.isEmpty()) {
-            mav.setViewName("home");
-            var repos = settingsService.getAllRepositories();
-            mav.addObject("repositoryListDto", new RepositoryListDto(repos));
-        } else {
-            loadRepoOverview(mav);
+        try{
+            List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
+            if (monitored.isEmpty()) {
+                mav.setViewName("home");
+                mav.addObject("repositoryListDto",
+                        new RepositoryListDto(settingsService.getAllRepositories()));
+            } else {
+                loadRepoOverview(mav);
+            }
+        }
+        catch(BitbucketUnauthorizedException b){
+            mav.addObject("baseUrl",baseUrl);
+            mav.setViewName("bitbucket");
         }
         return mav;
     }
@@ -61,7 +77,12 @@ public class SettingsController {
     public ModelAndView settings(ModelAndView mav, @RequestParam("repoId") String repoId) {
         mav.setViewName("repo-settings");
         RepositoryDto dto = settingsService.getRepositoryDtoWithSettings(repoId);
+        dto.setRepoId(repoId);
+        if (dto.getReviewer() != null){
+            mav.addObject("reviewerName", dto.getReviewer());
+        }
         mav.addObject("repoName", dto.getName());
+        mav.addObject("reviewerNames", settingsService.getContributerNamesFromWorkspace(repoId));
         mav.addObject("repo", dto);
         return mav;
     }

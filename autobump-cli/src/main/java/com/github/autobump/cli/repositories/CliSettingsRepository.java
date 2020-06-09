@@ -28,6 +28,13 @@ public class CliSettingsRepository implements SettingsRepository {
     }
 
     @Override
+    public Setting findSettingForReviewer(String repoName) {
+        return settingList.stream()
+                .filter(s -> s.getType().equals(Setting.SettingsType.REVIEWER))
+                .findFirst().orElse(null);
+    }
+
+    @Override
     public List<Setting> findAllSettingsForDependencies(String repoName) {
         return settingList.stream()
                 .filter(s -> s.getRepositoryName().equalsIgnoreCase(repoName))

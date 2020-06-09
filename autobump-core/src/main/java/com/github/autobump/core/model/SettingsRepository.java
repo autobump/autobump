@@ -8,6 +8,8 @@ public interface SettingsRepository {
 
     List<Setting> saveAllSettings(List<Setting> settings);
 
+    Setting findSettingForReviewer(String repoName);
+
     List<Setting> findAllSettingsForDependencies(String repoName);
 
     Setting getCronSetting(String repoName);
