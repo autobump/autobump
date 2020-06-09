@@ -15,7 +15,8 @@ public class UninstallListener implements ApplicationListener<AddonUninstalledEv
 
     private final RepoRepository repoRepository;
 
-    public UninstallListener(AtlassianHostRepository repository, SettingsRepository settingsRepository, RepoRepository repoRepository) {
+    public UninstallListener(AtlassianHostRepository repository, SettingsRepository settingsRepository,
+                             RepoRepository repoRepository) {
         this.repository = repository;
         this.settingsRepository = settingsRepository;
         this.repoRepository = repoRepository;
