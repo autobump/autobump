@@ -13,9 +13,6 @@ sourceCompatibility = 11
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://packages.atlassian.com/maven-public/"
-    }
 }
 
 subprojects {
@@ -107,7 +104,7 @@ configurations {
 
 dependencies {
     subprojects.each {
-        if (!it.path.contains('autobump-springboot'))
+        if (!it.path.contains('spring-boot'))
             childJarsCli project(it.path)
     }
 }

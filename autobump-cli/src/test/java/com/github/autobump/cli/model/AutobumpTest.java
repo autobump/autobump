@@ -197,6 +197,12 @@ class AutobumpTest {
         assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
     }
 
+    @Test
+    void main_integrationTest_NoArgs() {
+        String[] args = "".split(" ");
+        assertThatCode(() -> Autobump.main(args)).doesNotThrowAnyException();
+    }
+
     private void startServer() throws Exception {
         Repository repository = createNewRepository();
 
