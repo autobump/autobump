@@ -2,6 +2,7 @@
 version '1.0-SNAPSHOT'
 
 dependencies {
-    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.3.3'
     implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.3.3'
+    testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 }
