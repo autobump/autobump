@@ -1,12 +1,19 @@
-spring.datasource.url: ${DB_URL}
-spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
-
-spring.datasource.username: ${DB_USERNAME}
-spring.datasource.password: ${DB_PASSWORD}
-
-autobump.bitbucket.key: ${BITBUCKET_KEY}
-autobump.bitbucket.base-url: ${BITBUCKET_BASE_URL}
+spring:
+    liquibase:
+        enabled: false
+    datasource:
+        password: ${DB_PASSWORD}
+        username: ${DB_USERNAME}
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: jdbc:mariadb://autobumpdb.cluster-cf12zksyo7ha.eu-west-1.rds.amazonaws.com:3306/autobumpdb
+    jpa:
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MariaDBDialect
+                ddl-auto: update
 
 autobump:
     bitbucket:
         oAuthUrl: https://bitbucket.org/site/oauth2/access_token
+        base-url: https://prod.autobump.be
+        key: AutoBump.bitbucketd.prod

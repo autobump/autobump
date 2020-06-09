@@ -1,12 +1,14 @@
-spring.datasource.url: jdbc:mariadb://localhost:3306/autobumpdb
-spring.datasource.driver-class-name: org.mariadb.jdbc.Driver
-
-spring.liquibase.enabled: false
-
-spring.datasource.username: sa
-spring.datasource.password: password
-
-spring.jpa.hibernate.ddl-auto: update
+spring:
+    datasource:
+        url: jdbc:mariadb://localhost:3306/autobumpdb
+        driver-class-name: org.mariadb.jdbc.Driver
+        username: sa
+        password: password
+    liquibase:
+        enabled: false
+    jpa:
+        hibernate:
+            ddl-auto: update
 
 autobump:
     bitbucket:
