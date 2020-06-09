@@ -12,6 +12,7 @@ import com.github.autobump.core.model.IgnoreRepository;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
 import com.github.autobump.core.model.ReleaseNotesSource;
+import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.UseCaseConfiguration;
 import com.github.autobump.core.model.Version;
@@ -153,11 +154,16 @@ class AutobumpUseCaseTest {
     }
 
     private AutobumpUseCase buildAutobumpUseCase() {
+        SettingsRepository settingsRepository = Mockito.mock(SettingsRepository.class);
+        Setting reviewerSetting = new Setting();
+        reviewerSetting.setValue("reviewer_uuid");
+        reviewerSetting.setKey("reviewer_name");
+        lenient().when(settingsRepository.findSettingForReviewer(TEST_NAME)).thenReturn(reviewerSetting);
         return AutobumpUseCase.builder()
                 .config(config)
                 .uri(uri)
                 .releaseNotesSource(releaseNotesSource)
-                .settingsRepository(Mockito.mock(SettingsRepository.class))
+                .settingsRepository(settingsRepository)
                 .build();
     }
 

@@ -59,6 +59,13 @@ class SpringSettingsRepositoryTest {
     }
 
     @Test
+    void findSettingForReviewer(){
+        springSettingsRepository.saveSetting(createReviewerSetting());
+        assertThat(springSettingsRepository.findSettingForReviewer(REPOSITORY_NAME))
+                .isEqualToComparingFieldByField(createReviewerSetting());
+    }
+
+    @Test
     void getCronSetting(){
         createAndSaveCronSetting();
         assertThat(springSettingsRepository.getCronSetting(REPOSITORY_NAME)).isNotNull();
@@ -95,6 +102,15 @@ class SpringSettingsRepositoryTest {
                 .value("Major")
                 .repositoryName(REPOSITORY_NAME)
                 .type(Setting.SettingsType.IGNORE)
+                .build();
+    }
+
+    private Setting createReviewerSetting() {
+        return Setting.builder()
+                .key("reviewer_name")
+                .value("reviewer_uuid")
+                .repositoryName(REPOSITORY_NAME)
+                .type(Setting.SettingsType.REVIEWER)
                 .build();
     }
 

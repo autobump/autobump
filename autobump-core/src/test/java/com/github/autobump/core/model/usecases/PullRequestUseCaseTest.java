@@ -8,6 +8,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
@@ -49,7 +50,7 @@ class PullRequestUseCaseTest {
     @Mock
     private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
-    SettingsRepository settingsRepository;
+    private SettingsRepository settingsRepository;
     @Mock
     private Workspace workspace;
     private URI uri;
@@ -85,6 +86,14 @@ class PullRequestUseCaseTest {
                 .reviewer("reviewer_name")
                 .build();
         setUpGitProviders(pullRequest);
+        when(settingsRepository.findSettingForReviewer(TEST_NAME)).thenReturn(getReviewerSetting());
+    }
+
+    private Setting getReviewerSetting() {
+        Setting reviewerSetting = new Setting();
+        reviewerSetting.setValue("reviewer_uuid");
+        reviewerSetting.setKey("reviewer_name");
+        return reviewerSetting;
     }
 
     private void setUpGitProviders(PullRequest pullRequest) {
@@ -169,6 +178,7 @@ class PullRequestUseCaseTest {
                         .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
+                        .settingsRepository(settingsRepository)
                         .gitProvider(gitProviderWithPrAlreadyInListOpenPullRequests)
                         .uri(uri)
                         .build()
@@ -185,6 +195,7 @@ class PullRequestUseCaseTest {
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProviderThatReturnsEmptySetOfOpenPRs)
+                        .settingsRepository(settingsRepository)
                         .uri(uri)
                         .build()
                         .doPullRequest()
@@ -199,6 +210,7 @@ class PullRequestUseCaseTest {
                         .workspace(workspace)
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
+                        .settingsRepository(settingsRepository)
                         .gitProvider(gitProviderThatReturnsNoPullRequestsToBeSuperseded)
                         .uri(uri)
                         .build()

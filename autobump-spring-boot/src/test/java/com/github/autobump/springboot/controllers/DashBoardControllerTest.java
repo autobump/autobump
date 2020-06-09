@@ -1,5 +1,6 @@
 package com.github.autobump.springboot.controllers;
 
+import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
@@ -57,6 +58,19 @@ class DashBoardControllerTest {
     }
 
     @Test
+    void installPageAppears(){
+        ModelAndView mav = dashBoardController.bitbucket(new ModelAndView());
+        assertThat(mav.getViewName()).isEqualTo("bitbucket");
+    }
+
+    @Test
+    void nonAuthenticatedReturnsInstallPage(){
+        when(service.getMonitoredRepos()).thenThrow(BitbucketUnauthorizedException.class);
+        ModelAndView mav = dashBoardController.home(new ModelAndView());
+        assertThat(mav.getViewName()).isEqualTo("bitbucket");
+    }
+
+    @Test
     void home_with_monitored_repos() {
         when(service.getMonitoredRepos()).thenReturn(getDummyRepoList());
         ModelAndView mav = dashBoardController.home(new ModelAndView());
@@ -80,6 +94,14 @@ class DashBoardControllerTest {
 
     @Test
     void settings() {
+        when(service.getRepositoryDtoWithSettings(anyString())).thenReturn(dummyRepoDto);
+        ModelAndView mav = dashBoardController.settings(new ModelAndView(), MOCK_REPO_ID);
+        assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);
+    }
+
+    @Test
+    void settings_withoutReviewerInDto() {
+        dummyRepoDto.setReviewer(null);
         when(service.getRepositoryDtoWithSettings(anyString())).thenReturn(dummyRepoDto);
         ModelAndView mav = dashBoardController.settings(new ModelAndView(), MOCK_REPO_ID);
         assertThat(mav.getModel().get("repoName")).isEqualTo(REPOSITORY_NAME);

@@ -73,5 +73,14 @@ class CliSettingsRepositoryTest {
                 .containsExactlyInAnyOrderElementsOf(List.of(setting1));
         assertThatCode(() -> settingsRepository.deleteAll()).doesNotThrowAnyException();
         assertThat(settingsRepository.findAllSettingsForDependencies(setting1.getRepositoryName()))
-                .containsExactlyInAnyOrderElementsOf(List.of());    }
+                .containsExactlyInAnyOrderElementsOf(List.of());
+    }
+
+    @Test
+    void findSettingForReviewer(){
+        settingsRepository.saveSetting(setting2);
+        assertThat(settingsRepository.findSettingForReviewer("repoName2"))
+                .isEqualToComparingFieldByField(setting2);
+    }
+
 }

@@ -28,8 +28,8 @@ class BitBucketGitProviderTest {
     private static final String TEST_REPO_NAME = "testRepoName";
     private static final String TEST_TITLE = "testTitle";
     private BitBucketGitProvider bitBucketGitProvider;
+    private BitBucketGitProviderUrlHelper urlHelper;
     private WireMockServer wireMockServer;
-
 
     @BeforeEach
     void setUp() {
@@ -196,5 +196,27 @@ class BitBucketGitProviderTest {
     @Test
     void testGetRepos() {
         assertThat(bitBucketGitProvider.getRepos().size()).isEqualTo(10);
+    }
+
+    /*@Test
+    void getMembersFromWorkspace(){
+        //Repo repo =
+        wireMockServer.stubFor(get(urlEqualTo("/workspaces/grietvermeesch/members"))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBodyFile("members.json")));
+        urlHelper = Mockito.mock(BitBucketGitProviderUrlHelper.class);
+        when(urlHelper.getOwnerName(anyString())).thenReturn("grietvermeesch");
+        assertThat(bitBucketGitProvider.getMembersFromWorkspace("grietvermeesch"));
+    }*/
+
+    @Test
+    void getCurrentUser(){
+        wireMockServer.stubFor(get(urlEqualTo("/user")).willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withStatus(200)
+                .withBodyFile("user.json")));
+        assertThat(bitBucketGitProvider.getCurrentUserUuid()).isEqualTo("{63738a1c-70ca-4e41-88fd-cd02a4c25c61}");
     }
 }
