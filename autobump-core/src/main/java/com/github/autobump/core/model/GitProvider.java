@@ -11,4 +11,5 @@ public interface GitProvider {
     void commentPullRequest(PullRequest pr, String comment);
     List<Repo> getRepos();
     Map<String, String> getMembersFromWorkspace(Repo repo);
+    String getCurrentUserUuid();
 }

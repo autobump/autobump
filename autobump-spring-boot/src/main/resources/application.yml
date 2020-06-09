@@ -1,1 +1,5 @@
 spring.profiles.active: dev
+
+atlassian:
+  connect:
+    redirect-root-to-descriptor: false

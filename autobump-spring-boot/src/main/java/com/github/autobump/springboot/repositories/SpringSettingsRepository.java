@@ -30,6 +30,11 @@ public class SpringSettingsRepository implements SettingsRepository {
     }
 
     @Override
+    public Setting findSettingForReviewer(String repoName) {
+        return jpaSettingsRepository.findByTypeAndRepositoryName(Setting.SettingsType.REVIEWER, repoName);
+    }
+
+    @Override
     public List<Setting> findAllSettingsForDependencies(String repoName) {
         return jpaSettingsRepository.findAllByRepositoryName(repoName);
     }

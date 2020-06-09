@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Home</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="container">
+
+    <h1>Welcome to AutoBump!</h1>
+
+    <div class="jumbotron">
+        <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
+            It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
+            It then creates a pull-request for every outdated dependency</p>
+        <p>Hit the button to install the app in your bitbucket workspace!.</p>
+    </div>
+
+    <div class="installbtn col-md-12"><button><a href="https://bitbucket.org/site/addons/authorize?descriptor_uri
+    =https://prod.autobump.be&redirect_uri=https://prod.autobump.be/home">Install</a></button>
+    </div>
+
+</div>
+</body>
+</html>

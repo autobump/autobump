@@ -140,7 +140,10 @@ public class SettingsService {
         Map<String, String> members = new HashMap<>();
         members.put("none", "none");
         members.putAll(autobumpconfig.getGitProvider().getMembersFromWorkspace(repo));
-        return members.keySet();
+        String currentUserUuid = autobumpconfig.getGitProvider().getCurrentUserUuid();
+        return members.entrySet().stream().filter(m -> !m.getValue().equals(currentUserUuid))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private String getReviewerName(String repoId, String uuid){

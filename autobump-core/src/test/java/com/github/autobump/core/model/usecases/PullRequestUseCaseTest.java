@@ -8,6 +8,7 @@ import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Version;
 import com.github.autobump.core.model.Workspace;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,8 @@ class PullRequestUseCaseTest {
     @Mock
     private GitProviderUrlHelper gitProviderUrlHelper;
     @Mock
+    SettingsRepository settingsRepository;
+    @Mock
     private Workspace workspace;
     private URI uri;
     private Bump bump;
@@ -79,6 +82,7 @@ class PullRequestUseCaseTest {
                 .title(commitResult.getCommitMessage())
                 .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
                 .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
+                .reviewer("reviewer_name")
                 .build();
         setUpGitProviders(pullRequest);
     }
@@ -110,6 +114,7 @@ class PullRequestUseCaseTest {
                 .title(PULL_REQUEST_TITLE_1)
                 .repoName("test")
                 .repoOwner("test")
+                .reviewer("reviewer_name")
                 .pullRequestId(5)
                 .build();
         return Set.of(pr);
@@ -122,6 +127,7 @@ class PullRequestUseCaseTest {
                 .title(PULL_REQUEST_TITLE_1)
                 .repoName("test")
                 .repoOwner("test")
+                .reviewer("reviewer_name")
                 .pullRequestId(5)
                 .build());
         return prs;
@@ -148,6 +154,7 @@ class PullRequestUseCaseTest {
                         .gitProviderUrlHelper(gitProviderUrlHelper)
                         .gitClient(gitClient)
                         .gitProvider(gitProvider)
+                        .settingsRepository(settingsRepository)
                         .uri(uri)
                         .build()
                         .doPullRequest()

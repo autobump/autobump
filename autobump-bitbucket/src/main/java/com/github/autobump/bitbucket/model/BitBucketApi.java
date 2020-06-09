@@ -6,6 +6,7 @@ import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestListDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
 import com.github.autobump.bitbucket.model.dtos.RepositoryResponseDto;
+import com.github.autobump.bitbucket.model.dtos.UserDto;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
@@ -39,5 +40,7 @@ interface BitBucketApi {
 
     @RequestLine("GET /workspaces/{workspace}/members")
     MembersResponseDto getMembersFromWorkspace(@Param("workspace") String workspace);
-}
 
+    @RequestLine("GET /user")
+    UserDto getCurrentUserUuid();
+}

@@ -51,7 +51,8 @@ public class BitBucketGitProvider implements GitProvider {
     @Override
     public PullRequestResponse makePullRequest(PullRequest pullRequest) {
         PullRequestBodyDto body = new PullRequestBodyDto(pullRequest.getTitle(),
-                new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())));
+                new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())),
+                List.of(new PullRequestBodyDto.Reviewer(pullRequest.getReviewer())));
         PullRequestResponseDto dto
                 = client.createPullRequest(pullRequest.getRepoOwner(), pullRequest.getRepoName(), body);
         return PullRequestResponse.builder()
@@ -117,6 +118,11 @@ public class BitBucketGitProvider implements GitProvider {
         String workspaceName = bitBucketGitProviderUrlHelper.getOwnerName(repo.getLink());
         return client.getMembersFromWorkspace(workspaceName)
                 .getMembers();
+    }
+
+    @Override
+    public String getCurrentUserUuid() {
+        return client.getCurrentUserUuid().getUuid();
     }
 
 }

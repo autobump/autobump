@@ -1,6 +1,7 @@
 package com.github.autobump.springboot.controllers;
 
 import com.atlassian.connect.spring.IgnoreJwt;
+import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
 import com.github.autobump.core.model.Repo;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
@@ -30,15 +31,26 @@ public class DashBoardController {
     }
 
 
+    @GetMapping("/")
+    public ModelAndView bitbucket(ModelAndView mav){
+        mav.setViewName("bitbucket");
+        return mav;
+    }
+
     @GetMapping("/home")
     public ModelAndView home(ModelAndView mav) {
-        List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
-        if (monitored.isEmpty()) {
-            mav.setViewName("home");
-            var repos = settingsService.getAllRepositories();
-            mav.addObject("repositoryListDto", new RepositoryListDto(repos));
-        } else {
-            loadRepoOverview(mav);
+        try{
+            List<RepositoryDto> monitored = settingsService.getMonitoredRepos();
+            if (monitored.isEmpty()) {
+                mav.setViewName("home");
+                var repos = settingsService.getAllRepositories();
+                mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+            } else {
+                loadRepoOverview(mav);
+            }
+        }
+        catch(BitbucketUnauthorizedException b){
+            mav.setViewName("bitbucket");
         }
         return mav;
     }

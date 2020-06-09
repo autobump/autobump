@@ -16,4 +16,5 @@ public class PullRequest {
     final String repoOwner;
     @NonNull
     final String repoName;
+    final String reviewer;
 }
