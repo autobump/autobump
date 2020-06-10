@@ -4,25 +4,41 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title>Repository settings</title>
 
-    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a th:href="@{/home}">
+            <img class="navbar-brand" th:width="100" th:height="100" th:src="@{/images/autubumpLogo.png}"/>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/addRepos}">Repositories</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/loadRepoOverview}">Configure</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{https://autobump.github.io/autobump}">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-    <h1>AutoBump</h1>
+    <h1>Autobump</h1>
 
     <div class="jumbotron">
         <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
             It scans the pom.xml files, and automatically detects out-of-date dependencies using Maven central.
             It then creates a pull-request for every outdated dependency</p>
 
-        <p class="title">Configure the settings of <span th:text="${repoName}"/></p>
+        <p>Configure the settings of <span th:text="${repoName}"/></p>
 
     </div>
 
