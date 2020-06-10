@@ -4,18 +4,34 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <title>Home</title>
 
-    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
 <body>
 <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a th:href="@{/home}">
+            <img class="navbar-brand" th:width="100" th:height="100" th:src="@{/images/autubumpLogo.png}"/>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/addRepos}">Repositories</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/loadRepoOverview}">Configure</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{https://autobump.github.io/autobump}">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-    <h1>Welcome to AutoBump!</h1>
+    <h1><h1>Autobump</h1></h1>
 
     <div class="jumbotron">
         <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
@@ -24,7 +40,7 @@
         <p>Hit the button to install the app in your bitbucket workspace!.</p>
     </div>
     <div class="installbtn col-md-12">
-        <button><a th:href="@{'https://bitbucket.org/site/addons/authorize?descriptor_uri='
+        <button class="btn btn-primary"><a th:href="@{'https://bitbucket.org/site/addons/authorize?descriptor_uri='
      + ${baseUrl} + '/atlassian-connect.json&redirect_uri=' +${baseUrl}+'/home'}">Install</a></button>
     </div>
 
