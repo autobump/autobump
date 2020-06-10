@@ -110,7 +110,7 @@ class AutobumpconfigTest {
     void getNullJwt(){
         var host = new AtlassianHost();
         host.setClientKey("testKey");
-        host.setSharedSecret("SuperSecretkeyThatIjustToughtOfAndIsDefinitelyUnique");
+        host.setSharedSecret("3012b02577adbf62329d4aa3fbdfd35e02723ba49cef39524f1b2b97820e09e1");
         repository.delete(host);
         assertThat(autobumpconfig.getJwt()).isNull();
     }
