@@ -85,6 +85,27 @@ class BitBucketGitProviderTest {
                 .repoOwner(TEST_OWNER)
                 .repoName(TEST_REPO_NAME)
                 .title(TEST_TITLE)
+                .reviewer("reviewer_uuid")
+                .branchName(TEST_BRANCH)
+                .build();
+        var response = bitBucketGitProvider.makePullRequest(pullRequest);
+        assertThat(response)
+                .isEqualToComparingFieldByField(PullRequestResponse.builder()
+                        .type("pullrequest")
+                        .description("")
+                        .link("https://bitbucket.org/grietvermeesch/testmavenproject/pull-requests/3")
+                        .title("heyhey")
+                        .id(3)
+                        .state("OPEN")
+                        .build());
+    }
+
+    @Test
+    void makePullRequestWithoutReviewer(){
+        PullRequest pullRequest = PullRequest.builder()
+                .repoOwner(TEST_OWNER)
+                .repoName(TEST_REPO_NAME)
+                .title(TEST_TITLE)
                 .branchName(TEST_BRANCH)
                 .build();
         var response = bitBucketGitProvider.makePullRequest(pullRequest);

@@ -50,9 +50,7 @@ public class BitBucketGitProvider implements GitProvider {
 
     @Override
     public PullRequestResponse makePullRequest(PullRequest pullRequest) {
-        PullRequestBodyDto body = new PullRequestBodyDto(pullRequest.getTitle(),
-                new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())),
-                List.of(new PullRequestBodyDto.Reviewer(pullRequest.getReviewer())));
+        PullRequestBodyDto body = getPullRequestBodyDto(pullRequest);
         PullRequestResponseDto dto
                 = client.createPullRequest(pullRequest.getRepoOwner(), pullRequest.getRepoName(), body);
         return PullRequestResponse.builder()
@@ -64,6 +62,18 @@ public class BitBucketGitProvider implements GitProvider {
                 .state(dto.getState())
                 .commentCount(dto.getCommentCount())
                 .build();
+    }
+
+    private PullRequestBodyDto getPullRequestBodyDto(PullRequest pullRequest) {
+        if (pullRequest.getReviewer() != null){
+            return new PullRequestBodyDto(pullRequest.getTitle(),
+                    new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())),
+                    List.of(new PullRequestBodyDto.Reviewer(pullRequest.getReviewer())));
+        }
+        else {
+            return new PullRequestBodyDto(pullRequest.getTitle(),
+                    new PullRequestBodyDto.Source(new PullRequestBodyDto.Branch(pullRequest.getBranchName())));
+        }
     }
 
     @Override

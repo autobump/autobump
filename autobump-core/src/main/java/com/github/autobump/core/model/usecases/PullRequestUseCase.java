@@ -1,11 +1,13 @@
 package com.github.autobump.core.model.usecases;
 
 import com.github.autobump.core.model.Bump;
+import com.github.autobump.core.model.CommitResult;
 import com.github.autobump.core.model.GitClient;
 import com.github.autobump.core.model.GitProvider;
 import com.github.autobump.core.model.GitProviderUrlHelper;
 import com.github.autobump.core.model.PullRequest;
 import com.github.autobump.core.model.PullRequestResponse;
+import com.github.autobump.core.model.Setting;
 import com.github.autobump.core.model.SettingsRepository;
 import com.github.autobump.core.model.Workspace;
 import lombok.Builder;
@@ -27,14 +29,7 @@ public class PullRequestUseCase {
     public PullRequestResponse doPullRequest() {
         var commitResult =
                 gitClient.commitToNewBranch(workspace, bump);
-        PullRequest pullRequest = PullRequest.builder()
-                .branchName(commitResult.getBranchName())
-                .title(bump.getTitle())
-                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
-                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()))
-                .reviewer(settingsRepository
-                        .findSettingForReviewer(gitProviderUrlHelper.getRepoName(uri.toString())).getValue())
-                .build();
+        PullRequest pullRequest = getPullRequest(commitResult);
         PullRequestResponse response = pushPullRequest(pullRequest);
         PullRequest pr = getPullRequestThatShouldBeSuperSeded(pullRequest, response.getId());
         if (pr != null) {
@@ -43,6 +38,20 @@ public class PullRequestUseCase {
             gitProvider.closePullRequest(pr);
         }
         return response;
+    }
+
+    private PullRequest getPullRequest(CommitResult commitResult) {
+        PullRequest.PullRequestBuilder pr = PullRequest.builder()
+                .branchName(commitResult.getBranchName())
+                .title(bump.getTitle())
+                .repoName(gitProviderUrlHelper.getRepoName(uri.toString()))
+                .repoOwner(gitProviderUrlHelper.getOwnerName(uri.toString()));
+        Setting settingForReviewer = settingsRepository
+                .findSettingForReviewer(gitProviderUrlHelper.getRepoName(uri.toString()));
+        if (settingForReviewer != null){
+            pr.reviewer(settingForReviewer.getValue());
+        }
+        return pr.build();
     }
 
     private PullRequest getPullRequestThatShouldBeSuperSeded(PullRequest newPullRequest, int newPullrequestId){

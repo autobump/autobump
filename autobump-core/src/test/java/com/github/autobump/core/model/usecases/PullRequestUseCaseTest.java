@@ -224,6 +224,7 @@ class PullRequestUseCaseTest {
                 .title(PULL_REQUEST_TITLE_1)
                 .repoName("test")
                 .repoOwner("test")
+                .reviewer("reviewer_uuid")
                 .pullRequestId(1)
                 .build();
         PullRequest pr2 = PullRequest.builder()
