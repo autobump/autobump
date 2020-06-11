@@ -3,9 +3,9 @@ package com.github.autobump.bitbucket.model;
 import com.github.autobump.bitbucket.exceptions.BitbucketBadRequestException;
 import com.github.autobump.bitbucket.exceptions.BitbucketNotFoundException;
 import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
-import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.PullRequestResponse;
-import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.domain.PullRequest;
+import com.github.autobump.core.model.domain.Repo;
+import com.github.autobump.core.model.results.PullRequestResult;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -90,7 +90,7 @@ class BitBucketGitProviderTest {
                 .build();
         var response = bitBucketGitProvider.makePullRequest(pullRequest);
         assertThat(response)
-                .isEqualToComparingFieldByField(PullRequestResponse.builder()
+                .isEqualToComparingFieldByField(PullRequestResult.builder()
                         .type("pullrequest")
                         .description("")
                         .link("https://bitbucket.org/grietvermeesch/testmavenproject/pull-requests/3")
@@ -110,7 +110,7 @@ class BitBucketGitProviderTest {
                 .build();
         var response = bitBucketGitProvider.makePullRequest(pullRequest);
         assertThat(response)
-                .isEqualToComparingFieldByField(PullRequestResponse.builder()
+                .isEqualToComparingFieldByField(PullRequestResult.builder()
                         .type("pullrequest")
                         .description("")
                         .link("https://bitbucket.org/grietvermeesch/testmavenproject/pull-requests/3")

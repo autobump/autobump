@@ -1,7 +1,7 @@
 package com.github.autobump.cli.repositories;
 
-import com.github.autobump.core.model.Setting;
-import com.github.autobump.core.model.SettingsRepository;
+import com.github.autobump.core.model.domain.Setting;
+import com.github.autobump.core.repositories.SettingsRepository;
 
 import java.util.ArrayList;
 import java.util.List;

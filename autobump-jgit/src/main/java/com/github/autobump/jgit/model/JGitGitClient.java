@@ -1,11 +1,11 @@
 package com.github.autobump.jgit.model;
 
-import com.github.autobump.core.model.AutoBumpRebaseResult;
-import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.CommitResult;
-import com.github.autobump.core.model.DeleteBranchResult;
-import com.github.autobump.core.model.GitClient;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.domain.Bump;
+import com.github.autobump.core.model.domain.Workspace;
+import com.github.autobump.core.model.gitclients.GitClient;
+import com.github.autobump.core.model.results.AutoBumpRebaseResult;
+import com.github.autobump.core.model.results.CommitResult;
+import com.github.autobump.core.model.results.DeleteBranchResult;
 import com.github.autobump.jgit.exception.GitException;
 import lombok.AllArgsConstructor;
 import org.eclipse.jgit.api.CreateBranchCommand;

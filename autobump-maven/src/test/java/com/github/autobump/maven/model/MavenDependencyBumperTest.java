@@ -1,9 +1,9 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.Version;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.domain.Bump;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Version;
+import com.github.autobump.core.model.domain.Workspace;
 import com.github.autobump.maven.model.testclasses.MavenDependencyBumperTester;
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputSource;

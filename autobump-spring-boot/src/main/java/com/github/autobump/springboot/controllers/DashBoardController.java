@@ -2,7 +2,7 @@ package com.github.autobump.springboot.controllers;
 
 import com.atlassian.connect.spring.IgnoreJwt;
 import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
-import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.domain.Repo;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;
 import com.github.autobump.springboot.services.AutoBumpService;

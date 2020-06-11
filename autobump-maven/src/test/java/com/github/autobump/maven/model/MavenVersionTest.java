@@ -3,10 +3,10 @@ package com.github.autobump.maven.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.github.autobump.core.model.Version.UpdateType.INCREMENTAL;
-import static com.github.autobump.core.model.Version.UpdateType.MAJOR;
-import static com.github.autobump.core.model.Version.UpdateType.MINOR;
-import static com.github.autobump.core.model.Version.UpdateType.NONE;
+import static com.github.autobump.core.model.domain.Version.UpdateType.INCREMENTAL;
+import static com.github.autobump.core.model.domain.Version.UpdateType.MAJOR;
+import static com.github.autobump.core.model.domain.Version.UpdateType.MINOR;
+import static com.github.autobump.core.model.domain.Version.UpdateType.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 

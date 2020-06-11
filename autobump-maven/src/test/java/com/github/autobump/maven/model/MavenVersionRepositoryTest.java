@@ -1,7 +1,7 @@
 package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
-import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.domain.Dependency;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

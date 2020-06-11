@@ -1,6 +1,6 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Version;
+import com.github.autobump.core.model.domain.Version;
 import lombok.Value;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.codehaus.mojo.buildhelper.versioning.VersionInformation;
