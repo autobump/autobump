@@ -22,7 +22,7 @@ import java.util.List;
 @Setter
 @IgnoreJwt
 public class DashBoardController {
-
+    private final String BITBUCKET = "bitbucket";
     private SettingsService settingsService;
     private AutoBumpService autoBumpService;
     @Value("${autobump.bitbucket.base-url}")
@@ -36,7 +36,7 @@ public class DashBoardController {
     @GetMapping("/")
     public ModelAndView bitbucket(ModelAndView mav){
         mav.addObject("baseUrl",baseUrl);
-        mav.setViewName("bitbucket");
+        mav.setViewName(BITBUCKET);
         return mav;
     }
 
@@ -53,8 +53,7 @@ public class DashBoardController {
             }
         }
         catch(BitbucketUnauthorizedException b){
-            mav.addObject("baseUrl",baseUrl);
-            mav.setViewName("bitbucket");
+            bitbucket(mav);
         }
         return mav;
     }
@@ -95,7 +94,7 @@ public class DashBoardController {
             mav.addObject("repositoryListDto", new RepositoryListDto(repos));
         }catch (BitbucketUnauthorizedException b) {
             mav.addObject("baseUrl", baseUrl);
-            mav.setViewName("bitbucket");
+            mav.setViewName(BITBUCKET);
         }
         return mav;
     }

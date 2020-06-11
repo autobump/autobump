@@ -93,6 +93,13 @@ class DashBoardControllerTest {
     }
 
     @Test
+    void selectRepositoriesWhenUnauthenticated_leadsToInstallPage(){
+        when(service.getAllRepositories()).thenThrow(BitbucketUnauthorizedException.class);
+        ModelAndView mav = dashBoardController.addRepos(new ModelAndView());
+        assertThat(mav.getViewName()).isEqualTo("bitbucket");
+    }
+
+    @Test
     void settings() {
         when(service.getRepositoryDtoWithSettings(anyString())).thenReturn(dummyRepoDto);
         ModelAndView mav = dashBoardController.settings(new ModelAndView(), MOCK_REPO_ID);
