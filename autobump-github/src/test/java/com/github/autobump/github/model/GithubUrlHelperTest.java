@@ -1,6 +1,6 @@
 package com.github.autobump.github.model;
 
-import com.github.autobump.core.model.ReleaseNotesUrlHelper;
+import com.github.autobump.core.model.releasenotes.ReleaseNotesUrlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

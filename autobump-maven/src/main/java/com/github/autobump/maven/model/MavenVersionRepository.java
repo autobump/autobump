@@ -1,9 +1,9 @@
 package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.Version;
-import com.github.autobump.core.model.VersionRepository;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Version;
+import com.github.autobump.core.repositories.VersionRepository;
 import lombok.NonNull;
 import org.apache.maven.artifact.repository.metadata.io.xpp3.MetadataXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;

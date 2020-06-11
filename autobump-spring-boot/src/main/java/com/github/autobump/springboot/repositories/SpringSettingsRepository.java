@@ -1,7 +1,7 @@
 package com.github.autobump.springboot.repositories;
 
-import com.github.autobump.core.model.Setting;
-import com.github.autobump.core.model.SettingsRepository;
+import com.github.autobump.core.model.domain.Setting;
+import com.github.autobump.core.repositories.SettingsRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.autobump.core.model.Setting.SettingsType.IGNORE;
+import static com.github.autobump.core.model.domain.Setting.SettingsType.IGNORE;
 
 @Repository
 public class SpringSettingsRepository implements SettingsRepository {

@@ -1,7 +1,7 @@
 package com.github.autobump.springboot.controllers;
 
 import com.github.autobump.bitbucket.exceptions.BitbucketUnauthorizedException;
-import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.domain.Repo;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryListDto;

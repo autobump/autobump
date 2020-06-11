@@ -1,7 +1,7 @@
 package com.github.autobump.springboot.repositories;
 
-import com.github.autobump.core.model.Repo;
-import com.github.autobump.core.model.RepoRepository;
+import com.github.autobump.core.model.domain.Repo;
+import com.github.autobump.core.repositories.RepoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

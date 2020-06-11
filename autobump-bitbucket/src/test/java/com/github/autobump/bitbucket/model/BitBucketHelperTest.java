@@ -1,6 +1,6 @@
 package com.github.autobump.bitbucket.model;
 
-import com.github.autobump.core.model.GitProviderUrlHelper;
+import com.github.autobump.core.model.gitproviders.GitProviderUrlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

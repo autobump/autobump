@@ -1,10 +1,10 @@
 package com.github.autobump.springboot.services;
 
 import com.atlassian.connect.spring.AtlassianHostRepository;
-import com.github.autobump.core.model.Repo;
-import com.github.autobump.core.model.RepoRepository;
-import com.github.autobump.core.model.SettingsRepository;
-import com.github.autobump.core.model.usecases.AutobumpUseCase;
+import com.github.autobump.core.model.domain.Repo;
+import com.github.autobump.core.repositories.RepoRepository;
+import com.github.autobump.core.repositories.SettingsRepository;
+import com.github.autobump.core.usecases.AutobumpUseCase;
 import com.github.autobump.github.model.GithubReleaseNotesSource;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import lombok.Setter;

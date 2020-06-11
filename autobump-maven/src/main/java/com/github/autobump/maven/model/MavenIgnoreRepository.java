@@ -1,9 +1,9 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.IgnoreRepository;
-import com.github.autobump.core.model.Version;
-import com.github.autobump.core.model.Version.UpdateType;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Version;
+import com.github.autobump.core.model.domain.Version.UpdateType;
+import com.github.autobump.core.repositories.IgnoreRepository;
 
 import java.util.Collections;
 import java.util.Map;

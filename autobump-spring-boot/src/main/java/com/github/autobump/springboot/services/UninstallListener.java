@@ -2,8 +2,8 @@ package com.github.autobump.springboot.services;
 
 import com.atlassian.connect.spring.AddonUninstalledEvent;
 import com.atlassian.connect.spring.AtlassianHostRepository;
-import com.github.autobump.core.model.RepoRepository;
-import com.github.autobump.core.model.SettingsRepository;
+import com.github.autobump.core.repositories.RepoRepository;
+import com.github.autobump.core.repositories.SettingsRepository;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 

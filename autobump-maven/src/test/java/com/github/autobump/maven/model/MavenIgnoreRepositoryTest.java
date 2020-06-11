@@ -1,8 +1,8 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.IgnoreRepository;
-import com.github.autobump.core.model.Version;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Version;
+import com.github.autobump.core.repositories.IgnoreRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

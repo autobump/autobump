@@ -1,8 +1,8 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.DependencyResolver;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.dependencymanagement.DependencyResolver;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Workspace;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
