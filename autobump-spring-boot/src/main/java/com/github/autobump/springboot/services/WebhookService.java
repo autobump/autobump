@@ -1,12 +1,12 @@
 package com.github.autobump.springboot.services;
 
-import com.github.autobump.core.model.SettingsRepository;
-import com.github.autobump.core.model.events.CommentCreatedEvent;
-import com.github.autobump.core.model.events.PrClosedEvent;
-import com.github.autobump.core.model.events.PushEvent;
-import com.github.autobump.core.model.usecases.CommentCreatedUseCase;
-import com.github.autobump.core.model.usecases.PullRequestClosedUseCase;
-import com.github.autobump.core.model.usecases.RebaseUseCase;
+import com.github.autobump.core.events.CommentCreatedEvent;
+import com.github.autobump.core.events.PrClosedEvent;
+import com.github.autobump.core.events.PushEvent;
+import com.github.autobump.core.repositories.SettingsRepository;
+import com.github.autobump.core.usecases.CommentCreatedUseCase;
+import com.github.autobump.core.usecases.PullRequestClosedUseCase;
+import com.github.autobump.core.usecases.RebaseUseCase;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

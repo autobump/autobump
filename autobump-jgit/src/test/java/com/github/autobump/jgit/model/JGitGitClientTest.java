@@ -1,7 +1,7 @@
 package com.github.autobump.jgit.model;
 
-import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.domain.Bump;
+import com.github.autobump.core.model.domain.Workspace;
 import com.github.autobump.jgit.exception.GitException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;

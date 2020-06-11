@@ -1,7 +1,7 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Workspace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

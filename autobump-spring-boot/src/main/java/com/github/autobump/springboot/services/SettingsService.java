@@ -1,9 +1,9 @@
 package com.github.autobump.springboot.services;
 
-import com.github.autobump.core.model.GitProvider;
-import com.github.autobump.core.model.Repo;
-import com.github.autobump.core.model.RepoRepository;
-import com.github.autobump.core.model.Setting;
+import com.github.autobump.core.model.domain.Repo;
+import com.github.autobump.core.model.domain.Setting;
+import com.github.autobump.core.model.gitproviders.GitProvider;
+import com.github.autobump.core.repositories.RepoRepository;
 import com.github.autobump.springboot.configuration.Autobumpconfig;
 import com.github.autobump.springboot.controllers.dtos.DependencyDto;
 import com.github.autobump.springboot.controllers.dtos.RepositoryDto;

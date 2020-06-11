@@ -1,7 +1,7 @@
 package com.github.autobump.cli.model;
 
-import com.github.autobump.core.model.AutobumpResult;
-import com.github.autobump.core.model.usecases.AutobumpUseCase;
+import com.github.autobump.core.model.results.AutobumpResult;
+import com.github.autobump.core.usecases.AutobumpUseCase;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;

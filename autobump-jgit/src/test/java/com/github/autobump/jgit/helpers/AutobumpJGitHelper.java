@@ -1,9 +1,9 @@
 package com.github.autobump.jgit.helpers;
 
-import com.github.autobump.core.model.Bump;
-import com.github.autobump.core.model.Dependency;
-import com.github.autobump.core.model.Version;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.domain.Bump;
+import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.Version;
+import com.github.autobump.core.model.domain.Workspace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;

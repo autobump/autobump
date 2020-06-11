@@ -1,8 +1,9 @@
 package com.github.autobump.core.model;
 
+import com.github.autobump.core.model.domain.Setting;
 import org.junit.jupiter.api.Test;
 
-import static com.github.autobump.core.model.Setting.SettingsType.IGNORE;
+import static com.github.autobump.core.model.domain.Setting.SettingsType.IGNORE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 

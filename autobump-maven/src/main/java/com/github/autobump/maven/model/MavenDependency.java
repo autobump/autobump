@@ -1,6 +1,6 @@
 package com.github.autobump.maven.model;
 
-import com.github.autobump.core.model.Dependency;
+import com.github.autobump.core.model.domain.Dependency;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;

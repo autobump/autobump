@@ -3,11 +3,11 @@ package com.github.autobump.bitbucket.model;
 import com.github.autobump.bitbucket.model.dtos.CommentDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestBodyDto;
 import com.github.autobump.bitbucket.model.dtos.PullRequestResponseDto;
-import com.github.autobump.core.model.GitProvider;
-import com.github.autobump.core.model.GitProviderUrlHelper;
-import com.github.autobump.core.model.PullRequest;
-import com.github.autobump.core.model.PullRequestResponse;
-import com.github.autobump.core.model.Repo;
+import com.github.autobump.core.model.domain.PullRequest;
+import com.github.autobump.core.model.domain.Repo;
+import com.github.autobump.core.model.gitproviders.GitProvider;
+import com.github.autobump.core.model.gitproviders.GitProviderUrlHelper;
+import com.github.autobump.core.model.results.PullRequestResult;
 import feign.Feign;
 import feign.RequestInterceptor;
 import feign.auth.BasicAuthRequestInterceptor;
@@ -49,11 +49,11 @@ public class BitBucketGitProvider implements GitProvider {
     }
 
     @Override
-    public PullRequestResponse makePullRequest(PullRequest pullRequest) {
+    public PullRequestResult makePullRequest(PullRequest pullRequest) {
         PullRequestBodyDto body = getPullRequestBodyDto(pullRequest);
         PullRequestResponseDto dto
                 = client.createPullRequest(pullRequest.getRepoOwner(), pullRequest.getRepoName(), body);
-        return PullRequestResponse.builder()
+        return PullRequestResult.builder()
                 .type(dto.getType())
                 .description(dto.getDescription())
                 .link(dto.getLink())

@@ -1,7 +1,7 @@
 package com.github.autobump.maven.model;
 
 import com.github.autobump.core.exceptions.DependencyParserException;
-import com.github.autobump.core.model.Workspace;
+import com.github.autobump.core.model.domain.Workspace;
 import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
