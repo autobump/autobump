@@ -16,7 +16,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a th:href="@{/home}">
-            <img class="navbar-brand" th:width="100" th:height="100" th:src="@{/images/autobump.png}"/>
+            <img class="navbar-brand" th:src="@{/images/logo_text_transparent.png}"/>
         </a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
@@ -33,7 +33,7 @@
         </div>
     </nav>
 
-    <h1>Autobump</h1>
+    <p class="title"><img th:width="300px" th:src="@{/images/autobump.png}"></p>
 
     <div class="jumbotron">
         <p>Autobump is a bot that automatically creates pull-requests to keep dependencies up to date.
