@@ -1,11 +1,11 @@
 package com.github.autobump.core.usecases;
 
-import com.github.autobump.core.model.domain.ReleaseNotes;
 import com.github.autobump.core.model.dependencymanagement.DependencyBumper;
 import com.github.autobump.core.model.dependencymanagement.DependencyResolver;
 import com.github.autobump.core.model.domain.Bump;
 import com.github.autobump.core.model.domain.Dependency;
 import com.github.autobump.core.model.domain.PullRequest;
+import com.github.autobump.core.model.domain.ReleaseNotes;
 import com.github.autobump.core.model.domain.Setting;
 import com.github.autobump.core.model.domain.Version;
 import com.github.autobump.core.model.domain.Workspace;

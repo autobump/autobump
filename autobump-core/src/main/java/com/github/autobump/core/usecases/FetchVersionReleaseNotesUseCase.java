@@ -1,8 +1,8 @@
 package com.github.autobump.core.usecases;
 
-import com.github.autobump.core.model.domain.ReleaseNotes;
 import com.github.autobump.core.model.domain.Bump;
 import com.github.autobump.core.model.domain.Dependency;
+import com.github.autobump.core.model.domain.ReleaseNotes;
 import com.github.autobump.core.model.releasenotes.ReleaseNotesSource;
 import com.github.autobump.core.repositories.VersionRepository;
 import lombok.Builder;

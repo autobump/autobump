@@ -1,8 +1,8 @@
 package com.github.autobump.github.model;
 
+import com.github.autobump.core.model.domain.ReleaseNotes;
 import com.github.autobump.core.model.releasenotes.ReleaseNotesSource;
 import com.github.autobump.core.model.releasenotes.ReleaseNotesUrlHelper;
-import com.github.autobump.core.model.domain.ReleaseNotes;
 import com.github.autobump.github.exceptions.GithubNotFoundException;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
