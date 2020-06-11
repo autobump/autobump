@@ -89,9 +89,14 @@ public class DashBoardController {
 
     @GetMapping("/addRepos")
     public ModelAndView addRepos(ModelAndView mav) {
-        mav.setViewName("home");
-        var repos = settingsService.getAllRepositories();
-        mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+        try{
+            mav.setViewName("home");
+            var repos = settingsService.getAllRepositories();
+            mav.addObject("repositoryListDto", new RepositoryListDto(repos));
+        }catch (BitbucketUnauthorizedException b) {
+            mav.addObject("baseUrl", baseUrl);
+            mav.setViewName("bitbucket");
+        }
         return mav;
     }
 
