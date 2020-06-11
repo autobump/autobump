@@ -10,6 +10,18 @@ public class PullRequestBodyDto {
     PullRequestBodyDto.Source source;
     List<Reviewer> reviewers;
 
+    public PullRequestBodyDto(String title, Source source) {
+        this.title = title;
+        this.source = source;
+        reviewers = null;
+    }
+
+    public PullRequestBodyDto(String title, Source source, List<Reviewer> reviewers) {
+        this.title = title;
+        this.source = source;
+        this.reviewers = reviewers;
+    }
+
     @Value
     public static class Source{
         PullRequestBodyDto.Branch branch;
