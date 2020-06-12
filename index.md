@@ -58,7 +58,7 @@ Table of contents
 Autobump is a bot that automatically creates pull-requests to keep
 dependencies of your projects up to date. It scans the dependency files,
 and automatically detects out-of-date dependencies using the the configured repository. It then creates a pull-request for every outdated dependency.
-Currently Autobump support Maven dependencies defined in the Maven Central Repository.
+Currently Autobump supports Maven dependencies defined in the Maven Central Repository.
 
 ### What problem does Autobump solve? ###
 
