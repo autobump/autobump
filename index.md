@@ -56,10 +56,9 @@ Table of contents
 ### What is Autobump? ###
 
 Autobump is a bot that automatically creates pull-requests to keep
-dependencies of Maven projects up to date. It scans the pom.xml files,
-and automatically detects out-of-date dependencies using the Maven
-Central Repository. It then creates a pull-request for every outdated
-dependency.
+dependencies of your projects up to date. It scans the dependency files,
+and automatically detects out-of-date dependencies using the the configured repository. It then creates a pull-request for every outdated dependency.
+Currently Autobump support Maven dependencies defined in the Maven Central Repository.
 
 ### What problem does Autobump solve? ###
 
@@ -99,20 +98,6 @@ figure XXX below.
 To date, Autobump includes two clients: a command line interface and a
 spring boot web app, that is integrated in BitBucket as a BitBucket
 Cloud app.
-
-#### Command line interface ####
-
-You can run the application through a command-line interface. To bump a
-repository, enter your credentials (username and password of your
-BitBucket account) and the url of the repository you want to have
-bumped. In addition, you can specify dependencies you do not wish to
-have bumped. You can also specify whether 'major' or 'minor' updates
-need to be ignored. The help-page of the command-line interface is
-depicted in Image XXX.
-
-![](./media/image2.png)
-
->	Image XXX. The help-page of Autobump commandline interface.
 
 #### Autobump Spring boot ####
 
@@ -154,6 +139,21 @@ Github, they are included as a comment in the pull request (image XXX)
 
 >	Image XXX. A pull request issues by Autobump, that includes release
 notes.
+
+#### Command line interface ####
+
+You can run the application through a command-line interface. To bump a
+repository, enter your credentials (username and password of your
+BitBucket account) and the url of the repository you want to have
+bumped. In addition, you can specify dependencies you do not wish to
+have bumped. You can also specify whether 'major' or 'minor' updates
+need to be ignored. The help-page of the command-line interface is
+depicted in Image XXX.
+
+![](./media/image2.png)
+
+>	Image XXX. The help-page of Autobump commandline interface.
+
 
 ### How to configure Autobump ###
 
