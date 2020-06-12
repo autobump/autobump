@@ -87,11 +87,11 @@ repository. It then creates a pull request, and includes release notes
 of the new version if they are available on GitHub. If the build
 pipeline in your repository succeeds, you may merge the new pull request
 with the click of a button in Bitbucket. The flow is visualised in
-figure XXX below.
+the figure below.
 
 ![](./media/image1.png)
 
->	Figure XXX. Flow of Autobump
+>	Figure 1. Flow of Autobump
 
 ### Support ###
 
@@ -113,40 +113,39 @@ Cloud app.
 Alternatively, you can use Autobump Spring boot, a Bitbucket Cloud app
 that is integrated in your Bitbucket Workspace. When you go to
 [https://prod.autobump.be](https://prod.autobumpbe) you
-can hit the install-button (Image XXX). 
+can hit the install-button. 
 
 ![](./media/image3.png)
 
->	Image XXX. Page to install Autobump in a BitBucket workspace.
+>	Figure 2. Page to install Autobump in a BitBucket workspace.
 
 Once you are authenticated in BitBucket, you are prompted to grant
-Autobump access to your BitBucket workspace (Image XXX). 
+Autobump access to your BitBucket workspace. 
 
 ![](./media/image4.png)
 
 If you click 'Grant Access', you land on the homepage of the Autobump
 dashboard, where all the repositories of your BitBucket workspace are
-listed. You can now select the repositories you want Autobump to monitor
-(image XXX).
+listed. You can now select the repositories you want Autobump to monitor.
 
 ![](./media/image5.png)
 
->	Image XXX. List of the repositories in a BitBucket workspace, imported
+>	Figure 3. List of the repositories in a BitBucket workspace, imported
 in Autobump.
 
 ![](./media/image6.png)
 
->	Image XXX. Page to configure or bump repositories.
+>	Figure 4. Page to configure or bump repositories.
 
 After saving, you can then hit the 'Bump now!' button to run Autobump
 for your repositories. If your repositories contain outdated
 dependencies, you will soon see the first pull requests appear in your
 BitBucket workspace! If notes on the new release are available in
-Github, they are included as a comment in the pull request (image XXX)
+Github, they are included as a comment in the pull request.
 
 ![](./media/image7.png)
 
->	Image XXX. A pull request issues by Autobump, that includes release
+>	Figure 5. A pull request issued by Autobump, that includes release
 notes.
 
 #### Command line interface ####
@@ -161,7 +160,7 @@ depicted in Image XXX.
 
 ![](./media/image2.png)
 
->	Image XXX. The help-page of Autobump commandline interface.
+>	Figure 6. The help-page of Autobump commandline interface.
 
 
 ### How to configure Autobump ###
@@ -175,24 +174,24 @@ request. 
 
 ![](./media/image8.png)
 
->	Image XXX. Configuration page for a repository.
+>	Figure 7. Configuration page for a repository.
 
 Autobump may be configured to ignore updates for minor or major releases
 of particular dependencies. To that end, enter the comment "ignore this
 major" or "ignore this minor" in the comment-field of the relevant pull
-request upon declining it (image XXX). Autobump will then save this new
-setting and display it in the dashboard (image XXX). If you decline a
+request upon declining it. Autobump will then save this new
+setting and display it in the dashboard. If you decline a
 pull request without adding a comment, Autobump will no longer create
 pull requests for that particular version.
 
 ![](./media/image9.png)
 
->	Image XXX. Using a comment on a pull request in BitBucket to configure
+>	Figure 8. Using a comment on a pull request in BitBucket to configure
 Autobump to ignore updates.
 
 ![](./media/image10.png)
 
->	Image XXX. Configuration page of a repository, that displays ignored dependencies.
+>	Figure 9. Configuration page of a repository, that displays ignored dependencies.
 
 <br>
 <br>
@@ -293,16 +292,16 @@ purposes. Third, a diagram on Component-level visualises the internal
 structure of one container. For instance, the dependencies among the
 modules of a multi module application are typically visualised on this
 level. Lastly, the Class diagram contains the highest level of detail.
-The hierarchy of the C4-architecture is clarified by flowchart 1.
+The hierarchy of the C4-architecture is clarified by the figure below.
 
 ![](./media/image11.png)
 
->	Figure XXX. Overview of the C4-architecture. the 'Container'-level has been excluded here, because it is less pertinent to the Autobump architecture.
+>	Figure 10. Overview of the C4-architecture. the 'Container'-level has been excluded here, because it is less pertinent to the Autobump architecture.
 
 #### Context ####
 
 The main interactions between Autobump and external systems are depicted
-in figure XXX. The business flow starts with a git clone in BitBucket
+in figure 11. The business flow starts with a git clone in BitBucket
 cloud. Autubump extracts all the dependencies for Maven projects, and
 then checks for each dependency whether any new versions have been
 released. If this is the case, Autobump performs a bump for each
@@ -311,11 +310,11 @@ outdated dependency and creates a pull request in Bitbucket. 
 ![A screenshot of a cell phone Description automatically
 generated](./media/image12.png)
 
->	Figure XXX. The architecture of Autobump on Context-level.
+>	Figure 11. The architecture of Autobump on Context-level.
 
 #### Component ####
 
-Figure XXX elucidates the dependencies among the modules of Autobump.
+Figure 12 elucidates the dependencies among the modules of Autobump.
 The key-role of the core module is plainly evident. All modules depend
 on it. The CLI-Client and the Spring-boot module also have dependencies
 on the four implementing modules. When new implementations are added in
@@ -324,7 +323,7 @@ Similarly, Autobump can easily be extended with additional clients.
 
 ![](./media/image13.png)
 
->	Figure XXX. The architecture of Autobump on Component-level.
+>	Figure 12. The architecture of Autobump on Component-level.
 
 #### Code ####
 
@@ -369,7 +368,7 @@ can easily be extended or changed without jeopardizing the stability and
 maintainability of the application.
 
 The adaptability of Autobump is evidenced by the hexagon-architecture in
-figure XXX. It includes a selection of the ports and adapters in the
+figure 13. It includes a selection of the ports and adapters in the
 application. For instance, the core module has a port (an interface) for
 interacting with a SettingsRepository, where configurations are to be
 saved. Autobump has three different adapters: a MariaDB in de
@@ -384,24 +383,24 @@ stability and maintainability of Autobump.
 
 ![](./media/image14.png)
 
->	Figure XXX. The hexagon architecture of Autobump.
+>	Figure 13. The hexagon architecture of Autobump.
 
 ### Opportunities for extending the Autobump ###
 #### architecture ####
 
 The clean architecture of Autobump allows for easily extending and
-enhancing support for bumping a wide array of projects. Figures XXX  and
-XXX depict an architecture that may be accomplished by adding two more
+enhancing support for bumping a wide array of projects. Figures 14  and
+15 depict an architecture that may be accomplished by adding two more
 modules (in purple) to the code base. Additional clients (in yellow) may
 be added as well.
 
 ![](./media/image15.png)
 
->	Figure XXX. Extended Autobump context-diagram.
+>	Figure 14. Extended Autobump context-diagram.
 
 ![](./media/image16.png)
 
->	Figure XXX. Extended Autobump component-diagram
+>	Figure 15. Extended Autobump component-diagram
 
 <br>
 <br>
@@ -467,7 +466,7 @@ pom.xml file, the MavenDependencyBumper steps in to create the bumps.
 
 ![](./media/image20.png)
 
->	Figure XXX. Simplified class diagram of the maven-module
+>	Figure 16. Simplified class diagram of the maven-module
 
 ### Bitbucket ###
 
@@ -479,7 +478,7 @@ from urls; and the BitBucketErrorDecoder provides custom exceptions.
 
 ![](./media/image21.png)
 
->	Figure XXX. Simplified class diagram of the bitbucket-module
+>	Figure 17. Simplified class diagram of the bitbucket-module
 
 ### Github ###
 
