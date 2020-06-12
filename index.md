@@ -3,7 +3,7 @@ layout: page
 title: Autobump Documentation
 ---
 
-Table of contents {#inhoud .TOC-Heading}
+Table of contents
 =================
 
 [Description of Autobump](#_Toc42854096)
@@ -74,9 +74,9 @@ Table of contents {#inhoud .TOC-Heading}
 
 [Main flows of business logic](#_Toc42854129)
 
-[]{#_Toc42854096 TOC-Heading}Description of Autobump
+##Description of Autobump##
 
-[]{#_Toc42854097 .anchor}What is Autobump?
+###What is Autobump?###
 
 Autobump is a bot that automatically creates pull-requests to keep
 dependencies of Maven projects up to date. It scans the pom.xml files,
@@ -84,7 +84,7 @@ and automatically detects out-of-date dependencies using the Maven
 Central Repository. It then creates a pull-request for every outdated
 dependency.
 
-[]{#_Toc42854098 .anchor}What problem does Autobump solve?
+###What problem does Autobump solve?###
 
 It is important to regularly keep the dependencies of your projects up
 to date. External libraries are habitually updated to solve security
@@ -99,7 +99,7 @@ updates all dependencies when new versions are released. Autobump relies
 on the existing build pipelines of the repository to test whether
 anything breaks when the update is implemented.
 
-[]{#_Toc42854099 .anchor}How does Autobump accomplish its goals?
+###How does Autobump accomplish its goals?###
 
 Autobump makes a temporary git clone of your Bitbucket repository and
 extracts the build file where all dependencies are described. It then
@@ -113,17 +113,17 @@ pipeline in your repository succeeds, you may merge the new pull request
 with the click of a button in Bitbucket. The flow is visualised in
 figure XXX below.
 
-![](./media/image1.png){width="5.041666666666667in" height="1.875in"}
+![](./media/image1.png)
 
 >      Figure XXX. Flow of Autobump
 
-[]{#_Toc42854100 .anchor}Autobump clients
+###Autobump clients###
 
 To date, Autobump includes two clients: a command line interface and a
 spring boot web app, that is integrated in BitBucket as a BitBucket
 Cloud app.
 
-*Command line interface *
+####Command line interface####
 
 You can run the application through a command-line interface. To bump a
 repository, enter your credentials (username and password of your
@@ -133,44 +133,39 @@ have bumped. You can also specify whether 'major' or 'minor' updates
 need to be ignored. The help-page of the command-line interface is
 depicted in Image XXX.
 
-![](./media/image2.png){width="6.266666666666667in"
-height="3.2916666666666665in"}
+![](./media/image2.png)
 
-Image XXX. The help-page of Autobump commandline interface.
+>	Image XXX. The help-page of Autobump commandline interface.
 
-*Autobump Spring boot*
+####Autobump Spring boot####
 
 Alternatively, you can use Autobump Spring boot, a Bitbucket Cloud app
 that is integrated in your Bitbucket Workspace. When you go to
-[[https://prod.autobump.be]{.underline}](https://prod.autobumpbe) you
+[https://prod.autobump.be](https://prod.autobumpbe) you
 can hit the install-button (Image XXX). 
 
-![](./media/image3.png){width="6.266666666666667in"
-height="3.9166666666666665in"}
+![](./media/image3.png)
 
-Image XXX. Page to install Autobump in a BitBucket workspace.
+>	Image XXX. Page to install Autobump in a BitBucket workspace.
 
 Once you are authenticated in BitBucket, you are prompted to grant
 Autobump access to your BitBucket workspace (Image XXX). 
 
-![](./media/image4.png){width="6.266666666666667in"
-height="3.9166666666666665in"}
+![](./media/image4.png)
 
 If you click 'Grant Access', you land on the homepage of the Autobump
 dashboard, where all the repositories of your BitBucket workspace are
 listed. You can now select the repositories you want Autobump to monitor
 (image XXX).
 
-![](./media/image5.png){width="6.266666666666667in"
-height="3.9166666666666665in"}
+![](./media/image5.png)
 
-Image XXX. List of the repositories in a BitBucket workspace, imported
+>	Image XXX. List of the repositories in a BitBucket workspace, imported
 in Autobump.
 
-![](./media/image6.png){width="6.266666666666667in"
-height="3.9166666666666665in"}
+![](./media/image6.png)
 
-Image XXX. Page to configure or bump repositories.
+>	Image XXX. Page to configure or bump repositories.
 
 After saving, you can then hit the 'Bump now!' button to run Autobump
 for your repositories. If your repositories contain outdated
@@ -178,13 +173,12 @@ dependencies, you will soon see the first pull requests appear in your
 BitBucket workspace! If notes on the new release are available in
 Github, they are included as a comment in the pull request (image XXX)
 
-![](./media/image7.png){width="6.266666666666667in"
-height="3.533333333333333in"}
+![](./media/image7.png)
 
-Image XXX. A pull request issues by Autobump, that includes release
+>	Image XXX. A pull request issues by Autobump, that includes release
 notes.
 
-[]{#_Toc42854101 .anchor}How to configure Autobump
+###How to configure Autobump###
 
 You can configure the settings of the Autobump Spring Boot application,
 both by a dashboard and through commenting pull requests issued by
@@ -193,10 +187,9 @@ monitored daily. It is also possible to enter the username of a
 developer, who will be notified when Autobump has issued a new pull
 request. 
 
-![](./media/image8.png){width="6.266666666666667in"
-height="3.9166666666666665in"}
+![](./media/image8.png)
 
-Image XXX. Configuration page for a repository.
+>	Image XXX. Configuration page for a repository.
 
 Autobump may be configured to ignore updates for minor or major releases
 of particular dependencies. To that end, enter the comment "ignore this
@@ -206,21 +199,18 @@ setting and display it in the dashboard (image XXX). If you decline a
 pull request without adding a comment, Autobump will no longer create
 pull requests for that particular version.
 
-![](./media/image9.png){width="6.266666666666667in"
-height="3.533333333333333in"}
+![](./media/image9.png)
 
-Image XXX. Using a comment on a pull request in BitBucket to configure
+>	Image XXX. Using a comment on a pull request in BitBucket to configure
 Autobump to ignore updates.
 
-![](./media/image10.png){width="6.266666666666667in"
-height="3.9166666666666665in"}
+![](./media/image10.png)
 
-Image XXX. Configuration page of a repository, that displays ignored
-dependencies.
+>	Image XXX. Configuration page of a repository, that displays ignored dependencies.
 
-[]{#_Toc42854102 .anchor}Analysis
+###Analysis###
 
-[]{#_Toc42854103 .anchor}Uses cases
+###Uses cases###
 
 Create pull request
 
@@ -288,9 +278,9 @@ Assign reviewer
 As a developer, I want to be able to configure Autobump to assign a user
 as reviewer for pull-requests that are created by Autobump.
 
-[]{#_Toc42854104 .anchor}Architecture
+###Architecture###
 
-[]{#_Toc42854105 .anchor}C4-architecture
+###C4-architecture###
 
 In this project, we adopt the C4 model for visualising our software
 architecture. The four C's denote Context, Containers, Component and
@@ -311,14 +301,11 @@ modules of a multi module application are typically visualised on this
 level. Lastly, the Class diagram contains the highest level of detail.
 The hierarchy of the C4-architecture is clarified by flowchart 1.
 
-![](./media/image11.png){width="5.966666666666667in"
-height="4.491666666666666in"}
+![](./media/image11.png)
 
-Figure XXX. Overview of the C4-architecture. the 'Container'-level has
-been excluded here, because it is less pertinent to the Autobump
-architecture.
+>	Figure XXX. Overview of the C4-architecture. the 'Container'-level has been excluded here, because it is less pertinent to the Autobump architecture.
 
-*Context*
+####Context####
 
 The main interactions between Autobump and external systems are depicted
 in figure XXX. The business flow starts with a git clone in BitBucket
@@ -328,12 +315,11 @@ released. If this is the case, Autobump performs a bump for each
 outdated dependency and creates a pull request in Bitbucket. 
 
 ![A screenshot of a cell phone Description automatically
-generated](./media/image12.png){width="6.266666666666667in"
-height="4.216666666666667in"}
+generated](./media/image12.png)
 
-       Figure XXX. The architecture of Autobump on Context-level.
+>	Figure XXX. The architecture of Autobump on Context-level.
 
-*Component*
+####Component####
 
 Figure XXX elucidates the dependencies among the modules of Autobump.
 The key-role of the core module is plainly evident. All modules depend
@@ -342,17 +328,17 @@ on the four implementing modules. When new implementations are added in
 the future, these clients can be extended with additional dependencies.
 Similarly, Autobump can easily be extended with additional clients.
 
-![](./media/image13.png){width="5.475in" height="4.8in"}
+![](./media/image13.png)
 
-Figure XXX. The architecture of Autobump on Component-level.
+>	Figure XXX. The architecture of Autobump on Component-level.
 
-*Code*
+####Code####
 
 Lastly, package diagrams and domain class diagrams offer a granular view
 of the architecture of Autobump. These are discussed in the section
 'description of modules' below.
 
-[]{#_Toc42854106 .anchor}Hexagon-architecture
+###Hexagon-architecture###
 
 The hexagon-architecture is yet another model for visualising our
 software architecture. It exemplifies the SOLID principles that have
@@ -402,11 +388,11 @@ DependencyBumper. However, additional modules for gradle- or
 npm-projects can easily be created, again without endangering the
 stability and maintainability of Autobump.
 
-![](./media/image14.png){width="6.3in" height="5.1375in"}
+![](./media/image14.png)
 
-Figure XXX. The hexagon architecture of Autobump.
+>	Figure XXX. The hexagon architecture of Autobump.
 
-[]{#_Toc42854107 .anchor}Opportunities for extending the Autobump
+###Opportunities for extending the Autobump###
 architecture
 
 The clean architecture of Autobump allows for easily extending and
@@ -415,19 +401,17 @@ XXX depict an architecture that may be accomplished by adding two more
 modules (in purple) to the code base. Additional clients (in yellow) may
 be added as well.
 
-![](./media/image15.png){width="6.266666666666667in"
-height="3.841666666666667in"}
+![](./media/image15.png)
 
-         Figure XXX. Extended Autobump context-diagram.
+>	Figure XXX. Extended Autobump context-diagram.
 
-![](./media/image16.png){width="5.441666666666666in"
-height="2.9583333333333335in"}
+![](./media/image16.png)
 
-Figure XXX. Extended Autobump component-diagram
+>	Figure XXX. Extended Autobump component-diagram
 
-[]{#_Toc42854108 .anchor}Description of modules
+##Description of modules##
 
-[]{#_Toc42854109 .anchor}Core
+###Core###
 
 The core module comprises all the building blocks that enable the
 functionalities of Autobump. On the one hand, a package of Use Cases is
@@ -458,15 +442,13 @@ implementations. While Autobump may in the future be enhanced with many
 additional implementations, the core-module is expected to remain
 largely unaffected. 
 
-![](./media/image17.png){width="5.258333333333334in"
-height="2.5833333333333335in"}
+![](./media/image17.png)
 
-![](./media/image18.png){width="6.266666666666667in" height="4.075in"}
+![](./media/image18.png)
 
-![](./media/image19.png){width="6.266666666666667in"
-height="2.158333333333333in"}
+![](./media/image19.png)
 
-[]{#_Toc42854110 .anchor}Maven
+###Maven###
 
 In this module, Autobump provides support for Maven projects. It
 includes adapters that rely on the ports of the core module and
@@ -481,11 +463,11 @@ various ways dependencies are expressed in pom.xml files by defining a
 DependencyType. Once all dependencies have been extracted from the
 pom.xml file, the MavenDependencyBumper steps in to create the bumps.
 
-![](./media/image20.png){width="6.266666666666667in" height="3.55in"}
+![](./media/image20.png)
 
-Figure XXX. Simplified class diagram of the maven-module
+>	Figure XXX. Simplified class diagram of the maven-module
 
-[]{#_Toc42854111 .anchor}Bitbucket
+###Bitbucket###
 
 This module manages all interaction with the BitBucket api. Figure XXX
 displays the central role of the BitBucketGitProvider that uses the
@@ -493,32 +475,29 @@ BitBucketApi interface to make rest-calls. Authentication is covered by
 the BitBucketAccount class; a BitBucketUrlHelper assists extracting data
 from urls; and the BitBucketErrorDecoder provides custom exceptions.
 
-![](./media/image21.png){width="6.266666666666667in"
-height="1.4166666666666667in"}
+![](./media/image21.png)
 
-Figure XXX. Simplified class diagram of the bitbucket-module
+>	Figure XXX. Simplified class diagram of the bitbucket-module
 
-[]{#_Toc42854112 .anchor}Github
+###Github###
 
 Interaction with the Github-api is implemented in the github-module.
 Presently, it mainly includes a GithubReleaseNotesSource that uses the
 GithubApi-interface to obtain releasenotes of new versions of
 dependencies, which may be added to the comment of a pull request.
 
-![](./media/image22.png){width="6.266666666666667in"
-height="1.5083333333333333in"}
+![](./media/image22.png)
 
-[]{#_Toc42854113 .anchor}JGit
+###JGit###
 
 The JGit-module contains an adapter for implementing the core-interface
 GitClient. It uses the JGit library for issuing git commands, such as a
 git clone, the creation of a new branch, committing and pushing to a
 branch or rebasing from the master branch.
 
-![](./media/image23.png){width="1.8666666666666667in"
-height="1.9583333333333333in"}
+![](./media/image23.png)
 
-[]{#_Toc42854114 .anchor}CLI
+###CLI###
 
 Presently, there are two clients for running Autobump. The first one is
 included in the CLI-module, and provides a command line interface that
@@ -528,9 +507,9 @@ automatically creates a pull-request for every outdated dependency in
 the project. The AutobumpPropertiesProvider assists at prompting the
 user for the required cli-input.
 
-![](./media/image24.png){width="5.05in" height="1.9583333333333333in"}
+![](./media/image24.png)
 
-[]{#_Toc42854115 .anchor}Spring-boot
+###Spring-boot###
 
 Lastly, a second client is managed by the Spring-boot module, that is
 responsible for the integration of Autobump in BitBucket cloud, and
@@ -547,86 +526,81 @@ monitor. The Spring-boot module also comprises implementation of the
 repository interfaces in the core-module to persist the repositories
 that should be monitored, and the settings for those repositories. 
 
-![](./media/image25.png){width="5.466666666666667in" height="4.95in"}
+![](./media/image25.png)
 
-![](./media/image26.png){width="6.266666666666667in"
-height="5.658333333333333in"}
+![](./media/image26.png)
 
-[]{#_Toc42854116 .anchor}External dependencies
+###External dependencies###
 
 The main dependencies on external libraries for the production code of
 Autobump are:
 
--   [[Eclipse JGit]{.underline}](https://www.eclipse.org/jgit/): a java
+-   [Eclipse JGit](https://www.eclipse.org/jgit/): a java
     library to implement the git version control system
 
--   [[Feign]{.underline}](https://github.com/OpenFeign/feign): used in
+-   [Feign](https://github.com/OpenFeign/feign): used in
     the bitbucket- and github-modules, to create java http clients
 
--   [[Picocli]{.underline}](https://picocli.info/): a framework to
+-   [Picocli](https://picocli.info/): a framework to
     create the Autobump command line application
 
--   [[Maven]{.underline}](https://maven.apache.org/ref/3.6.3/): used for
+-   [Maven](https://maven.apache.org/ref/3.6.3/): used for
     implementing dependency management and parsing of pom.xml files
 
--   [[Spring-boot]{.underline}](https://spring.io/projects/spring-boot):
+-   [Spring-boot](https://spring.io/projects/spring-boot):
     a framework used for building the web app
 
--   [[Atlassian-connect-spring-boot]{.underline}](https://bitbucket.org/atlassian/atlassian-connect-spring-boot/src/master/):
+-   [Atlassian-connect-spring-boot](https://bitbucket.org/atlassian/atlassian-connect-spring-boot/src/master/):
     a framework for building an Atlassian Connect App
 
-[]{#_Toc42854117 .anchor}Build guidelines
+##Build guidelines##
 
-[]{#_Toc42854118 .anchor}PMD & checkstyle
+###PMD & checkstyle###
 
 When building the project by running:
 
-  --------------------------
-  ./gradlew autobump:build
-  --------------------------
-
+    ./gradlew autobump:build
+  
 PMD and Checkstyle will automatically run code checks for every module
 and will report possible errors in the console. 
 
 The configuration files for PMD and Checkstyle can be found in: 
 
--   config/pmd
+	config/pmd
 
--   config/checkstyle
+	config/checkstyle
 
 If you opt for not addressing the issues reported by PMD or Checkstyle,
 the \@SupressWarnings annotation is available for disabling checks.
 
-[]{#_Toc42854119 .anchor}Jacoco
+###Jacoco###
 
 The jacoco plugin is used to report on test coverage. When running:
 
-  -------------------------
-  ./gradlew autobump:test
-  -------------------------
+    ./gradlew autobump:test
 
 jacoco will automatically check the test coverage and will generate a
 report in html format that is located in:
 
-build/reports/jacoco/codeCoverageReport/html/index.html
+    build/reports/jacoco/codeCoverageReport/html/index.html
 
 Note: When running the html page, make sure javascript is enabled.
 
-[]{#_Toc42854120 .anchor}Github Actions
+###Github Actions###
 
 The yml files for the configured github actions are located in:
 .github/workflows
 
 Please consult the github documentation for configuring the workflows:
-[[Configuring a
-workflow]{.underline}](https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow).
+[Configuring a
+workflow](https://help.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow).
 
-*Main workflow*
+####Main workflow####
 
 The main workflow runs the build. In the event of failed build, the
 workflow fails. The actions tab in github then displays the errors. 
 
-*Sonarcloud pr*
+####Sonarcloud pr####
 
 The sonarcloud pr workflow runs every time a pull request is made or
 updated. This workflow performs static code checks to scan for
@@ -648,45 +622,41 @@ that must be met:
 -   security rating on the new code must be ≥ A\*
 
 \* Information about the calculation of these scores can be found at
-[[SonarCloud]{.underline}](https://sonarcloud.io/documentation/user-guide/quality-profiles/).
+[SonarCloud](https://sonarcloud.io/documentation/user-guide/quality-profiles/).
 
 Sonarcloud will make an overview page per pull request where a summary
 of the results is listed:
 
-![](./media/image27.png){width="6.266666666666667in"
-height="3.0083333333333333in"}
+![](./media/image27.png)
 
-*Sonarcloud*
+####Sonarcloud####
 
 The sonarcloud workflow is similarly executed every time a push to
 master is made. This prompts sonarcloud to reanalyse the whole project
 and then report it on the main overview page:
-[[https://sonarcloud.io/dashboard?id=autobump\_autobump]{.underline}](https://sonarcloud.io/dashboard?id=autobump_autobump)
+[https://sonarcloud.io/dashboard?id=autobump\_autobump](https://sonarcloud.io/dashboard?id=autobump_autobump)
 
-![](./media/image28.png){width="6.266666666666667in"
-height="4.041666666666667in"}
+![](./media/image28.png)
 
-[]{#_Toc42854121 .anchor}Deployment guidelines
+##Deployment guidelines##
 
-[]{#_Toc42854122 .anchor}General guidelines
+###General guidelines###
 
 -   The application must be deployed with https enabled. this is
     required for the bitbucket integration.
 
--   The spring application by default listens on port 8080.
+-   The spring application by default listens on port `8080`.
 
--   The spring profile must be set to prod while running in production.
+-   The spring profile must be set to `prod` while running in production.
 
-[]{#_Toc42854123 .anchor}Deploy guidelines
+###Deploy guidelines###
 
 To deploy the application:
 
 1\) Build the jar file of the spring-boot module. Navigate to the root
 directory of the project and enter:
 
-  -----------------------------------
-  ./gralew autobump:jar\_springboot
-  -----------------------------------
+	./gralew autobump:jar\_springboot
 
 2\) When gradle has finished running, navigate to the 
 
@@ -698,22 +668,21 @@ to the the AWS Elastic Beanstalk page and selecting the
 autobump-env-prod environment. Use the filepicker to upload the newly
 created jar file.
 
-![](./media/image29.png){width="6.241666666666666in" height="0.225in"}
+![](./media/image29.png)
 
 Then press the \'Upload and deploy\'-button under the running version
 section .
 
-![](./media/image30.png){width="2.225in" height="2.275in"}
+![](./media/image30.png)
 
-![](./media/image31.png){width="6.266666666666667in"
-height="5.158333333333333in"}
+![](./media/image31.png)
 
 AWS will autofill the version label for you. If you have selected the
 correct jar file, you can press the 'deploy' button to start the upload
 and deploy process. The new version should be up and running within
 minutes.
 
-[]{#_Toc42854124 .anchor}Guidelines for the developer
+##Guidelines for the developer##
 
 As has been elaborated above, the clean architecture of Autobump allows
 for easily extending its functionalities. The strict separation between
@@ -724,7 +693,7 @@ modification as well.  In this section, we list a number of issues we
 have encountered and that may be reconsidered by developers who wish to
 continue developing Autobump.
 
-[]{#_Toc42854125 .anchor}Bitbucket integration
+###Bitbucket integration###
 
 The application can be installed on the BitBucket cloud by clicking the
 button on the application home page or by adding it by url from within
@@ -735,10 +704,9 @@ flow to ensure an Autobump account can be matched with incoming
 webhooks. To achieve this, we would suggest reconsidering usage of the
 Atlassian Connect library. After all, this library is not designed to be
 used with BitBucket, as has been discussed at the community forum:
-[[Doing git operations as a cloud app - Bitbucket
-Cloud]{.underline}](https://community.developer.atlassian.com/t/doing-git-operations-as-a-cloud-app/38708)
+[Doing git operations as a cloud app - Bitbucket Cloud](https://community.developer.atlassian.com/t/doing-git-operations-as-a-cloud-app/38708)
 
-[]{#_Toc42854126 .anchor}Authentication
+###Authentication###
 
 Issues regarding authentication similarly relate to the BitBucket
 integration and usage of the Atlassian Connect library. Because the
@@ -749,13 +717,13 @@ it creates custom JWT tokens for outgoing requests. An implementation
 that can be applied both for incoming and outgoing requests would be
 better.
 
-[]{#_Toc42854127 .anchor}Bitbucket Connect App scopes
+###Bitbucket Connect App scopes###
 
 Currently, Autobump demands all available scopes when a user grants
 access to a BitBucket workspace. Surely, access should be limited to the
 scopes it really needs. This needs to be further explored.
 
-[]{#_Toc42854128 .anchor}Use Case refactor
+###Use Case refactor###
 
 During an innovation sprint, we have made a branch
 (usecase\_refactor\_2\_jb) to refactor the use case classes so as to
@@ -763,13 +731,13 @@ fully leverage the opportunities for dependency injection. To be sure,
 import the latest version of the master branch before continuing this
 branch. 
 
-[]{#_Toc42854129 .anchor}Main flows of business logic 
+###Main flows of business logic ###
 
 Autobump currently supports ten Use Cases that bring together the
 business logic. Below, we elaborate on two Use Cases that are fairly
 representative for the way Autobump handles the bumping of dependencies.
 
-*AutobumpUsecase*
+####AutobumpUsecase####
 
 The AutobumpUseCase manages the main business logic that is performed by
 Autobump. Figure XXX depicts the interaction between Autobump on the one
@@ -784,12 +752,11 @@ and finally send a pull request to BitBucket. In the event a user has
 requested Autobump to run as a cron job, this Use Case is invoked on a
 daily basis.
 
-![](./media/image32.png){width="6.266666666666667in"
-height="5.841666666666667in"}
+![](./media/image32.png)
 
-Figure XXX. Interaction diagram of the AutobumpUseCase.
+>	Figure XXX. Interaction diagram of the AutobumpUseCase.
 
-*RebaseUsecase*
+####RebaseUsecase####
 
 The RebaseUseCase is a fine example of the way Autobump handles events
 that come from the BitBucket workspace. In the event of a commit on
@@ -804,5 +771,4 @@ removed, and the bump is performed again. A new pull request is then
 sent to BitBucket, and the developer may be confident that it does not
 contain conflicts with the latest master branch. 
 
-![](./media/image33.png){width="6.266666666666667in"
-height="6.216666666666667in"}
+![](./media/image33.png)
