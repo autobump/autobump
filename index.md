@@ -10,69 +10,69 @@ Table of contents
 
 [What is Autobump?](#what-is-autobump?)
 
-[What problem does Autobump solve?](#_Toc42854098)
+[What problem does Autobump solve?](#what-problem-does-autobump-solve)
 
-[How does Autobump accomplish its goals?](#_Toc42854099)
+[How does Autobump accomplish its goals?](#how-does-autobump-accomplish-its-goals)
 
-[Autobump clients](#_Toc42854100)
+[Autobump clients](#autobump-clients)
 
-[How to configure Autobump](#_Toc42854101)
+[How to configure Autobump](#how-to-configure-autobump)
 
-[Analysis](#_Toc42854102)
+[Analysis](#analysis)
 
-[Uses cases](#_Toc42854103)
+[Uses cases](#uses-cases)
 
-[Architecture](#_Toc42854104)
+[Architecture](#architecture)
 
-[C4-architecture](#_Toc42854105)
+[C4-architecture](#c4-architecture)
 
-[Hexagon-architecture](#_Toc42854106)
+[Hexagon-architecture](#hexagon-architecture)
 
-[Opportunities for extending the Autobump architecture](#_Toc42854107)
+[Opportunities for extending the Autobump architecture](#opportunities-for-extending-the-autobump-architecture)
 
-[Description of modules](#_Toc42854108)
+[Description of modules](#description-of-modules)
 
-[Core](#_Toc42854109)
+[Core](#core)
 
-[Maven](#_Toc42854110)
+[Maven](#maven)
 
-[Bitbucket](#_Toc42854111)
+[Bitbucket](#bitbucket)
 
-[Github](#_Toc42854112)
+[Github](#github)
 
-[JGit](#_Toc42854113)
+[JGit](#jgit)
 
-[CLI](#_Toc42854114)
+[CLI](#cli)
 
-[Spring-boot](#_Toc42854115)
+[Spring-boot](#spring-boot)
 
-[External dependencies](#_Toc42854116)
+[External dependencies](#external-dependencies)
 
-[Build guidelines](#_Toc42854117)
+[Build guidelines](#build-guidelines)
 
-[PMD & checkstyle](#_Toc42854118)
+[PMD & checkstyle](#pmd--checkstyle)
 
 [Jacoco](#jacoco)
 
-[Github Actions](#_Toc42854120)
+[Github Actions](#github-actions)
 
-[Deployment guidelines](#_Toc42854121)
+[Deployment guidelines](#deployment-guidelines)
 
-[General guidelines](#_Toc42854122)
+[General guidelines](#general-guidelines)
 
-[Deploy guidelines](#_Toc42854123)
+[Deploy guidelines](#deploy-guidelines)
 
-[Guidelines for the developer](#_Toc42854124)
+[Guidelines for the developer](#guidelines-for-the-developer)
 
-[Bitbucket integration](#_Toc42854125)
+[Bitbucket integration](#bitbucket-integration)
 
-[Authentication](#_Toc42854126)
+[Authentication](#authentication)
 
-[Bitbucket Connect App scopes](#_Toc42854127)
+[Bitbucket Connect App scopes](#bitbucket-connect-app-scopes)
 
-[Use Case refactor](#_Toc42854128)
+[Use Case refactor](#use-case-refactor)
 
-[Main flows of business logic](#_Toc42854129)
+[Main flows of business logic](#main-flows-of-business-logic)
 
 ## Description of Autobump ##
 
