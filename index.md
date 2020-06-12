@@ -6,7 +6,7 @@ title: Autobump Documentation
 Table of contents
 =================
 
-[Description of Autobump](#_Toc42854096)
+[Description of Autobump](#Description-of-Autobump)
 
 [What is Autobump?](#_Toc42854097)
 
