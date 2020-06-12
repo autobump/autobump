@@ -9,6 +9,7 @@ Table of contents
     + [What is Autobump?](#what-is-autobump)
     + [What problem does Autobump solve?](#what-problem-does-autobump-solve)
     + [How does Autobump accomplish its goals?](#how-does-autobump-accomplish-its-goals)
+    + [Support](#support)
     + [Autobump clients](#autobump-clients)
       - [Autobump Spring boot](#autobump-spring-boot)
       - [Command line interface](#command-line-interface)
@@ -92,6 +93,15 @@ figure XXX below.
 ![](./media/image1.png)
 
 >	Figure XXX. Flow of Autobump
+
+### Support ###
+
+Autobump currently supports:
+
+- Build tool: Maven
+- Repositories: Maven Central
+- Git Providers: Bitbucket
+- Release Notes Sources: GitHub
 
 ### Autobump clients ###
 
