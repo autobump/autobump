@@ -115,7 +115,7 @@ figure XXX below.
 
 ![](./media/image1.png)
 
->      Figure XXX. Flow of Autobump
+>	Figure XXX. Flow of Autobump
 
 ###Autobump clients###
 
