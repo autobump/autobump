@@ -657,10 +657,7 @@ To deploy the application:
 
 	./gralew autobump:jar_springboot
 
-2\) When gradle has finished running, navigate to the 
-
-autobump-spring-boot/build/libs/ folder where the  
-autobump-spring-boot-1.0-SNAPSHOT.jar file is located.
+2\) When gradle has finished running, navigate to the autobump-spring-boot/build/libs/ folder where the autobump-spring-boot-1.0-SNAPSHOT.jar file is located.
 
 3\) Optional: upload the jar file to the aws Elastic Beanstalk by going
 to the the AWS Elastic Beanstalk page and selecting the
