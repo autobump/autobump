@@ -6,73 +6,73 @@ title: Autobump Documentation
 Table of contents
 =================
 
-[Description of Autobump](#description-of-autobump)
+-	[Description of Autobump](#description-of-autobump)
 
-[What is Autobump?](#what-is-autobump?)
+-	[What is Autobump?](#what-is-autobump?)
 
-[What problem does Autobump solve?](#what-problem-does-autobump-solve)
+-	[What problem does Autobump solve?](#what-problem-does-autobump-solve)
 
-[How does Autobump accomplish its goals?](#how-does-autobump-accomplish-its-goals)
+-	[How does Autobump accomplish its goals?](#how-does-autobump-accomplish-its-goals)
 
-[Autobump clients](#autobump-clients)
+-	[Autobump clients](#autobump-clients)
 
-[How to configure Autobump](#how-to-configure-autobump)
+-	[How to configure Autobump](#how-to-configure-autobump)
 
-[Analysis](#analysis)
+-	[Analysis](#analysis)
 
-[Uses cases](#uses-cases)
+-	[Uses cases](#uses-cases)
 
-[Architecture](#architecture)
+-	[Architecture](#architecture)
 
-[C4-architecture](#c4-architecture)
+-	[C4-architecture](#c4-architecture)
 
-[Hexagon-architecture](#hexagon-architecture)
+-	[Hexagon-architecture](#hexagon-architecture)
 
-[Opportunities for extending the Autobump architecture](#opportunities-for-extending-the-autobump-architecture)
+-	[Opportunities for extending the Autobump architecture](#opportunities-for-extending-the-autobump-architecture)
 
-[Description of modules](#description-of-modules)
+-	[Description of modules](#description-of-modules)
 
-[Core](#core)
+-	[Core](#core)
 
-[Maven](#maven)
+-	[Maven](#maven)
 
-[Bitbucket](#bitbucket)
+-	[Bitbucket](#bitbucket)
 
-[Github](#github)
+-	[Github](#github)
 
-[JGit](#jgit)
+-	[JGit](#jgit)
 
-[CLI](#cli)
+-	[CLI](#cli)
 
-[Spring-boot](#spring-boot)
+-	[Spring-boot](#spring-boot)
 
-[External dependencies](#external-dependencies)
+-	[External dependencies](#external-dependencies)
 
-[Build guidelines](#build-guidelines)
+-	[Build guidelines](#build-guidelines)
 
-[PMD & checkstyle](#pmd--checkstyle)
+-	[PMD & checkstyle](#pmd--checkstyle)
 
-[Jacoco](#jacoco)
+-	[Jacoco](#jacoco)
 
-[Github Actions](#github-actions)
+-	[Github Actions](#github-actions)
 
-[Deployment guidelines](#deployment-guidelines)
+-	[Deployment guidelines](#deployment-guidelines)
 
-[General guidelines](#general-guidelines)
+-	[General guidelines](#general-guidelines)
 
-[Deploy guidelines](#deploy-guidelines)
+-	[Deploy guidelines](#deploy-guidelines)
 
-[Guidelines for the developer](#guidelines-for-the-developer)
+-	[Guidelines for the developer](#guidelines-for-the-developer)
 
-[Bitbucket integration](#bitbucket-integration)
+-	[Bitbucket integration](#bitbucket-integration)
 
-[Authentication](#authentication)
+-	[Authentication](#authentication)
 
-[Bitbucket Connect App scopes](#bitbucket-connect-app-scopes)
+-	[Bitbucket Connect App scopes](#bitbucket-connect-app-scopes)
 
-[Use Case refactor](#use-case-refactor)
+-	[Use Case refactor](#use-case-refactor)
 
-[Main flows of business logic](#main-flows-of-business-logic)
+-	[Main flows of business logic](#main-flows-of-business-logic)
 
 ## Description of Autobump ##
 
