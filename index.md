@@ -185,7 +185,13 @@ Autobump to ignore updates.
 
 >	Image XXX. Configuration page of a repository, that displays ignored dependencies.
 
+<br>
+<br>
+
 ***
+
+<br>
+<br>
 
 ## Analysis ##
 
@@ -388,7 +394,13 @@ be added as well.
 
 >	Figure XXX. Extended Autobump component-diagram
 
+<br>
+<br>
+
 ***
+
+<br>
+<br>
 
 ## Description of modules ##
 
@@ -534,7 +546,13 @@ Autobump are:
 -   [Atlassian-connect-spring-boot](https://bitbucket.org/atlassian/atlassian-connect-spring-boot/src/master/):
     a framework for building an Atlassian Connect App
 
+<br>
+<br>
+
 ***
+
+<br>
+<br>
 
 ## Build guidelines ##
 
@@ -621,7 +639,13 @@ and then report it on the main overview page:
 
 ![](./media/image28.png)
 
+<br>
+<br>
+
 ***
+
+<br>
+<br>
 
 ## Deployment guidelines ##
 
@@ -663,7 +687,13 @@ correct jar file, you can press the 'deploy' button to start the upload
 and deploy process. The new version should be up and running within
 minutes.
 
+<br>
+<br>
+
 ***
+
+<br>
+<br>
 
 ## Guidelines for the developer ##
 
