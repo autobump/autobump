@@ -6,9 +6,9 @@ title: Autobump Documentation
 Table of contents
 =================
 
-[Description of Autobump](#Description-of-Autobump)
+[Description of Autobump](#description-of-autobump)
 
-[What is Autobump?](#What-is-Autobump?)
+[What is Autobump?](#what-is-autobump?)
 
 [What problem does Autobump solve?](#_Toc42854098)
 
@@ -52,7 +52,7 @@ Table of contents
 
 [PMD & checkstyle](#_Toc42854118)
 
-[Jacoco](#Jacoco)
+[Jacoco](#jacoco)
 
 [Github Actions](#_Toc42854120)
 
