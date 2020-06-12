@@ -653,8 +653,7 @@ and then report it on the main overview page:
 
 To deploy the application:
 
-1\) Build the jar file of the spring-boot module. Navigate to the root
-directory of the project and enter:
+1\) Build the jar file of the spring-boot module. Navigate to the root directory of the project and enter:
 
 	./gralew autobump:jar_springboot
 
