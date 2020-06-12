@@ -506,7 +506,7 @@ user for the required cli-input.
 
 Lastly, a second client is managed by the Spring-boot module, that is
 responsible for the integration of Autobump in BitBucket cloud, and
-making it available it as a BitBucket Cloud App. Connection to BitBucket
+making it available as a BitBucket Cloud App. Connection to BitBucket
 is handled by an atlassian-connect.json file in the resources folder.
 The Spring-boot module is designed based on the MVC-pattern. Two
 controllers provide an interface to the application. The
