@@ -57,7 +57,7 @@ Table of contents
 ### What is Autobump? ###
 
 Autobump is a bot that automatically creates pull-requests to keep
-dependencies of your projects up to date. It scans the dependency files,
+dependencies of your projects up to date. It scans the build files,
 and automatically detects out-of-date dependencies using the the configured repository. It then creates a pull-request for every outdated dependency.
 
 ### What problem does Autobump solve? ###
