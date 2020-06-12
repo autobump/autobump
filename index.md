@@ -634,7 +634,7 @@ of the results is listed:
 The sonarcloud workflow is similarly executed every time a push to
 master is made. This prompts sonarcloud to reanalyse the whole project
 and then report it on the main overview page:
-[https://sonarcloud.io/dashboard?id=autobump\_autobump](https://sonarcloud.io/dashboard?id=autobump_autobump)
+[https://sonarcloud.io/dashboard?id=autobump_autobump](https://sonarcloud.io/dashboard?id=autobump_autobump)
 
 ![](./media/image28.png)
 
@@ -656,7 +656,7 @@ To deploy the application:
 1\) Build the jar file of the spring-boot module. Navigate to the root
 directory of the project and enter:
 
-	./gralew autobump:jar\_springboot
+	./gralew autobump:jar_springboot
 
 2\) When gradle has finished running, navigate to the 
 
