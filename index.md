@@ -466,7 +466,6 @@ pom.xml file, the MavenDependencyBumper steps in to create the bumps.
 
 ![](./media/image20.png)
 
->	Figure 16. Simplified class diagram of the maven-module
 
 ### Bitbucket ###
 
@@ -477,8 +476,6 @@ the BitBucketAccount class; a BitBucketUrlHelper assists extracting data
 from urls; and the BitBucketErrorDecoder provides custom exceptions.
 
 ![](./media/image21.png)
-
->	Figure 17. Simplified class diagram of the bitbucket-module
 
 ### Github ###
 
@@ -761,7 +758,7 @@ representative for the way Autobump handles the bumping of dependencies.
 #### AutobumpUsecase ####
 
 The AutobumpUseCase manages the main business logic that is performed by
-Autobump. Figure XXX depicts the interaction between Autobump on the one
+Autobump. THe figure below depicts the interaction between Autobump on the one
 hand and the user and external systems on the other. The figure
 elucidates that fairly limited interaction with the user is required.
 Pressing the 'bump now' button in the dashboard (or alternatively -
@@ -775,7 +772,6 @@ daily basis.
 
 ![](./media/image32.png)
 
->	Figure XXX. Interaction diagram of the AutobumpUseCase.
 
 #### RebaseUsecase ####
 
