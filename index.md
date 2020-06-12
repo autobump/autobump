@@ -191,68 +191,68 @@ Autobump to ignore updates.
 
 ### Uses cases ###
 
-Create pull request
+*Create pull request*
 
 As a developer I want Autobump to create a new pull request to bump a
 dependency to the latest available version.
 
-Rebase pull requests
+*Rebase pull requests*
 
 As a developer I want Autobump to automatically rebase pull requests
 when new commits are made onto the target branch.
 
-Comment \"Ignore this minor\"
+*Comment \"Ignore this minor\"*
 
 As a developer, I want to be able to comment \"Ignore this minor\" on a
 Autobump pull request. Autobump should ignore all minor and patch
 versions within the same range.
 
-Comment \"Ignore this major\"
+*Comment \"Ignore this major\"*
 
 As a developer, I want to be able to comment on an Autobump PR with
 \"Ignore this major\". Autobump should update its Settings and not
 notify me again about updates within this major version range.
 
-Bitbucket Cloud App
+*Bitbucket Cloud App*
 
 As a developer I want to integrate Autobump Spring Boot in my Bitbucket
 Cloud workspace.
 
-Ignore update
+*Ignore update*
 
 As a developer, when I close a pull request, I want Autobump to ignore
 the bump and not notify me again about this update until a new version
 of the same dependency is available.
 
-Supersede pull request
+*Supersede pull request*
 
 As a developer, I want Autobump to automatically supersede existing pull
 requests to avoid having to close outdated pull requests manually.
 
-Comment on superseded pull request
+*Comment on superseded pull request*
 
 As a developer, I want Autobump to leave a comment on a superseded pull
 request, explaining that the pull request was superseded by another pull
 request. The comment includes a link to the new pull request.
 
-Include release notes in the pull request description
+*Include release notes in the pull request description*
 
 As a developer, I want Autobump to include release notes in the pull
 request description if they are available in order to save time when
 reviewing the pull request.
 
-Web dashboard
+*Web dashboard*
 
 As a developer, I want Autobump to provide me a minimal web dashboard
 that allows me to configure which repositories to bump and modify the
 configuration settings for those repositories.
 
-Schedule run
+*Schedule run*
 
 As a developer I want Autobump to schedule a run for every repository
 once per day.
 
-Assign reviewer
+*Assign reviewer*
 
 As a developer, I want to be able to configure Autobump to assign a user
 as reviewer for pull-requests that are created by Autobump.
