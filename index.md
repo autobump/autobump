@@ -74,9 +74,9 @@ Table of contents
 
 [Main flows of business logic](#_Toc42854129)
 
-##Description of Autobump
+## Description of Autobump ##
 
-###What is Autobump?###
+### What is Autobump? ###
 
 Autobump is a bot that automatically creates pull-requests to keep
 dependencies of Maven projects up to date. It scans the pom.xml files,
@@ -84,7 +84,7 @@ and automatically detects out-of-date dependencies using the Maven
 Central Repository. It then creates a pull-request for every outdated
 dependency.
 
-###What problem does Autobump solve?###
+### What problem does Autobump solve? ###
 
 It is important to regularly keep the dependencies of your projects up
 to date. External libraries are habitually updated to solve security
@@ -117,7 +117,7 @@ figure XXX below.
 
 >	Figure XXX. Flow of Autobump
 
-###Autobump clients###
+### Autobump clients ###
 
 To date, Autobump includes two clients: a command line interface and a
 spring boot web app, that is integrated in BitBucket as a BitBucket
