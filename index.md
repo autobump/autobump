@@ -74,7 +74,7 @@ Table of contents
 
 [Main flows of business logic](#_Toc42854129)
 
-##Description of Autobump##
+##Description of Autobump
 
 ###What is Autobump?###
 
