@@ -8,7 +8,7 @@ Table of contents
 
 [Description of Autobump](#Description-of-Autobump)
 
-[What is Autobump?](#_Toc42854097)
+[What is Autobump?](#What-is-Autobump?)
 
 [What problem does Autobump solve?](#_Toc42854098)
 
@@ -52,7 +52,7 @@ Table of contents
 
 [PMD & checkstyle](#_Toc42854118)
 
-[Jacoco](#_Toc42854119)
+[Jacoco](#Jacoco)
 
 [Github Actions](#_Toc42854120)
 
