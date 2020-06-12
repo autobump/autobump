@@ -185,6 +185,8 @@ Autobump to ignore updates.
 
 >	Image XXX. Configuration page of a repository, that displays ignored dependencies.
 
+***
+
 ## Analysis ##
 
 ### Uses cases ###
@@ -386,6 +388,8 @@ be added as well.
 
 >	Figure XXX. Extended Autobump component-diagram
 
+***
+
 ## Description of modules ##
 
 ### Core ###
@@ -530,6 +534,8 @@ Autobump are:
 -   [Atlassian-connect-spring-boot](https://bitbucket.org/atlassian/atlassian-connect-spring-boot/src/master/):
     a framework for building an Atlassian Connect App
 
+***
+
 ## Build guidelines ##
 
 ### PMD & checkstyle ###
@@ -615,6 +621,8 @@ and then report it on the main overview page:
 
 ![](./media/image28.png)
 
+***
+
 ## Deployment guidelines ##
 
 ### General guidelines ###
@@ -654,6 +662,8 @@ AWS will autofill the version label for you. If you have selected the
 correct jar file, you can press the 'deploy' button to start the upload
 and deploy process. The new version should be up and running within
 minutes.
+
+***
 
 ## Guidelines for the developer ##
 
