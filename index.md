@@ -5,74 +5,51 @@ title: Autobump Documentation
 
 Table of contents
 =================
-
--	[Description of Autobump](#description-of-autobump)
-
--	[What is Autobump?](#what-is-autobump?)
-
--	[What problem does Autobump solve?](#what-problem-does-autobump-solve)
-
--	[How does Autobump accomplish its goals?](#how-does-autobump-accomplish-its-goals)
-
--	[Autobump clients](#autobump-clients)
-
--	[How to configure Autobump](#how-to-configure-autobump)
-
--	[Analysis](#analysis)
-
--	[Uses cases](#uses-cases)
-
--	[Architecture](#architecture)
-
--	[C4-architecture](#c4-architecture)
-
--	[Hexagon-architecture](#hexagon-architecture)
-
--	[Opportunities for extending the Autobump architecture](#opportunities-for-extending-the-autobump-architecture)
-
--	[Description of modules](#description-of-modules)
-
--	[Core](#core)
-
--	[Maven](#maven)
-
--	[Bitbucket](#bitbucket)
-
--	[Github](#github)
-
--	[JGit](#jgit)
-
--	[CLI](#cli)
-
--	[Spring-boot](#spring-boot)
-
--	[External dependencies](#external-dependencies)
-
--	[Build guidelines](#build-guidelines)
-
--	[PMD & checkstyle](#pmd--checkstyle)
-
--	[Jacoco](#jacoco)
-
--	[Github Actions](#github-actions)
-
--	[Deployment guidelines](#deployment-guidelines)
-
--	[General guidelines](#general-guidelines)
-
--	[Deploy guidelines](#deploy-guidelines)
-
--	[Guidelines for the developer](#guidelines-for-the-developer)
-
--	[Bitbucket integration](#bitbucket-integration)
-
--	[Authentication](#authentication)
-
--	[Bitbucket Connect App scopes](#bitbucket-connect-app-scopes)
-
--	[Use Case refactor](#use-case-refactor)
-
--	[Main flows of business logic](#main-flows-of-business-logic)
+  * [Description of Autobump](#description-of-autobump)
+    + [What is Autobump?](#what-is-autobump)
+    + [What problem does Autobump solve?](#what-problem-does-autobump-solve)
+    + [How does Autobump accomplish its goals?](#how-does-autobump-accomplish-its-goals)
+    + [Autobump clients](#autobump-clients)
+      - [Command line interface](#command-line-interface)
+      - [Autobump Spring boot](#autobump-spring-boot)
+    + [How to configure Autobump](#how-to-configure-autobump)
+  * [Analysis](#analysis)
+    + [Uses cases](#uses-cases)
+    + [Architecture](#architecture)
+    + [C4-architecture](#c4-architecture)
+      - [Context](#context)
+      - [Component](#component)
+      - [Code](#code)
+    + [Hexagon-architecture](#hexagon-architecture)
+    + [Opportunities for extending the Autobump](#opportunities-for-extending-the-autobump)
+      - [architecture](#architecture)
+  * [Description of modules](#description-of-modules)
+    + [Core](#core)
+    + [Maven](#maven)
+    + [Bitbucket](#bitbucket)
+    + [Github](#github)
+    + [JGit](#jgit)
+    + [CLI](#cli)
+    + [Spring-boot](#spring-boot)
+    + [External dependencies](#external-dependencies)
+  * [Build guidelines](#build-guidelines)
+    + [PMD & checkstyle](#pmd--checkstyle)
+    + [Jacoco](#jacoco)
+    + [Github Actions](#github-actions)
+      - [Main workflow](#main-workflow)
+      - [Sonarcloud pr](#sonarcloud-pr)
+      - [Sonarcloud](#sonarcloud)
+  * [Deployment guidelines](#deployment-guidelines)
+    + [General guidelines](#general-guidelines)
+    + [Deploy guidelines](#deploy-guidelines)
+  * [Guidelines for the developer](#guidelines-for-the-developer)
+    + [Bitbucket integration](#bitbucket-integration)
+    + [Authentication](#authentication)
+    + [Bitbucket Connect App scopes](#bitbucket-connect-app-scopes)
+    + [Use Case refactor](#use-case-refactor)
+    + [Main flows of business logic](#main-flows-of-business-logic)
+      - [AutobumpUsecase](#autobumpusecase)
+      - [RebaseUsecase](#rebaseusecase)
 
 ## Description of Autobump ##
 
